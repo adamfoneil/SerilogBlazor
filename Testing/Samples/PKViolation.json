@@ -1,0 +1,14 @@
+{
+	"exceptionType": "Dapper.Repository.Exceptions.RepositoryException",
+	"message": "Can't save this row in the 'dbo.Appointment' table because the value '16, 7, 2025-05-07, 64142' already exists and duplicates are not allowed.",
+	"locations": [
+		{
+			"fileName": "Hs5/Hs5.RadzenBlazor/Pages/Ops/Online/Request.razor.cs",
+			"lineNumber": 449			
+		},
+		{
+			"fileName": "Hs5/Hs5.RadzenBlazor/Components/AppointmentRequestOptions.razor.cs",
+			"lineNumber": 163
+		}
+	]	
+}

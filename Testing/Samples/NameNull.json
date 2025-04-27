@@ -1,0 +1,6 @@
+{
+	"exceptionType": "Dapper.Repository.Exceptions.RepositoryException",
+	"message": "Cannot insert the value NULL into column 'Name', table 'Hs5Prod.dbo.Patient'; column does not allow nulls. INSERT fails.  The statement has been terminated.",
+	"fileName": "Hs5/Hs5/Hs5.RadzenBlazor/Components/PatientForm.razor",
+	"lineNumber": 334
+}

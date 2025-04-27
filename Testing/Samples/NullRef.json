@@ -1,0 +1,6 @@
+{
+	"exceptionType": "System.NullReferenceException",
+	"message": "Object reference not set to an instance of an object.",
+	"fileName": "Hs5/Hs5/Hs5.RadzenBlazor/Pages/List/Ledger.razor",
+	"lineNumber": 44
+}

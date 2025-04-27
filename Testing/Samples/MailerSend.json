@@ -1,0 +1,10 @@
+{
+	"exceptionType": "CoreNotify.MailerSend.MailerSendException",
+	"message": "Email sent successfully, but X-Message-Id header not found in response",
+	"codeLocations": [
+		{
+			"fileName": "Hs5/Hs5.Services/Abstract/SenderBase.cs",
+			"lineNumber": 109
+		}
+	]	
+}

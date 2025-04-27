@@ -1,0 +1,47 @@
+<Project Sdk="MSTest.Sdk/3.6.4">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <!--
+      Displays error on console in addition to the log file. Note that this feature comes with a performance impact.
+      For more information, visit https://learn.microsoft.com/dotnet/core/testing/unit-testing-platform-integration-dotnet-test#show-failure-per-test
+      -->
+    <TestingPlatformShowTestsFailure>true</TestingPlatformShowTestsFailure>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Samples\MailerSend.json" />
+    <None Remove="Samples\MailerSend.txt" />
+    <None Remove="Samples\NameNull.json" />
+    <None Remove="Samples\NameNull.txt" />
+    <None Remove="Samples\NullRef.json" />
+    <None Remove="Samples\NullRef.txt" />
+    <None Remove="Samples\PKViolation.json" />
+    <None Remove="Samples\PKViolation.txt" />
+    <None Remove="Samples\TicketInUse.txt" />
+    <None Remove="Samples\Truncated.txt" />
+    <None Remove="Samples\Twilio.txt" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Samples\MailerSend.json" />
+    <EmbeddedResource Include="Samples\MailerSend.txt" />
+    <EmbeddedResource Include="Samples\NameNull.json" />
+    <EmbeddedResource Include="Samples\NameNull.txt" />
+    <EmbeddedResource Include="Samples\NullRef.json" />
+    <EmbeddedResource Include="Samples\NullRef.txt" />
+    <EmbeddedResource Include="Samples\PKViolation.json" />
+    <EmbeddedResource Include="Samples\PKViolation.txt" />
+    <EmbeddedResource Include="Samples\TicketInUse.txt" />
+    <EmbeddedResource Include="Samples\Truncated.txt" />
+    <EmbeddedResource Include="Samples\Twilio.txt" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Parsing\Parsing.csproj" />
+  </ItemGroup>
+
+</Project>
