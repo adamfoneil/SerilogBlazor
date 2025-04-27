@@ -4,7 +4,7 @@ namespace Parsing;
 
 public record StackTraceEssentials(string ExceptionType, string Message, CodeLocation[] Locations);
 
-public record CodeLocation(string Filename, int LineNumber);
+public record CodeLocation(string MethodName, string Filename, int LineNumber);
 
 public static class StackTraceHelper
 {
@@ -41,11 +41,13 @@ public static class StackTraceHelper
 			var match = fileInfoRegex.Match(line);
 			if (match.Success)
 			{
-				var method = match.Groups["method"].Value.Trim();
+				var fullMethodName = match.Groups["method"].Value.Trim();
+				var method = fullMethodName.Split('.').Last();
+
 				var file = match.Groups["file"].Value.Trim();
 				var lineNumber = int.Parse(match.Groups["line"].Value);
 
-				if (method.StartsWith(myCodePrefix, StringComparison.Ordinal))
+				if (fullMethodName.StartsWith(myCodePrefix, StringComparison.Ordinal))
 				{
 					// Remove basePath if it matches
 					if (!string.IsNullOrEmpty(basePath) && file.StartsWith(basePath, StringComparison.OrdinalIgnoreCase))
@@ -53,7 +55,7 @@ public static class StackTraceHelper
 						file = file[basePath.Length..].TrimStart(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
 					}
 
-					codeLocations.Add(new(file, lineNumber));
+					codeLocations.Add(new(method, file, lineNumber));
 				}
 			}
 		}

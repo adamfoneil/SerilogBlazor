@@ -1,0 +1,16 @@
+{
+	"exceptionType": "Dapper.Repository.Exceptions.RepositoryException",
+	"message": "String or binary data would be truncated.  The statement has been terminated.",
+	"locations": [
+		{
+			"methodName": "SaveQuestionResponses",
+			"fileName": "Hs5/Hs5.RadzenBlazor/Pages/Ops/Online/Request.razor.cs",
+			"lineNumber": 329
+		},
+		{
+			"methodName": "AddUpdatePatient",
+			"fileName": "Hs5/Hs5.RadzenBlazor/Pages/Ops/Online/Request.razor.cs",
+			"lineNumber": 282
+		}
+	]
+}

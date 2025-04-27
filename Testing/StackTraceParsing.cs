@@ -10,6 +10,8 @@ public sealed class StackTraceParsing
 	[TestMethod]
 	public void PKViolation() => TestInner("PKViolation");
 
+	[TestMethod]
+	public void Truncated() => TestInner("Truncated");
 
 	private static void TestInner(string resourceNameBase)
 	{
