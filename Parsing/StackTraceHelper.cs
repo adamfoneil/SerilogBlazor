@@ -1,8 +1,15 @@
-﻿using System.Text.RegularExpressions;
+﻿using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace Parsing;
 
-public record StackTraceEssentials(string ExceptionType, string Message, CodeLocation[] Locations);
+public record StackTraceEssentials(string ExceptionType, string Message, CodeLocation[] Locations)
+{
+	/// <summary>
+	/// unique identifier for where this error is happening
+	/// </summary>
+	public string ErrorId => string.Join("|", Locations.Select(loc => $"{loc.MethodName}:{loc.LineNumber}")).ToMd5();
+}
 
 public record CodeLocation(string MethodName, string Filename, int LineNumber);
 

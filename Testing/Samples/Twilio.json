@@ -1,0 +1,16 @@
+{
+	"exceptionType": "Twilio.Exceptions.ApiException",
+	"message": "Invalid 'To' Phone Number: (333) 555-XXXX",
+	"locations": [
+		{
+			"methodName": "SendImplementationAsync",
+			"fileName": "Hs5/Hs5.Services/Services/TextSender.cs",
+			"lineNumber": 55
+		},
+		{
+			"methodName": "SendInternalAsync",
+			"fileName": "Hs5/Hs5.Services/Abstract/SenderBase.cs",
+			"lineNumber": 109
+		}
+	]
+}

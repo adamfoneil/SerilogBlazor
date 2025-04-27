@@ -24,6 +24,7 @@
     <None Remove="Samples\TicketInUse.txt" />
     <None Remove="Samples\Truncated.json" />
     <None Remove="Samples\Truncated.txt" />
+    <None Remove="Samples\Twilio.json" />
     <None Remove="Samples\Twilio.txt" />
   </ItemGroup>
 
@@ -39,6 +40,7 @@
     <EmbeddedResource Include="Samples\TicketInUse.txt" />
     <EmbeddedResource Include="Samples\Truncated.json" />
     <EmbeddedResource Include="Samples\Truncated.txt" />
+    <EmbeddedResource Include="Samples\Twilio.json" />
     <EmbeddedResource Include="Samples\Twilio.txt" />
   </ItemGroup>
 

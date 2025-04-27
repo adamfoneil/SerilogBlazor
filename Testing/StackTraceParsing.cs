@@ -1,4 +1,5 @@
 ﻿using Parsing;
+using System.Diagnostics;
 using System.Reflection;
 using System.Text.Json;
 
@@ -13,6 +14,9 @@ public sealed class StackTraceParsing
 	[TestMethod]
 	public void Truncated() => TestInner("Truncated");
 
+	[TestMethod]
+	public void Twilio() => TestInner("Twilio");
+
 	private static void TestInner(string resourceNameBase)
 	{
 		var input = GetContent(resourceNameBase + ".txt");
@@ -24,6 +28,8 @@ public sealed class StackTraceParsing
 		Assert.AreEqual(expected.ExceptionType, actual.ExceptionType);
 		Assert.AreEqual(expected.Message, actual.Message);
 		Assert.IsTrue(expected.Locations.SequenceEqual(actual.Locations));
+
+		Debug.Print($"ErrorId = {actual.ErrorId}");
 	}
 
 	private static string GetContent(string resourceName)
