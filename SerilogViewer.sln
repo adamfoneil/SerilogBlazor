@@ -4,7 +4,7 @@ VisualStudioVersion = 17.13.35931.197
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SerilogViewer.RCL", "SerilogViewer.RCL\SerilogViewer.RCL.csproj", "{D5FC06A5-48CA-48D7-AF9E-677E3559115C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Parsing", "Parsing\Parsing.csproj", "{3045BBC1-D0A8-4BD4-AD84-929386221D6B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Service", "Parsing\Service.csproj", "{3045BBC1-D0A8-4BD4-AD84-929386221D6B}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Testing", "Testing\Testing.csproj", "{0706961B-2FDB-40FA-9082-A7E7C8EEBEA6}"
 EndProject
