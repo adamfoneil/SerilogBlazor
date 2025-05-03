@@ -1,21 +1,10 @@
-﻿using System.Linq;
-using System.Text.RegularExpressions;
+﻿using System.Text.RegularExpressions;
 
-namespace Parsing;
+namespace Service;
 
-public record StackTraceEssentials(string ExceptionType, string Message, CodeLocation[] Locations)
+public static class StackTraceParser
 {
-	/// <summary>
-	/// unique identifier for where this error is happening
-	/// </summary>
-	public string ErrorId => string.Join("|", Locations.Select(loc => $"{loc.MethodName}:{loc.LineNumber}")).ToMd5();
-}
-
-public record CodeLocation(string MethodName, string Filename, int LineNumber);
-
-public static class StackTraceHelper
-{
-	public static StackTraceEssentials Parse(string stackTrace, string basePath, string myCodePrefix)
+	public static StackTraceCore Parse(string stackTrace, string basePath, string myCodePrefix)
 	{
 		if (string.IsNullOrWhiteSpace(stackTrace))
 			throw new ArgumentException("Stack trace cannot be null or empty.", nameof(stackTrace));
@@ -67,6 +56,6 @@ public static class StackTraceHelper
 			}
 		}
 
-		return new StackTraceEssentials(exceptionType, message, [.. codeLocations]);
+		return new StackTraceCore(exceptionType, message, [.. codeLocations]);
 	}
 }

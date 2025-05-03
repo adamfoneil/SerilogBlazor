@@ -1,4 +1,4 @@
-﻿namespace Parsing;
+﻿namespace Service;
 
 public static class HashHelper
 {

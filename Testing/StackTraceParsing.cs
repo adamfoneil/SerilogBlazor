@@ -1,4 +1,4 @@
-﻿using Parsing;
+﻿using Service;
 using System.Diagnostics;
 using System.Reflection;
 using System.Text.Json;
@@ -24,8 +24,8 @@ public sealed class StackTraceParsing
 	{
 		var input = GetContent(resourceNameBase + ".txt");
 		var expectedJson = GetContent(resourceNameBase + ".json");
-		var expected = JsonSerializer.Deserialize<StackTraceEssentials>(expectedJson, new JsonSerializerOptions() {  PropertyNameCaseInsensitive = true }) ?? throw new Exception("Couldn't deserialize");
-		var actual = StackTraceHelper.Parse(input, "/home/runner/work/Hs5/", "Hs5.");
+		var expected = JsonSerializer.Deserialize<StackTraceCore>(expectedJson, new JsonSerializerOptions() {  PropertyNameCaseInsensitive = true }) ?? throw new Exception("Couldn't deserialize");
+		var actual = StackTraceParser.Parse(input, "/home/runner/work/Hs5/", "Hs5.");
 
 		//var actualJson = JsonSerializer.Serialize(actual, new JsonSerializerOptions() {  WriteIndented = true });
 

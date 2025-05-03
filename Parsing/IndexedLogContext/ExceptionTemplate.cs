@@ -18,5 +18,5 @@ public class ExceptionTemplate
 	/// <summary>
 	/// json parse of stack trace
 	/// </summary>
-	public string Data { get; set; } = default!;
+	public string StackTraceData { get; set; } = default!;
 }
