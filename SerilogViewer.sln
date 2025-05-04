@@ -8,6 +8,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Service", "Parsing\Service.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Testing", "Testing\Testing.csproj", "{0706961B-2FDB-40FA-9082-A7E7C8EEBEA6}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SandboxCmd", "SandboxCmd\SandboxCmd.csproj", "{AC553D0F-6657-4290-808C-85A5B82DB353}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -26,6 +28,10 @@ Global
 		{0706961B-2FDB-40FA-9082-A7E7C8EEBEA6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0706961B-2FDB-40FA-9082-A7E7C8EEBEA6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0706961B-2FDB-40FA-9082-A7E7C8EEBEA6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AC553D0F-6657-4290-808C-85A5B82DB353}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AC553D0F-6657-4290-808C-85A5B82DB353}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AC553D0F-6657-4290-808C-85A5B82DB353}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AC553D0F-6657-4290-808C-85A5B82DB353}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
