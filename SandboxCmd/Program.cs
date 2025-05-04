@@ -1,9 +1,11 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Coravel;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using SandboxCmd;
 using Serilog;
 using Serilog.Sinks.MSSqlServer;
+using Service;
 
 var host = Host.CreateDefaultBuilder(args)
 	.UseSerilog((context, services, configuration) =>
@@ -15,12 +17,20 @@ var host = Host.CreateDefaultBuilder(args)
 				AutoCreateSqlTable = true,
 				TableName = "Serilog",
 				SchemaName = "log"
-			});		
+			});
+
+		services.UseScheduler(schedule =>
+		{
+			schedule.Schedule<SerilogIndexer<ApplicationDbContext>>().EveryThirtyMinutes();
+		});
 	})
 	.ConfigureServices((context, services) =>
-	{
-		services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(AppDbContextFactory.ConnectionString));
+	{		
+		services.AddDbContextFactory<ApplicationDbContext>(options => options.UseSqlServer(AppDbContextFactory.ConnectionString));
 	})
 	.Build();
+
+using var services = host.Services.CreateScope();
+
 
 await host.RunAsync();

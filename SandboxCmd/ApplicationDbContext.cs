@@ -8,6 +8,13 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
 {
 	public DbSet<ExceptionTemplate> ExceptionTemplates { get; set; }
 	public DbSet<ExceptionInstance> ExceptionInstances { get; set; }
+	public DbSet<SerilogTableMarker> SerilogTableMarkers { get; set; }
+
+	protected override void OnModelCreating(ModelBuilder modelBuilder)
+	{
+		base.OnModelCreating(modelBuilder);
+		modelBuilder.ApplyConfigurationsFromAssembly(typeof(IIndexedLogContext).Assembly);
+	}
 }
 
 public class AppDbContextFactory : IDesignTimeDbContextFactory<ApplicationDbContext>
