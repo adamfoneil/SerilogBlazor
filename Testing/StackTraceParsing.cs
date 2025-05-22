@@ -15,6 +15,9 @@ public sealed class StackTraceParsing
 	public void PKViolation2() => TestInner("PKViolation2");
 
 	[TestMethod]
+	public void PKViolation3() => TestInner("PKViolation3");
+
+	[TestMethod]
 	public void Truncated() => TestInner("Truncated");
 
 	[TestMethod]
@@ -27,7 +30,7 @@ public sealed class StackTraceParsing
 		var expected = JsonSerializer.Deserialize<StackTraceCore>(expectedJson, new JsonSerializerOptions() {  PropertyNameCaseInsensitive = true }) ?? throw new Exception("Couldn't deserialize");
 		var actual = StackTraceParser.Parse(input, "/home/runner/work/Hs5/", "Hs5.");
 
-		//var actualJson = JsonSerializer.Serialize(actual, new JsonSerializerOptions() {  WriteIndented = true });
+		var actualJson = JsonSerializer.Serialize(actual, new JsonSerializerOptions() {  WriteIndented = true });
 
 		//Assert.AreEqual(expected, actual); for some reason this doesn't work, but the other assertions do
 		Assert.AreEqual(expected.ExceptionType, actual.ExceptionType);

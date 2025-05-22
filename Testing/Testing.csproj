@@ -23,6 +23,8 @@
     <None Remove="Samples\PKViolation.txt" />
     <None Remove="Samples\PKViolation2.json" />
     <None Remove="Samples\PKViolation2.txt" />
+    <None Remove="Samples\PKViolation3.json" />
+    <None Remove="Samples\PKViolation3.txt" />
     <None Remove="Samples\TicketInUse.txt" />
     <None Remove="Samples\Truncated.json" />
     <None Remove="Samples\Truncated.txt" />
@@ -41,6 +43,8 @@
     <EmbeddedResource Include="Samples\PKViolation.txt" />
     <EmbeddedResource Include="Samples\PKViolation2.json" />
     <EmbeddedResource Include="Samples\PKViolation2.txt" />
+    <EmbeddedResource Include="Samples\PKViolation3.json" />
+    <EmbeddedResource Include="Samples\PKViolation3.txt" />
     <EmbeddedResource Include="Samples\TicketInUse.txt" />
     <EmbeddedResource Include="Samples\Truncated.json" />
     <EmbeddedResource Include="Samples\Truncated.txt" />
