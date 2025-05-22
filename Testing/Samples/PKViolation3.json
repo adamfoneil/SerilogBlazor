@@ -1,0 +1,12 @@
+{
+	"ExceptionType": "Dapper.Repository.Exceptions.RepositoryException",
+	"Message": "Can\u0027t save this row in the \u0027dbo.Appointment\u0027 table because the value \u002716, 7, 2025-06-10, 64866\u0027 already exists and duplicates are not allowed.",
+	"Locations": [
+		{
+			"MethodName": "SaveOrUpdateAsync",
+			"Filename": "Hs5/Hs5.Services/Repositories/BaseRepository.cs",
+			"LineNumber": 134
+		}
+	],
+	"ErrorId": "5a4bcf17083aab86c3ba729b3a692bd8"
+}
