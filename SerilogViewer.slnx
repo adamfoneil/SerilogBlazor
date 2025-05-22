@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="Parsing/Service.csproj" />
+  <Project Path="SandboxCmd/SandboxCmd.csproj" />
+  <Project Path="SerilogViewer.RCL/SerilogViewer.RCL.csproj" />
+  <Project Path="Testing/Testing.csproj" />
+</Solution>
