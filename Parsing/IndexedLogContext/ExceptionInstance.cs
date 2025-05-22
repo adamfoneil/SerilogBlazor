@@ -1,7 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
-
-namespace Service.IndexedLogContext;
+﻿namespace Service.IndexedLogContext;
 
 public class ExceptionInstance
 {

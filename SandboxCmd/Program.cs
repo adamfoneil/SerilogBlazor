@@ -21,7 +21,7 @@ var host = Host.CreateDefaultBuilder(args)
 
 		services.UseScheduler(schedule =>
 		{
-			schedule.Schedule<SerilogIndexer<ApplicationDbContext>>().EveryThirtyMinutes();
+			schedule.Schedule<ExceptionIndexer<ApplicationDbContext>>().EveryThirtyMinutes();
 		});
 	})
 	.ConfigureServices((context, services) =>
