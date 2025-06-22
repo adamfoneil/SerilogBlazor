@@ -49,6 +49,8 @@ public abstract class ExceptionIndexer<TDbContext>(
 
 			try
 			{
+				// todo: update SourceContext values
+
 				var (maxId, logs) = await QueryExceptionsAsync(marker.LogId);
 
 				foreach (var entry in logs)
@@ -65,12 +67,11 @@ public abstract class ExceptionIndexer<TDbContext>(
 							{ 
 								ErrorId = info.ErrorId, 
 								Message = entry.Message, 
-								StackTraceData = entry.StackTrace 
+								StackTraceData = entry.StackTrace,
+								SourceContext = entry.SourceContext
 							};
 
 						db.ExceptionTemplates.Update(exceptionTemplate);
-
-
 					}
 				}
 
