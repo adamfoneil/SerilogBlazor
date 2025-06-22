@@ -1,6 +1,6 @@
 ﻿namespace Service;
 
-public record StackTraceCore(string ExceptionType, string Message, CodeLocation[] Locations)
+public record StackTraceInfo(string ExceptionType, string Message, CodeLocation[] Locations)
 {
 	/// <summary>
 	/// unique identifier for where this error is happening

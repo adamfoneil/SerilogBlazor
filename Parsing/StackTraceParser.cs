@@ -4,7 +4,7 @@ namespace Service;
 
 public static class StackTraceParser
 {
-	public static StackTraceCore Parse(string stackTrace, string basePath, string myCodePrefix)
+	public static StackTraceInfo Parse(string stackTrace, string basePath, string myCodePrefix)
 	{
 		if (string.IsNullOrWhiteSpace(stackTrace))
 			throw new ArgumentException("Stack trace cannot be null or empty.", nameof(stackTrace));
@@ -56,6 +56,6 @@ public static class StackTraceParser
 			}
 		}
 
-		return new StackTraceCore(exceptionType, message, [.. codeLocations]);
+		return new StackTraceInfo(exceptionType, message, [.. codeLocations]);
 	}
 }
