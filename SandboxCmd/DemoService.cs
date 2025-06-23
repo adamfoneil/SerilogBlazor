@@ -1,6 +1,12 @@
-﻿namespace SandboxCmd;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
-internal class DemoService(ApplicationDbContext dbContext)
+namespace SandboxCmd;
+
+internal class DemoService(
+	ILogger<DemoService> logger,
+	IDbContextFactory<ApplicationDbContext> dbFactory)
 {
-	private readonly ApplicationDbContext dbContext = dbContext;
+	private readonly ILogger<DemoService> _logger = logger;
+	private readonly IDbContextFactory<ApplicationDbContext> _dbFactory = dbFactory;
 }

@@ -27,6 +27,7 @@ var host = Host.CreateDefaultBuilder(args)
 	})
 	.ConfigureServices((context, services) =>
 	{
+		services.AddScoped<DemoService>();
 		services.AddScheduler();
 		services.AddDbContextFactory<ApplicationDbContext>(options => options.UseSqlServer(AppDbContextFactory.ConnectionString));
 	})
