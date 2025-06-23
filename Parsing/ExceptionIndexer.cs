@@ -49,8 +49,15 @@ public abstract class ExceptionIndexer<TDbContext>(
 
 			try
 			{
-				// todo: update SourceContext values
+				_logger.LogDebug("Querying source contexts");
+				var sourceContexts = await QuerySourceContextsAsync(marker.LogId);
+				if (sourceContexts.Any())
+				{
+					_logger.LogDebug("Updating {count} SourceContext values", sourceContexts.Length);
+					await UpdateSourceContextsAsync(db, sourceContexts);
+				}
 
+				_logger.LogDebug("Querying exceptions");
 				var (maxId, logs) = await QueryExceptionsAsync(marker.LogId);
 
 				foreach (var entry in logs)
@@ -70,6 +77,13 @@ public abstract class ExceptionIndexer<TDbContext>(
 								StackTraceData = entry.StackTrace,
 								SourceContext = entry.SourceContext
 							};
+
+						exceptionTemplate.Instances.Add(new()
+						{
+							Timestamp = entry.Timestamp,
+							Message = entry.Message,
+							LogId = entry.Id
+						});
 
 						db.ExceptionTemplates.Update(exceptionTemplate);
 					}
@@ -102,4 +116,15 @@ public abstract class ExceptionIndexer<TDbContext>(
 	}
 
 	protected abstract Task<(int MaxLogId, IExceptionData[])> QueryExceptionsAsync(int fromLogId);
+
+	protected abstract Task<(int LogId, string SourceContext)[]> QuerySourceContextsAsync(int fromLogId);
+
+	protected async Task UpdateSourceContextsAsync(TDbContext db, (int LogId, string SourceContext)[] values)
+	{
+		// prevent too many updates at once
+		foreach (var chunk in values.Chunk(20))
+		{
+
+		}
+	}
 }

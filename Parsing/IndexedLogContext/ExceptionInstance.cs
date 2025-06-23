@@ -1,4 +1,7 @@
-﻿namespace Service.IndexedLogContext;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
+
+namespace Service.IndexedLogContext;
 
 public class ExceptionInstance
 {
@@ -12,4 +15,13 @@ public class ExceptionInstance
 	public int LogId { get; set; }
 
 	public ExceptionTemplate ExceptionTemplate { get; set; } = default!;
+}
+
+public class ExceptionInstanceConfiguration : IEntityTypeConfiguration<ExceptionInstance>
+{
+	public void Configure(EntityTypeBuilder<ExceptionInstance> builder)
+	{
+		builder.HasOne(e => e.ExceptionTemplate).WithMany(e => e.Instances).HasForeignKey(e => e.ExceptionTemplateId)
+			.OnDelete(DeleteBehavior.Cascade);
+	}
 }

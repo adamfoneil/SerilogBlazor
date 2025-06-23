@@ -23,6 +23,8 @@ public class ExceptionTemplate
 	/// json parse of stack trace
 	/// </summary>
 	public string StackTraceData { get; set; } = default!;
+
+	public ICollection<ExceptionInstance> Instances { get; set; } = [];
 }
 
 public class ExceptionTemplateConfiguration : IEntityTypeConfiguration<ExceptionTemplate>
