@@ -6,6 +6,7 @@ using SandboxCmd;
 using Serilog;
 using Serilog.Sinks.MSSqlServer;
 using Service;
+using System.Data;
 
 var host = Host.CreateDefaultBuilder(args)
 	.UseSerilog((context, services, configuration) =>
@@ -16,8 +17,8 @@ var host = Host.CreateDefaultBuilder(args)
 			{
 				AutoCreateSqlTable = true,
 				TableName = "Serilog",
-				SchemaName = "log"
-			});
+				SchemaName = "log",				
+			}, columnOptions: GetColumnOptions());
 
 		services.UseScheduler(schedule =>
 		{
@@ -25,12 +26,18 @@ var host = Host.CreateDefaultBuilder(args)
 		});
 	})
 	.ConfigureServices((context, services) =>
-	{		
+	{
+		services.AddScheduler();
 		services.AddDbContextFactory<ApplicationDbContext>(options => options.UseSqlServer(AppDbContextFactory.ConnectionString));
 	})
 	.Build();
 
-using var services = host.Services.CreateScope();
-
+static ColumnOptions GetColumnOptions() => new()
+{
+	AdditionalColumns =
+	[
+		new SqlColumn("SourceContext", SqlDbType.NVarChar, allowNull: true, dataLength: 256),
+	]
+};
 
 await host.RunAsync();
