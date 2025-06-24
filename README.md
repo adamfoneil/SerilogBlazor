@@ -2,6 +2,8 @@
 
 When self-hosting Serilog, there's no built-in log view experience. You have to query the serilog table manually and/or build your own UI or query feature. There are products like Seq and Graylog that provide a very polished log search and view exeperience, but have costs of their own. The reason for self-hosting to begin with is to avoid those costs. Furthermore, traditional homegrown log viewers have not provided the kind of insights I'm looking for when examining logs. I'd like a log view that helps focus my attention on distinct issues. There's still a place for the traditional scrolling table view, but one thing I want to do here is to improve upon this classic view with a card view of distinct recurring issues.
 
+The other difficulty I run into with Serilog is configuring the logging levels by namespace. These are string arguments with no feedback or preview capability, and changes require app restarts. So I'm looking for an improved configuration experience of some kind.
+
 So this project does these things:
 - indexes exception info in order to help you focus on recurring issues
 - provides some Razor components for viewing Serilog detail in your applications
