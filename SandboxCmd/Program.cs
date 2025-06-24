@@ -5,7 +5,7 @@ using Microsoft.Extensions.Hosting;
 using SandboxCmd;
 using Serilog;
 using Serilog.Sinks.MSSqlServer;
-using Service;
+using SerilogViewer.Service;
 using System.Data;
 
 var host = Host.CreateDefaultBuilder(args)

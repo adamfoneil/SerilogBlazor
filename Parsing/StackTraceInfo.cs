@@ -1,4 +1,4 @@
-﻿namespace Service;
+﻿namespace SerilogViewer.Service;
 
 public record StackTraceInfo(string ExceptionType, string Message, CodeLocation[] Locations)
 {

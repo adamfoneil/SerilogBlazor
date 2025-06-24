@@ -1,6 +1,6 @@
 ﻿using System.Text.RegularExpressions;
 
-namespace Service;
+namespace SerilogViewer.Service;
 
 public static class StackTraceParser
 {

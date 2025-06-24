@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
-using Service.IndexedLogContext;
+using SerilogViewer.Service.IndexedLogContext;
 
 namespace SandboxCmd;
 

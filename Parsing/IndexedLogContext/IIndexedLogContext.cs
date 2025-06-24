@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
-namespace Service.IndexedLogContext;
+namespace SerilogViewer.Service.IndexedLogContext;
 
 public interface IIndexedLogContext
 {

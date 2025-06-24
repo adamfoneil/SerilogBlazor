@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace Service.IndexedLogContext;
+namespace SerilogViewer.Service.IndexedLogContext;
 
 /// <summary>
 /// tracks the last log id that was queried for each serilog table (normally you have just one)

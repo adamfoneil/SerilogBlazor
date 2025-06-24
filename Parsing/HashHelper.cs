@@ -1,4 +1,4 @@
-﻿namespace Service;
+﻿namespace SerilogViewer.Service;
 
 public static class HashHelper
 {

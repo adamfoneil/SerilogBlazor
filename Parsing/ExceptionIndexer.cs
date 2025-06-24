@@ -2,9 +2,9 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Service.IndexedLogContext;
+using SerilogViewer.Service.IndexedLogContext;
 
-namespace Service;
+namespace SerilogViewer.Service;
 
 public class ExceptionIndexerOptions
 {
