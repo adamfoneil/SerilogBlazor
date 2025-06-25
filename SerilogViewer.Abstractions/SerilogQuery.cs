@@ -13,7 +13,7 @@ public record SerilogEntry(
 
 public abstract class SerilogQuery
 {
-	public abstract Task<SerilogEntry[]> ExecuteAsync(Criteria? criteria = null, int offset = 0, int limit = 50);
+	public abstract Task<IEnumerable<SerilogEntry>> ExecuteAsync(Criteria? criteria = null, int offset = 0, int limit = 50);
 
 	public class Criteria
 	{
