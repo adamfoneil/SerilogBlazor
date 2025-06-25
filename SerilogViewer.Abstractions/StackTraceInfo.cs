@@ -1,4 +1,4 @@
-﻿namespace SerilogViewer.Service;
+﻿namespace SerilogViewer.Abstractions;
 
 public record StackTraceInfo(string ExceptionType, string Message, CodeLocation[] Locations)
 {

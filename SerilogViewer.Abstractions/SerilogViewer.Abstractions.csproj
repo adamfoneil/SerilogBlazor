@@ -4,7 +4,7 @@
     <TargetFramework>net9.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <RootNamespace>SerilogViewer.Service</RootNamespace>
+    <RootNamespace>SerilogViewer.Abstractions</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>

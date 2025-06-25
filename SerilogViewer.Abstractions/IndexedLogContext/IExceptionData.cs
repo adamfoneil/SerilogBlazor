@@ -1,4 +1,4 @@
-﻿namespace SerilogViewer.Service.IndexedLogContext;
+﻿namespace SerilogViewer.Abstractions.IndexedLogContext;
 
 public interface IExceptionData
 {

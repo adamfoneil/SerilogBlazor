@@ -3,7 +3,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System.Data;
 
-namespace SerilogViewer.Service;
+namespace SerilogViewer.Abstractions;
 
 public class SerilogCleanupOptions
 {

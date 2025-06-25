@@ -2,7 +2,8 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using SerilogViewer.Service.IndexedLogContext;
+using SerilogViewer.Abstractions;
+using SerilogViewer.Abstractions.IndexedLogContext;
 
 namespace SerilogViewer.Service;
 

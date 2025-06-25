@@ -1,4 +1,4 @@
-﻿namespace SerilogViewer.Service;
+﻿namespace SerilogViewer.Abstractions;
 
 public static class HashHelper
 {

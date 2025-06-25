@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace SerilogViewer.Service.IndexedLogContext;
+namespace SerilogViewer.Abstractions.IndexedLogContext;
 
 public class ExceptionInstance
 {
