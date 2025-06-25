@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
-using SerilogViewer.Service.IndexedLogContext;
+using SerilogViewer.Abstractions.IndexedLogContext;
 
 namespace SampleApp.Data;
 

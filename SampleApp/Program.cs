@@ -2,7 +2,7 @@ using SampleApp.Components;
 using SampleApp.Data;
 using Serilog;
 using Serilog.Sinks.MSSqlServer;
-using System.Data;
+using SerilogViewer.SqlServer;
 
 Log.Logger = new LoggerConfiguration()
 	.WriteTo.Console()
@@ -11,14 +11,13 @@ Log.Logger = new LoggerConfiguration()
 		AutoCreateSqlTable = true,
 		TableName = "Serilog",
 		SchemaName = "log",
-	}, columnOptions: GetColumnOptions())
+	}, columnOptions: SqlServerColumnOptions.Default)
 	.Enrich.FromLogContext()
 	.CreateLogger();
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Host.UseSerilog();
-
 
 // Add services to the container.
 builder.Services.AddRazorComponents()
@@ -44,11 +43,3 @@ app.MapRazorComponents<App>()
 	.AddInteractiveServerRenderMode();
 
 app.Run();
-
-static ColumnOptions GetColumnOptions() => new()
-{
-	AdditionalColumns =
-	[
-		new SqlColumn("SourceContext", SqlDbType.NVarChar, allowNull: true, dataLength: 256),
-	]
-};

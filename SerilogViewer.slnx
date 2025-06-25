@@ -2,5 +2,6 @@
   <Project Path="SampleApp/SampleApp.csproj" Id="bbea7058-49fa-43a4-8c48-abdc8cb61183" />
   <Project Path="SerilogViewer.Abstractions/SerilogViewer.Abstractions.csproj" />
   <Project Path="SerilogViewer.RCL/SerilogViewer.RCL.csproj" />
+  <Project Path="SerilogViewer.SqlServer/SerilogViewer.SqlServer.csproj" Id="90ad3f7e-8c8b-4cf2-bf9b-8aa5cecd3cf2" />
   <Project Path="Testing/Testing.csproj" />
 </Solution>

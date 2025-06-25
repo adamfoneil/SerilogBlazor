@@ -1,4 +1,4 @@
-﻿using SerilogViewer.Service;
+﻿using SerilogViewer.Abstractions;
 using System.Diagnostics;
 using System.Reflection;
 using System.Text.Json;
