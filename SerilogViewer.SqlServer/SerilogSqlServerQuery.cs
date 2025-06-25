@@ -31,10 +31,7 @@ public class SerilogSqlServerQuery(
 			ORDER BY [Timestamp] DESC 
 			OFFSET {offset} ROWS FETCH NEXT {limit} ROWS ONLY";
 
-		using var scope = _logger.BeginScope(new Dictionary<string, object>()
-		{
-			["RequestId"] = $"request:{_nextRequestId++}",
-		});
+		_logger.RequestId($"request{++_nextRequestId}");
 
 		_logger.LogDebug("Querying serilog: {query}", query);
 

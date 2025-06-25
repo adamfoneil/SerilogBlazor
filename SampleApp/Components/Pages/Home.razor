@@ -1,7 +1,20 @@
 ﻿@page "/"
+@inject ILogger<Home> Logger
 
 <PageTitle>Home</PageTitle>
 
 <h1>Hello, world!</h1>
 
 Welcome to your new app.
+
+<button @onclick="LogThis">Click me</button>
+
+@code {
+	private int counter = 0;
+
+	private void LogThis()
+	{
+		Logger.RequestId($"request-{++counter}");
+		Logger.LogInformation("This is a log message");
+	}
+}
