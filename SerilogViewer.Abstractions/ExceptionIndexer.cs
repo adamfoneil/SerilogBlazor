@@ -19,13 +19,13 @@ public class ExceptionIndexerOptions
 }
 
 /// <summary>
-/// queries the serilog table for new logs and extracts and transforms stack traces
+/// queries the serilog table for new logs and extracts and transforms stack traces,
+/// add as singleton to DI to periodically index exceptions
 /// </summary>
 public abstract class ExceptionIndexer<TDbContext>(
 	IDbContextFactory<TDbContext> dbFactory,
 	IOptions<ExceptionIndexerOptions> options,
-	ILogger<ExceptionIndexer<TDbContext>> logger
-	) : IInvocable 
+	ILogger<ExceptionIndexer<TDbContext>> logger) : IInvocable 
 	where TDbContext : DbContext, IIndexedLogContext
 {
 	private readonly IDbContextFactory<TDbContext> _dbFactory = dbFactory;

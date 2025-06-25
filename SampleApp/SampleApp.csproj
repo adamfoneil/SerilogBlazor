@@ -14,7 +14,7 @@
 	</ItemGroup>
 	
   <ItemGroup>
-    <ProjectReference Include="..\Parsing\Service.csproj" />
+    <ProjectReference Include="..\SerilogViewer.Abstractions\SerilogViewer.Abstractions.csproj" />
     <ProjectReference Include="..\SerilogViewer.RCL\SerilogViewer.RCL.csproj" />
   </ItemGroup>
 
