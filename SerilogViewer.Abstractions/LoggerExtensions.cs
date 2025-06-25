@@ -4,9 +4,15 @@ namespace SerilogViewer.Abstractions;
 
 public static class LoggerExtensions
 {
-	public static IDisposable? RequestId<T>(this ILogger<T> logger, string requestId) => 
+	/// <summary>
+	/// attaches the given requestId to the logger scope, so you can correlate logs with a specific request
+	/// </summary>
+	public static IDisposable? BeginRequestId<T>(this ILogger<T> logger, string requestId) => 
 		logger.BeginScope(new Dictionary<string, object>
 		{
 			["RequestId"] = requestId
 		});
+
+	public static IDisposable? BeginRequestId<T>(this ILogger<T> logger, LoggingRequestIdProvider idProvider) => 
+		BeginRequestId<T>(logger, idProvider.NextId());
 }

@@ -31,7 +31,7 @@ public class SerilogSqlServerQuery(
 			ORDER BY [Timestamp] DESC 
 			OFFSET {offset} ROWS FETCH NEXT {limit} ROWS ONLY";
 
-		_logger.RequestId($"request{++_nextRequestId}");
+		_logger.BeginRequestId($"request{++_nextRequestId}");
 
 		_logger.LogDebug("Querying serilog: {query}", query);
 
@@ -68,31 +68,31 @@ public class SerilogSqlServerQuery(
 		if (criteria.FromTimestamp.HasValue)
 		{
 			parameters.Add("@fromTimestamp", criteria.FromTimestamp.Value);
-			terms.Add($"[Timestamp] >= @fromTimestamp");
+			terms.Add($"[Timestamp]>=@fromTimestamp");
 		}
 
 		if (criteria.ToTimestamp.HasValue)
 		{
 			parameters.Add("@toTimestamp", criteria.ToTimestamp.Value);
-			terms.Add($"[Timestamp] <= @toTimestamp");
+			terms.Add($"[Timestamp]<=@toTimestamp");
 		}
 
 		if (!string.IsNullOrEmpty(criteria.SourceContext))
 		{
 			parameters.Add("@sourceContext", criteria.SourceContext);
-			terms.Add($"[SourceContext] = @sourceContext");
+			terms.Add($"[SourceContext] LIKE '%' + @sourceContext + '%'");
 		}
 
 		if (!string.IsNullOrEmpty(criteria.RequestId))
 		{
 			parameters.Add("@requestId", criteria.RequestId);
-			terms.Add($"[RequestId] = @requestId");
+			terms.Add($"[RequestId]=@requestId");
 		}
 
 		if (!string.IsNullOrEmpty(criteria.Level))
 		{
 			parameters.Add("@level", criteria.Level);
-			terms.Add($"[Level] = @level");
+			terms.Add($"[Level]=@level");
 		}
 
 		if (!string.IsNullOrEmpty(criteria.Message))

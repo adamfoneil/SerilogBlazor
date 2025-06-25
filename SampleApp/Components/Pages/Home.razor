@@ -1,5 +1,6 @@
 ﻿@page "/"
 @inject ILogger<Home> Logger
+@inject LoggingRequestIdProvider RequestId
 
 <PageTitle>Home</PageTitle>
 
@@ -10,11 +11,10 @@ Welcome to your new app.
 <button @onclick="LogThis">Click me</button>
 
 @code {
-	private int counter = 0;
-
 	private void LogThis()
 	{
-		Logger.RequestId($"request-{++counter}");
+		Logger.BeginRequestId(RequestId);
 		Logger.LogInformation("This is a log message");
+		Logger.LogInformation("As is this");
 	}
 }

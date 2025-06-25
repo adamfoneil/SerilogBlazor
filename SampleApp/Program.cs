@@ -2,6 +2,7 @@ using SampleApp.Components;
 using SampleApp.Data;
 using Serilog;
 using Serilog.Sinks.MSSqlServer;
+using SerilogViewer.Abstractions;
 using SerilogViewer.SqlServer;
 
 Log.Logger = new LoggerConfiguration()
@@ -22,6 +23,8 @@ builder.Host.UseSerilog();
 // Add services to the container.
 builder.Services.AddRazorComponents()
 	.AddInteractiveServerComponents();
+
+builder.Services.AddSingleton<LoggingRequestIdProvider>();
 
 var app = builder.Build();
 
