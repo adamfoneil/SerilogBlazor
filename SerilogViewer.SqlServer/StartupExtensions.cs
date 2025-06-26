@@ -1,5 +1,4 @@
 ﻿using Coravel;
-using Coravel.Scheduling.Schedule.Event;
 using Coravel.Scheduling.Schedule.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
