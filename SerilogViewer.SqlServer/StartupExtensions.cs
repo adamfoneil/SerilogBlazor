@@ -1,4 +1,6 @@
 ﻿using Coravel;
+using Coravel.Scheduling.Schedule.Event;
+using Coravel.Scheduling.Schedule.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -19,8 +21,15 @@ public static class StartupExtensions
 				sp.GetRequiredService<LoggingRequestIdProvider>(),				
 				sp.GetRequiredService<ILogger<SerilogSqlServerCleanup>>(),
 				sp.GetRequiredService<IOptions<SerilogCleanupOptions>>()
-			));
+		));
 	}
 
-	
+	public static void RunSerilogCleanup(this IServiceProvider serviceProvider, Action<IScheduleInterval> config)
+	{
+		serviceProvider.UseScheduler(scheduler =>
+		{
+			var schedule = scheduler.Schedule<SerilogCleanup>();
+			config(schedule); // let caller choose EveryMinute(), Daily(), etc.
+		});
+	}
 }

@@ -43,12 +43,8 @@ builder.Services.AddScoped<SampleService>();
 
 var app = builder.Build();
 
-app.Services.UseScheduler(scheduler =>
-{
-	scheduler.Schedule<SerilogCleanup>().EveryMinute();
-});
+app.Services.RunSerilogCleanup(interval => interval.DailyAt(0, 0)); 
 
-// Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
 	app.UseExceptionHandler("/Error", createScopeForErrors: true);
