@@ -3,6 +3,7 @@
 /// <summary>
 /// Blazor apps can't make use of the RequestId from ASP.NET Core, 
 /// so this provides a way to generate an incrementing request id for a logging scope.
+/// Also works for anything outside of a web request, e.g. background tasks.
 /// Add as singleton to your services collection.
 /// </summary>
 public class LoggingRequestIdProvider

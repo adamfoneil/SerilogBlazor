@@ -2,15 +2,29 @@
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System.Data;
+using System.Diagnostics;
 
 namespace SerilogViewer.Abstractions;
 
 public class SerilogCleanupOptions
 {
-	public string ConnectionString { get; set; } = default!;	
-	public int Debug { get; set; } = 3;
-	public int Information { get; set; } = 30;
-	public int Warning { get; set; } = 30;
+	public string ConnectionString { get; set; } = default!;
+	public string TableName { get; set; } = default!;
+	/// <summary>
+	/// Debug level retention in days
+	/// </summary>
+	public int Debug { get; set; } = 5;
+	/// <summary>
+	/// Information level retention in days
+	/// </summary>
+	public int Information { get; set; } = 60;
+	/// <summary>
+	/// Warning level retention in days
+	/// </summary>
+	public int Warning { get; set; } = 10;
+	/// <summary>
+	/// Error level retention in days
+	/// </summary>
 	public int Error { get; set; } = 30;
 
 	public Dictionary<string, int> RetentionDays => new()
@@ -26,15 +40,47 @@ public class SerilogCleanupOptions
 /// add as singleton to DI to periodically clean up old serilog entries
 /// </summary>
 public abstract class SerilogCleanup(
+	LoggingRequestIdProvider requestIdProvider,
 	ILogger<SerilogCleanup> logger,
 	IOptions<SerilogCleanupOptions> options) : IInvocable
 {
-	private readonly SerilogCleanupOptions _options = options.Value;
-	private readonly ILogger<SerilogCleanup> _logger = logger;
+	protected readonly SerilogCleanupOptions Options = options.Value;
+	protected readonly ILogger<SerilogCleanup> Logger = logger;
+
+	private readonly LoggingRequestIdProvider _requestIdProvider = requestIdProvider;
+	
+	public async Task ExecuteAsync()
+	{
+		using var cn = GetConnection();
+		cn.Open();
+
+		Logger.BeginRequestId(_requestIdProvider);
+
+		foreach (var (logLevel, retentionDays) in Options.RetentionDays)
+		{
+			var sw = Stopwatch.StartNew();
+			bool error = false;
+			try
+			{
+				var deleted = await DeleteOldEntriesAsync(cn, logLevel, retentionDays);				
+				Logger.LogInformation("Deleted {deleted} {logLevel} entries older than {retentionDays} days", deleted, logLevel, retentionDays);
+			}
+			catch (Exception exc)
+			{
+				error = true;
+				Logger.LogError(exc, "Error deleting old {logLevel} entries older than {retentionDays} days", logLevel, retentionDays);
+			}
+			finally
+			{
+				Logger.LogInformation("Serilog cleanup for {logLevel} entries {status} in {elapsed} ms", logLevel, error ? "failed" : "succeeded", sw.ElapsedMilliseconds);
+			}
+		}
+	}
 
 	public async Task Invoke()
 	{
-		using var cn = GetConnection();
+		Logger.LogDebug("Running scheduled Serilog cleanup");
+		await ExecuteAsync();
 	}
 
 	protected abstract IDbConnection GetConnection();

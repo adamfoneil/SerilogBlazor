@@ -1,4 +1,5 @@
-﻿using Microsoft.Data.SqlClient;
+﻿using Dapper;
+using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using SerilogViewer.Abstractions;
@@ -7,16 +8,15 @@ using System.Data;
 namespace SerilogViewer.SqlServer;
 
 public class SerilogSqlServerCleanup(
-	string connectionString,
+	LoggingRequestIdProvider requestIdProvider,	
 	ILogger<SerilogSqlServerCleanup> logger,
-	IOptions<SerilogCleanupOptions> options) : SerilogCleanup(logger, options)
+	IOptions<SerilogCleanupOptions> options) : SerilogCleanup(requestIdProvider, logger, options)
 {
-	private readonly string _connectionString = connectionString;
-
 	protected override Task<int> DeleteOldEntriesAsync(IDbConnection cn, string logLevel, int retentionDays)
 	{
-		throw new NotImplementedException();
+		var sql = $"DELETE FROM {Options.TableName} WHERE [Level] = @Level AND [Timestamp] < DATEADD(DAY, -@RetentionDays, GETUTCDATE())";
+		return cn.ExecuteAsync(sql, new { Level = logLevel, RetentionDays = retentionDays }, commandTimeout: 0);
 	}
 
-	protected override IDbConnection GetConnection() => new SqlConnection(_connectionString);	
+	protected override IDbConnection GetConnection() => new SqlConnection(Options.ConnectionString);	
 }

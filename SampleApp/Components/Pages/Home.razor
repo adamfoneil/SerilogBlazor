@@ -18,7 +18,9 @@ Welcome to your new app.
 		// attach an id to all logging in this method
 		Logger.BeginRequestId(RequestId);
 
-		Logger.LogInformation("This is a log message");
+		Logger.LogInformation("This is an info log message");
+
+		Logger.LogDebug("This is a debug message");
 
 		// logs from this method call will be correlated with requestId in scope here
 		SampleService.DoWork();
