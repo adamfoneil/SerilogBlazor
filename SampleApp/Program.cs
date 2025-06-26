@@ -6,8 +6,10 @@ using Serilog.Sinks.MSSqlServer;
 using SerilogViewer.Abstractions;
 using SerilogViewer.SqlServer;
 
-Log.Logger = new LoggerConfiguration()
-	.MinimumLevel.Override("SampleApp", Serilog.Events.LogEventLevel.Debug)
+var logLevels = new ApplicationLogLevels();
+
+Log.Logger = logLevels
+	.GetConfiguration()
 	.WriteTo.Console()
 	.WriteTo.MSSqlServer(AppDbContextFactory.ConnectionString, new MSSqlServerSinkOptions()
 	{
@@ -19,6 +21,8 @@ Log.Logger = new LoggerConfiguration()
 	.CreateLogger();
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddSingleton(logLevels);
 
 builder.Host.UseSerilog();
 
