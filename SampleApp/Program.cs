@@ -1,4 +1,3 @@
-using Coravel;
 using SampleApp;
 using SampleApp.Components;
 using SampleApp.Data;
