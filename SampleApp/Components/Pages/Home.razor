@@ -1,20 +1,26 @@
 ﻿@page "/"
 @inject ILogger<Home> Logger
 @inject LoggingRequestIdProvider RequestId
+@inject SampleService SampleService
 
 <PageTitle>Home</PageTitle>
 
 <h1>Hello, world!</h1>
 
 Welcome to your new app.
+<hr />
 
 <button @onclick="LogThis">Click me</button>
 
 @code {
 	private void LogThis()
 	{
+		// attach an id to all logging in this method
 		Logger.BeginRequestId(RequestId);
+
 		Logger.LogInformation("This is a log message");
-		Logger.LogInformation("As is this");
+
+		// logs from this method call will be correlated with requestId in scope here
+		SampleService.DoWork();
 	}
 }

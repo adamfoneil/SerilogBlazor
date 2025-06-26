@@ -2,7 +2,8 @@
 
 /// <summary>
 /// Blazor apps can't make use of the RequestId from ASP.NET Core, 
-/// so we need to provide a way to generate or retrieve a request ID for logging purposes.
+/// so this provides a way to generate an incrementing request id for a logging scope.
+/// Add as singleton to your services collection.
 /// </summary>
 public class LoggingRequestIdProvider
 {
@@ -19,6 +20,6 @@ public class LoggingRequestIdProvider
 		}
 
 		var id = Interlocked.Increment(ref _currentId);
-		return $"{_date:yyyMMdd}-{id:0000000}";
+		return $"{_date:yyyyMMdd}-{id:0000000}";
 	}
 }

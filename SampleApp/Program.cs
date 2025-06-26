@@ -1,3 +1,4 @@
+using SampleApp;
 using SampleApp.Components;
 using SampleApp.Data;
 using Serilog;
@@ -25,6 +26,7 @@ builder.Services.AddRazorComponents()
 	.AddInteractiveServerComponents();
 
 builder.Services.AddSingleton<LoggingRequestIdProvider>();
+builder.Services.AddScoped<SampleService>();
 
 var app = builder.Build();
 

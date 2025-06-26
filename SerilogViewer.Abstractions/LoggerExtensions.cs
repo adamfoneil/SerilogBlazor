@@ -13,6 +13,9 @@ public static class LoggerExtensions
 			["RequestId"] = requestId
 		});
 
+	/// <summary>
+	/// attaches the next incremented requestId to the logger
+	/// </summary>
 	public static IDisposable? BeginRequestId<T>(this ILogger<T> logger, LoggingRequestIdProvider idProvider) => 
 		BeginRequestId<T>(logger, idProvider.NextId());
 }
