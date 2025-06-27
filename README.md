@@ -13,3 +13,12 @@ Exception "indexing" means extracting key info from stack traces and storing it 
 - [StackTraceInfo](https://github.com/adamfoneil/SerilogViewer/blob/master/Parsing/StackTraceInfo.cs) is the info model
 - [ExceptionIndexer](https://github.com/adamfoneil/SerilogViewer/blob/master/Parsing/ExceptionIndexer.cs) is the background process that periodically scans your Serilog table for exception info, using [Coravel](https://docs.coravel.net/)
 - custom tables are defined in [IndexedLogContent](https://github.com/adamfoneil/SerilogViewer/tree/master/Parsing/IndexedLogContext)
+
+## Tracing
+Todo...
+
+## Dynamic Log Levels
+Todo...
+
+## Log Viewer Components
+Todo...
