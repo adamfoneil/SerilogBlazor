@@ -3,14 +3,10 @@
 @inject LoggingRequestIdProvider RequestId
 @inject SampleService SampleService
 
-<PageTitle>Home</PageTitle>
+<PageTitle>Serilog Viewer</PageTitle>
 
-<h1>Hello, world!</h1>
-
-Welcome to your new app.
-<hr />
-
-<button @onclick="LogThis">Click me</button>
+<h2>Serilog Viewer</h2>
+<SerilogGrid Entries="@sampleEntries" />
 
 @code {
 	private void LogThis()
@@ -25,4 +21,93 @@ Welcome to your new app.
 		// logs from this method call will be correlated with requestId in scope here
 		SampleService.DoWork();
 	}
+
+	private SerilogEntry[] sampleEntries = [
+		new(
+			Id: 1,
+			Timestamp: DateTime.Now.AddMinutes(-10),
+			SourceContext: "SampleApp.Controllers.HomeController",
+			RequestId: "req-12345",
+			Level: "Information",
+			MessageTemplate: "User {UserId} logged in successfully",
+			Message: "User 42 logged in successfully",
+			Exception: null,
+			Properties: new Dictionary<string, object>
+			{
+				{"UserId", 42},
+				{"UserName", "john.doe"},
+				{"IPAddress", "192.168.1.100"}
+			}
+		),
+		new(
+			Id: 2,
+			Timestamp: DateTime.Now.AddMinutes(-8),
+			SourceContext: "SampleApp.Services.PaymentService",
+			RequestId: "req-12346",
+			Level: "Warning",
+			MessageTemplate: "Payment processing took longer than expected: {Duration}ms",
+			Message: "Payment processing took longer than expected: 3500ms",
+			Exception: null,
+			Properties: new Dictionary<string, object>
+			{
+				{"Duration", 3500},
+				{"PaymentId", "pay-abc123"},
+				{"Amount", 99.99m},
+				{"Currency", "USD"}
+			}
+		),
+		new(
+			Id: 3,
+			Timestamp: DateTime.Now.AddMinutes(-5),
+			SourceContext: "SampleApp.Data.UserRepository",
+			RequestId: "req-12347",
+			Level: "Error",
+			MessageTemplate: "Failed to update user profile for {UserId}",
+			Message: "Failed to update user profile for 42",
+			Exception: @"System.InvalidOperationException: User profile is locked for editing
+   at SampleApp.Data.UserRepository.UpdateProfile(Int32 userId) in C:\Projects\SampleApp\Data\UserRepository.cs:line 45
+   at SampleApp.Controllers.ProfileController.UpdateProfile(UpdateProfileRequest request) in C:\Projects\SampleApp\Controllers\ProfileController.cs:line 28",
+			Properties: new Dictionary<string, object>
+			{
+				{"UserId", 42},
+				{"ProfileVersion", "1.2.3"},
+				{"Locked", true},
+				{"LastModified", DateTime.Now.AddDays(-2)}
+			}
+		),
+		new(
+			Id: 4,
+			Timestamp: DateTime.Now.AddMinutes(-2),
+			SourceContext: "SampleApp.Middleware.AuthenticationMiddleware",
+			RequestId: null,
+			Level: "Debug",
+			MessageTemplate: "Processing authentication for request {RequestPath}",
+			Message: "Processing authentication for request /api/users/profile",
+			Exception: null,
+			Properties: new Dictionary<string, object>
+			{
+				{"RequestPath", "/api/users/profile"},
+				{"Method", "GET"},
+				{"UserAgent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"}
+			}
+		),
+		new(
+			Id: 5,
+			Timestamp: DateTime.Now.AddMinutes(-1),
+			SourceContext: "SampleApp.Services.EmailService",
+			RequestId: "req-12348",
+			Level: "Verbose",
+			MessageTemplate: "Sending email to {EmailAddress} with template {TemplateId}",
+			Message: "Sending email to user@example.com with template welcome-email",
+			Exception: null,
+			Properties: new Dictionary<string, object>
+			{
+				{"EmailAddress", "user@example.com"},
+				{"TemplateId", "welcome-email"},
+				{"Priority", "Normal"},
+				{"RetryCount", 0},
+				{"ScheduledAt", DateTime.Now.AddMinutes(5)}
+			}
+		)
+	];
 }
