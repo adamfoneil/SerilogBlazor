@@ -1,12 +1,234 @@
 @using SerilogViewer.Abstractions
 
+<div class="serilog-grid">
+    <!-- Header Row -->
+    <div class="serilog-grid-header">
+        <div class="header-cell">ID</div>
+        <div class="header-cell">Timestamp</div>
+        <div class="header-cell">Source Context</div>
+        <div class="header-cell">Request ID</div>
+        <div class="header-cell">Level</div>
+        <div class="header-cell">Message Template</div>
+        <div class="header-cell">Message</div>
+        <div class="header-cell">Exception</div>
+        <div class="header-cell"></div> <!-- Expand button column -->
+    </div>
 
+    <!-- Data Rows -->
+    @foreach (var entry in Entries)
+    {
+        <div class="serilog-grid-row @(expandedRows.Contains(entry.Id) ? "expanded" : "")">
+            <div class="data-cell">@entry.Id</div>
+            <div class="data-cell">@entry.Timestamp.ToString("yyyy-MM-dd HH:mm:ss")</div>
+            <div class="data-cell">@entry.SourceContext</div>
+            <div class="data-cell">@entry.RequestId</div>
+            <div class="data-cell level-@entry.Level.ToLower()">@entry.Level</div>
+            <div class="data-cell">@entry.MessageTemplate</div>
+            <div class="data-cell">@entry.Message</div>
+            <div class="data-cell">@(string.IsNullOrEmpty(entry.Exception) ? "" : "✗")</div>
+            <div class="data-cell expand-cell">
+                <button class="expand-button" @onclick="() => ToggleExpand(entry.Id)">
+                    @(expandedRows.Contains(entry.Id) ? "▼" : "▶")
+                </button>
+            </div>
+        </div>
 
-<div class="">
-
+        @if (expandedRows.Contains(entry.Id))
+        {
+            <div class="serilog-grid-details">
+                @if (!string.IsNullOrEmpty(entry.Exception))
+                {
+                    <div class="detail-section">
+                        <h4>Exception:</h4>
+                        <pre class="exception-text">@entry.Exception</pre>
+                    </div>
+                }
+                
+                @if (entry.Properties.Any())
+                {
+                    <div class="detail-section">
+                        <h4>Properties:</h4>
+                        <div class="properties-grid">
+                            @foreach (var prop in entry.Properties)
+                            {
+                                <div class="property-key">@prop.Key:</div>
+                                <div class="property-value">@prop.Value</div>
+                            }
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+    }
 </div>
 
+<style>
+    .serilog-grid {
+        width: 100%;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        border: 1px solid #e1e5e9;
+        border-radius: 8px;
+        overflow: hidden;
+    }
+
+    .serilog-grid-header {
+        display: grid;
+        grid-template-columns: 60px 180px 200px 120px 80px 1fr 1fr 60px 40px;
+        background-color: #f8f9fa;
+        border-bottom: 2px solid #e1e5e9;
+        font-weight: 600;
+    }
+
+    .serilog-grid-row {
+        display: grid;
+        grid-template-columns: 60px 180px 200px 120px 80px 1fr 1fr 60px 40px;
+        border-bottom: 1px solid #e1e5e9;
+        transition: background-color 0.15s ease;
+    }
+
+    .serilog-grid-row:hover {
+        background-color: #f8f9fa;
+    }
+
+    .serilog-grid-row.expanded {
+        background-color: #fff3cd;
+    }
+
+    .header-cell, .data-cell {
+        padding: 12px 8px;
+        border-right: 1px solid #e1e5e9;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .header-cell:last-child, .data-cell:last-child {
+        border-right: none;
+    }
+
+    .header-cell {
+        font-size: 14px;
+        color: #495057;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .data-cell {
+        font-size: 13px;
+        color: #212529;
+    }
+
+    .level-information { color: #0c84ff; }
+    .level-warning { color: #ff9500; }
+    .level-error { color: #ff3b30; }
+    .level-debug { color: #8e8e93; }
+    .level-verbose { color: #8e8e93; }
+
+    .expand-cell {
+        text-align: center;
+        padding: 8px;
+    }
+
+    .expand-button {
+        background: none;
+        border: none;
+        font-size: 12px;
+        cursor: pointer;
+        color: #6c757d;
+        padding: 4px 8px;
+        border-radius: 4px;
+        transition: all 0.15s ease;
+    }
+
+    .expand-button:hover {
+        background-color: #e9ecef;
+        color: #495057;
+    }
+
+    .serilog-grid-details {
+        grid-column: 1 / -1;
+        background-color: #fff8e1;
+        border-bottom: 1px solid #e1e5e9;
+        padding: 16px;
+    }
+
+    .detail-section {
+        margin-bottom: 16px;
+    }
+
+    .detail-section:last-child {
+        margin-bottom: 0;
+    }
+
+    .detail-section h4 {
+        margin: 0 0 8px 0;
+        font-size: 14px;
+        font-weight: 600;
+        color: #495057;
+    }
+
+    .exception-text {
+        background-color: #f8f9fa;
+        border: 1px solid #e1e5e9;
+        border-radius: 4px;
+        padding: 12px;
+        font-size: 12px;
+        white-space: pre-wrap;
+        overflow-x: auto;
+        margin: 0;
+    }
+
+    .properties-grid {
+        display: grid;
+        grid-template-columns: auto 1fr;
+        gap: 8px 16px;
+        font-size: 13px;
+    }
+
+    .property-key {
+        font-weight: 600;
+        color: #495057;
+    }
+
+    .property-value {
+        color: #212529;
+        word-break: break-word;
+    }
+
+    @@media (max-width: 1200px) {
+        .serilog-grid-header,
+        .serilog-grid-row {
+            grid-template-columns: 50px 150px 150px 100px 70px 1fr 1fr 50px 40px;
+        }
+    }
+
+    @@media (max-width: 768px) {
+        .serilog-grid-header,
+        .serilog-grid-row {
+            grid-template-columns: 40px 120px 120px 80px 60px 1fr 1fr 40px 30px;
+        }
+        
+        .header-cell, .data-cell {
+            padding: 8px 4px;
+            font-size: 12px;
+        }
+    }
+</style>
 
 @code {
-	[Parameter] public SerilogEntry[] Entries { get; set; } = [];
+    [Parameter] public SerilogEntry[] Entries { get; set; } = [];
+    
+    private HashSet<int> expandedRows = new();
+    
+    private void ToggleExpand(int entryId)
+    {
+        if (expandedRows.Contains(entryId))
+        {
+            expandedRows.Remove(entryId);
+        }
+        else
+        {
+            expandedRows.Add(entryId);
+        }
+    }
 }
