@@ -25,7 +25,7 @@
             <div class="data-cell level-@entry.Level.ToLower()">@entry.Level</div>
             <div class="data-cell">@entry.MessageTemplate</div>
             <div class="data-cell">@entry.Message</div>
-            <div class="data-cell">@(string.IsNullOrEmpty(entry.Exception) ? "" : "✗")</div>
+            <div class="data-cell">@(string.IsNullOrWhiteSpace(entry.Exception) ? "" : "✗")</div>
             <div class="data-cell expand-cell">
                 <button class="expand-button" @onclick="() => ToggleExpand(entry.Id)">
                     @(expandedRows.Contains(entry.Id) ? "▼" : "▶")
@@ -36,7 +36,7 @@
         @if (expandedRows.Contains(entry.Id))
         {
             <div class="serilog-grid-details">
-                @if (!string.IsNullOrEmpty(entry.Exception))
+                @if (!string.IsNullOrWhiteSpace(entry.Exception))
                 {
                     <div class="detail-section">
                         <h4>Exception:</h4>
@@ -44,7 +44,7 @@
                     </div>
                 }
                 
-                @if (entry.Properties.Any())
+                @if (entry.Properties?.Any() == true)
                 {
                     <div class="detail-section">
                         <h4>Properties:</h4>
@@ -52,7 +52,7 @@
                             @foreach (var prop in entry.Properties)
                             {
                                 <div class="property-key">@prop.Key:</div>
-                                <div class="property-value">@prop.Value</div>
+                                <div class="property-value">@prop.Value?.ToString()</div>
                             }
                         </div>
                     </div>
