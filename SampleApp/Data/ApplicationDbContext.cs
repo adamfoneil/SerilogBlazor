@@ -1,14 +1,18 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 using SerilogViewer.Abstractions.IndexedLogContext;
+using SerilogViewer.Abstractions.SourceContextView;
 
 namespace SampleApp.Data;
 
-public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : DbContext(options), IIndexedLogContext
+public partial class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : DbContext(options), IIndexedLogContext, ISourceContextViewState
 {
 	public DbSet<ExceptionTemplate> ExceptionTemplates { get; set; }
 	public DbSet<ExceptionInstance> ExceptionInstances { get; set; }
 	public DbSet<SerilogTableMarker> SerilogTableMarkers { get; set; }
+	public DbSet<SourceContextView> SourceContexts { get; set; }
+
+	
 
 	protected override void OnModelCreating(ModelBuilder modelBuilder)
 	{
