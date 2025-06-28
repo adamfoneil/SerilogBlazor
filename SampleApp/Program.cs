@@ -36,10 +36,10 @@ builder.Services.AddSerilogCleanup(new()
 { 
 	ConnectionString = AppDbContextFactory.ConnectionString, 
 	TableName = "log.Serilog",
-	Debug = 1,
-	Information = 1,
-	Warning = 1,
-	Error = 1
+	Debug = 5,
+	Information = 20,
+	Warning = 20,
+	Error = 20
 });
 
 builder.Services.AddScoped<SampleService>();
