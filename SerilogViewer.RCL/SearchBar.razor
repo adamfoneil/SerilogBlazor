@@ -93,4 +93,23 @@
 		await SearchTextChanged.InvokeAsync(searchText);
 		await SearchExecuted.InvokeAsync(results);
 	}
+
+	public async Task AddRequestId(string requestId)
+	{
+		if (string.IsNullOrWhiteSpace(requestId))
+			return;
+
+		// Remove any existing RequestId from the search text
+		var regex = new System.Text.RegularExpressions.Regex(@"#\w+");
+		var cleanedSearchText = regex.Replace(searchText, "").Trim();
+		
+		// Add the new RequestId
+		searchText = string.IsNullOrWhiteSpace(cleanedSearchText) 
+			? $"#{requestId}" 
+			: $"{cleanedSearchText} #{requestId}";
+		
+		page = 0; // Reset to first page when search changes
+		hasMoreResults = true; // Reset this flag when search changes
+		await ExecuteSearch();
+	}
 }

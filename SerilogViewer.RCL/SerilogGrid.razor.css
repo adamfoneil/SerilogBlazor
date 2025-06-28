@@ -94,6 +94,23 @@
 		color: #495057;
 	}
 
+.request-id-button {
+	background: none;
+	border: none;
+	font-size: 13px;
+	cursor: pointer;	
+	padding: 2px 4px;
+	border-radius: 3px;
+	transition: all 0.15s ease;
+	text-decoration: underline;
+	text-underline-offset: 2px;
+}
+
+	.request-id-button:hover {
+		background-color: #e7f3ff;
+		color: #0066cc;
+	}
+
 .serilog-grid-details {
 	grid-column: 1 / -1;
 	background-color: #fff8e1;

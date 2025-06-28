@@ -9,6 +9,7 @@ public class ApplicationLogLevels : LogLevels
 	{
 		["System"] = LogEventLevel.Warning,
 		["Microsoft"] = LogEventLevel.Warning,
-		["SampleApp"] = LogEventLevel.Debug
+		["SampleApp"] = LogEventLevel.Debug,
+		["SerilogViewer.SqlServer"] = LogEventLevel.Debug
 	};
 }

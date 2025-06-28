@@ -113,7 +113,7 @@ public abstract class SerilogQuery(TimestampType timestampType = TimestampType.U
 
 		private static string ProcessRequestId(string input, Criteria criteria)
 		{
-			var regex = new System.Text.RegularExpressions.Regex(@"#(\w+)");
+			var regex = new System.Text.RegularExpressions.Regex(@"#(\S+)");
 			var match = regex.Match(input);
 			if (match.Success)
 			{

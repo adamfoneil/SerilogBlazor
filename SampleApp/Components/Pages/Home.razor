@@ -9,11 +9,12 @@
 
 <hr />
 
-<SearchBar @rendermode="InteractiveServer" SearchExecuted="OnSearchExecuted" />
-<SerilogGrid Entries="@entries" @rendermode="InteractiveServer" />
+<SearchBar @ref="searchBar" @rendermode="InteractiveServer" SearchExecuted="OnSearchExecuted" />
+<SerilogGrid Entries="@entries" RequestIdClicked="OnRequestIdClicked" @rendermode="InteractiveServer" />
 
 @code {
 	private IEnumerable<SerilogEntry> entries = [];
+	private SearchBar? searchBar;
 
 	private void LogThis()
 	{
@@ -36,5 +37,13 @@
 	private void OnSearchExecuted(IEnumerable<SerilogEntry> results)
 	{
 		entries = results;	
+	}
+
+	private async Task OnRequestIdClicked(string requestId)
+	{
+		if (searchBar is not null)
+		{
+			await searchBar.AddRequestId(requestId);
+		}
 	}
 }
