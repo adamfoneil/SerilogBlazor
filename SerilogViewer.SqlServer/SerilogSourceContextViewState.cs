@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using SerilogViewer.Abstractions.IndexedLogContext;
+using SerilogViewer.Abstractions;
 using SerilogViewer.Abstractions.SourceContextView;
 
 namespace SerilogViewer.SqlServer;
@@ -7,7 +7,7 @@ namespace SerilogViewer.SqlServer;
 public static class SerilogSourceContextViewState
 {
 	public static async Task<SourceContextViewItem[]> QuerySourceContextViewItemsAsync<TDbContext>(
-		this TDbContext dbContext, string userName) where TDbContext : ISourceContextViewState, IIndexedLogContext
+		this TDbContext dbContext, string userName) where TDbContext : ISourceContextViewState
 	{
 		if (dbContext is not DbContext context)
 			throw new ArgumentException("DbContext must derive from EntityFramework DbContext", nameof(dbContext));
@@ -15,12 +15,12 @@ public static class SerilogSourceContextViewState
 		var currentTime = DateTime.UtcNow;
 
 		// Use EF Core LINQ query to get source context summary data
-		var summaryData = await context.Set<SerilogEntry>()
+		var summaryData = await dbContext.SourceContexts
 			.GroupBy(entry => new { entry.SourceContext, entry.Level })
 			.Select(group => new
 			{
-				SourceContext = group.Key.SourceContext,
-				Level = group.Key.Level,
+				group.Key.SourceContext,
+				group.Key.Level,
 				LatestTimestamp = group.Max(e => e.Timestamp),
 				Count = group.Count()
 			})
@@ -39,7 +39,7 @@ public static class SerilogSourceContextViewState
 			Level = item.Level,
 			LatestTimestamp = item.LatestTimestamp,
 			Count = item.Count,
-			AgeText = SerilogSqlServerQuery.ParseAgeText((int)(currentTime - item.LatestTimestamp).TotalMinutes),
+			AgeText = DateHelper.ParseAgeText((int)(currentTime - item.LatestTimestamp).TotalMinutes),
 			IsVisible = visibilitySettings
 				.FirstOrDefault(vs => vs.SourceContext == item.SourceContext && vs.Level == item.Level)
 				?.IsVisible ?? true // Default to visible if no setting exists
