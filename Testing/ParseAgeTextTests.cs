@@ -1,4 +1,4 @@
-using SerilogViewer.SqlServer;
+using SerilogViewer.Abstractions;
 
 namespace Testing;
 
@@ -12,7 +12,7 @@ public class ParseAgeTextTests
         var ageMinutes = 0;
 
         // Act
-        var result = SerilogSqlServerQuery.ParseAgeText(ageMinutes);
+        var result = DateHelper.ParseAgeText(ageMinutes);
 
         // Assert
         Assert.AreEqual("just now", result);
@@ -25,7 +25,7 @@ public class ParseAgeTextTests
         var ageMinutes = 0;
 
         // Act
-        var result = SerilogSqlServerQuery.ParseAgeText(ageMinutes);
+        var result = DateHelper.ParseAgeText(ageMinutes);
 
         // Assert
         Assert.AreEqual("just now", result);
@@ -38,7 +38,7 @@ public class ParseAgeTextTests
         var ageMinutes = 5;
 
         // Act
-        var result = SerilogSqlServerQuery.ParseAgeText(ageMinutes);
+        var result = DateHelper.ParseAgeText(ageMinutes);
 
         // Assert
         Assert.AreEqual("5m", result);
@@ -51,7 +51,7 @@ public class ParseAgeTextTests
         var ageMinutes = 60;
 
         // Act
-        var result = SerilogSqlServerQuery.ParseAgeText(ageMinutes);
+        var result = DateHelper.ParseAgeText(ageMinutes);
 
         // Assert
         Assert.AreEqual("1h", result);
@@ -64,7 +64,7 @@ public class ParseAgeTextTests
         var ageMinutes = 65; // 1 hour and 5 minutes
 
         // Act
-        var result = SerilogSqlServerQuery.ParseAgeText(ageMinutes);
+        var result = DateHelper.ParseAgeText(ageMinutes);
 
         // Assert
         Assert.AreEqual("1h, 5m", result);
@@ -77,7 +77,7 @@ public class ParseAgeTextTests
         var ageMinutes = 1440 + 65; // 1 day, 1 hour, 5 minutes
 
         // Act
-        var result = SerilogSqlServerQuery.ParseAgeText(ageMinutes);
+        var result = DateHelper.ParseAgeText(ageMinutes);
 
         // Assert
         Assert.AreEqual("1d, 1h", result); // Minutes should not be shown for days
@@ -90,7 +90,7 @@ public class ParseAgeTextTests
         var ageMinutes = 2880 + 120 + 30; // 2 days, 2 hours, 30 minutes
 
         // Act
-        var result = SerilogSqlServerQuery.ParseAgeText(ageMinutes);
+        var result = DateHelper.ParseAgeText(ageMinutes);
 
         // Assert
         Assert.AreEqual("2d, 2h", result); // Minutes should not be shown for days

@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using SampleApp;
 using SampleApp.Components;
 using SampleApp.Data;
@@ -27,6 +28,8 @@ builder.Host.UseSerilog();
 // Add services to the container.
 builder.Services.AddRazorComponents()
 	.AddInteractiveServerComponents();
+
+builder.Services.AddDbContextFactory<ApplicationDbContext>(config => config.UseSqlServer(AppDbContextFactory.ConnectionString), ServiceLifetime.Singleton);
 
 builder.Services.AddSerilogUtilities(AppDbContextFactory.ConnectionString, logLevels, "log", "Serilog", TimestampType.Local);
 

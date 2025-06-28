@@ -5,10 +5,6 @@ namespace SerilogViewer.Abstractions.SourceContextView;
 public interface ISourceContextViewState
 {
 	DbSet<SourceContextView> SourceContexts { get; set; }
-
-	Task<SourceContextViewItem[]> GetSourceContextViewItemsAsync(string userName);
-
-	Task SetSourceContextVisibilityAsync(string userName, string sourceContext, string level, bool isVisible);
 }
 
 public class SourceContextViewItem

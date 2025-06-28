@@ -3,12 +3,14 @@
 @inject LoggingRequestIdProvider RequestId
 @inject SampleService SampleService
 @inject SerilogQuery Query
+@using SampleApp.Data
 
 <PageTitle>Serilog Viewer</PageTitle>
 <button @onclick="LogThis">Log Me</button>
 
 <hr />
 
+<SourceContextFilter TDbContext="ApplicationDbContext" />
 <SearchBar @ref="searchBar" @rendermode="InteractiveServer" SearchExecuted="OnSearchExecuted" />
 <SerilogGrid Entries="@entries" RequestIdClicked="OnRequestIdClicked" @rendermode="InteractiveServer" />
 

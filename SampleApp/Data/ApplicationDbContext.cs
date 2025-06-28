@@ -13,8 +13,6 @@ public partial class ApplicationDbContext(DbContextOptions<ApplicationDbContext>
 	public DbSet<SourceContextView> SourceContexts { get; set; }
 	public DbSet<SerilogEntry> SerilogEntries { get; set; }
 
-	
-
 	protected override void OnModelCreating(ModelBuilder modelBuilder)
 	{
 		base.OnModelCreating(modelBuilder);

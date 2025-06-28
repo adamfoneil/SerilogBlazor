@@ -38,11 +38,11 @@ public class SerilogSqlServerSourceContextMetricsQuery(
 				SELECT
 					[SourceContext], [Level], MAX([Timestamp]) AS [LatestTimestamp], COUNT(1) AS [Count]
 				FROM
-					[{_schemaName}].[{_tableName}]
+					[log].[Serilog]
 				GROUP BY
 					[SourceContext], [Level]
-			) AS [src]
-			SELECT [src].*, DATEDIFF(n, [Timestamp], {SqlServerHelpers.CurrentTimeFunction(_timestampType)}) AS [AgeMinutes]
+			)
+			SELECT [src].*, DATEDIFF(n, [LatestTimestamp], GETDATE()) AS [AgeMinutes]
 			FROM [source] AS [src]";
 
 		_logger.BeginRequestId(_requestIdProvider.NextId());
