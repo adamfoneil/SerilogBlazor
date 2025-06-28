@@ -27,10 +27,10 @@ public abstract class SerilogQuery(TimestampType timestampType = TimestampType.U
 
 	protected abstract IEnumerable<string> GetSearchTerms(Criteria criteria);
 
-	public string[] ParseCriteria(string input)
+	public (Criteria Criteria, string[] SearchTerms) ParseCriteria(string input)
 	{
 		var criteria = Criteria.ParseExpression(input);
-		return [.. GetSearchTerms(criteria)];
+		return (criteria, [.. GetSearchTerms(criteria)]);
 	}
 
 	public class Criteria

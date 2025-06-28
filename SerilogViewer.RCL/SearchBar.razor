@@ -1,13 +1,28 @@
+@inject SerilogQuery Query
+
 <div>	
-	<input type="text" @bind-value="_searchText" @bind-value:after="oninput" placeholder="Search..." class="form-control" />
+	<input type="text" @bind-value="searchText" @bind-value:after="OnSearchTextChanged" placeholder="Search..." class="form-control" />
 
 	<div>
 		<!--prev/next paging controls-->
 	</div>
 </div>
 
+@if (searchTerms.Any())
+{
+	<details>
+		<summary>Parsed Search Terms</summary>
+		<ul>
+			@foreach (var term in searchTerms)
+			{
+				<li>@term</li>
+			}
+		</ul>
+	</details>
+}
+
 <details>
-	<summary>Search Tips</summary>
+	<summary>Tips</summary>
 	<ul>
 		<li>Enclose text in square brackets to search in the <strong>Source Context</strong> field</li>
 		<li>Add an age expression by starting with a minus sign <code>-</code> followed by a duration such as <code>15m</code> or <code>2hr</code></li>
@@ -25,19 +40,24 @@
 </details>
 
 @code {
-	private string _searchText = string.Empty;
-	
+	private string searchText = string.Empty;
+	private string[] searchTerms = [];
+	private SerilogQuery.Criteria? criteria;
+	private int page = 0;
+
+	const int pageSize = 50;
+
 	[Parameter]
 	public EventCallback<string> SearchTextChanged { get; set; }
 
+	[Parameter]
+	public EventCallback<IEnumerable<SerilogEntry>> SearchExecuted { get; set; }
+
 	private async Task OnSearchTextChanged()
 	{
-		await SearchTextChanged.InvokeAsync(_searchText);
-	}
-
-	protected override void OnParametersSet()
-	{
-		base.OnParametersSet();
-		
+		(criteria, searchTerms) = Query.ParseCriteria(searchText);
+		var results = await Query.ExecuteAsync(criteria, page * pageSize, pageSize);
+		await SearchTextChanged.InvokeAsync(searchText);
+		await SearchExecuted.InvokeAsync(results);
 	}
 }

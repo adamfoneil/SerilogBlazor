@@ -9,6 +9,7 @@
 
 <hr />
 
+<SearchBar @rendermode="InteractiveServer" SearchExecuted="OnSearchExecuted" />
 <SerilogGrid Entries="@entries" @rendermode="InteractiveServer" />
 
 @code {
@@ -31,4 +32,9 @@
 	{
 		entries = await Query.ExecuteAsync();
 	}	
+
+	private async Task OnSearchExecuted(IEnumerable<SerilogEntry> results)
+	{
+		entries = results;	
+	}
 }
