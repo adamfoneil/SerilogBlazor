@@ -8,7 +8,7 @@
 
 .serilog-grid-header {
 	display: grid;
-	grid-template-columns: 60px 180px 250px 150px 100px 1fr 40px;
+	grid-template-columns: 60px 220px 250px 150px 100px 1fr 40px;
 	background-color: #f8f9fa;
 	border-bottom: 2px solid #e1e5e9;
 	font-weight: 600;
@@ -16,7 +16,7 @@
 
 .serilog-grid-row {
 	display: grid;
-	grid-template-columns: 60px 180px 250px 150px 100px 1fr 40px;
+	grid-template-columns: 60px 220px 250px 150px 100px 1fr 40px;
 	border-bottom: 1px solid #e1e5e9;
 	transition: background-color 0.15s ease;
 }

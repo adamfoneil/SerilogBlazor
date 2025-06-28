@@ -33,7 +33,7 @@
 		entries = await Query.ExecuteAsync();
 	}	
 
-	private async Task OnSearchExecuted(IEnumerable<SerilogEntry> results)
+	private void OnSearchExecuted(IEnumerable<SerilogEntry> results)
 	{
 		entries = results;	
 	}

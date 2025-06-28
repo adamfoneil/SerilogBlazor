@@ -2,7 +2,7 @@
     <!-- Header Row -->
     <div class="serilog-grid-header">
         <div class="header-cell">ID</div>
-        <div class="header-cell">Timestamp</div>
+        <div class="header-cell">Timestamp/Age</div>
         <div class="header-cell">Source Context</div>
         <div class="header-cell">Request ID</div>
         <div class="header-cell">Level</div>        
@@ -15,7 +15,9 @@
     {
         <div class="serilog-grid-row @(expandedRows.Contains(entry.Id) ? "expanded" : "")">
             <div class="data-cell">@entry.Id</div>
-            <div class="data-cell">@entry.Timestamp.ToString("yyyy-MM-dd HH:mm:ss")</div>
+            <div class="data-cell">
+                @entry.Timestamp.ToString("yyyy-MM-dd HH:mm:ss") - @entry.AgeText
+            </div>
             <div class="data-cell">@entry.SourceContext</div>
             <div class="data-cell">@entry.RequestId</div>
             <div class="data-cell level-@entry.Level.ToLower()">@entry.Level</div>            

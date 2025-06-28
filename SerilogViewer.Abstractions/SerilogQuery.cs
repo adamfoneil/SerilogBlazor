@@ -4,6 +4,7 @@ public class SerilogEntry
 {
 	public int Id { get; init; }
 	public DateTime Timestamp { get; init; }
+	public string? AgeText { get; init; } = default!;
 	public string? SourceContext { get; init; }
 	public string? RequestId { get; init; }
 	public string Level { get; init; } = default!;

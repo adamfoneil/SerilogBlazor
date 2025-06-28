@@ -22,6 +22,7 @@ public class SerilogSqlServerQuery(
 	{
 		public int Id { get; init; }
 		public DateTime Timestamp { get; init; }
+		public int AgeMinutes { get; init; } // calculated as DATEDIFF(n, Timestamp, {c})		
 		public string? SourceContext { get; init; }
 		public string? RequestId { get; init; }
 		public string Level { get; init; } = default!;
@@ -40,8 +41,9 @@ public class SerilogSqlServerQuery(
 
 		var query = 
 			@$"SELECT 
-				[Id], [Timestamp], [SourceContext], [RequestId], [Level], 
-				[MessageTemplate], [Message], [Exception], [Properties] AS [PropertyXml]
+				[Id], [Timestamp], DATEDIFF(n, [Timestamp], {CurrentTimeFunction(TimestampType)}) AS [AgeMinutes], 
+				[SourceContext], [RequestId], [Level], [MessageTemplate], 
+				[Message], [Exception], [Properties] AS [PropertyXml]
 			FROM [{_schemaName}].[{_tableName}] 
 			{whereClause} 
 			ORDER BY [Timestamp] DESC 
@@ -84,6 +86,7 @@ public class SerilogSqlServerQuery(
 	{
 		Id = source.Id,
 		Timestamp = source.Timestamp,
+		AgeText = ParseAgeText(source.AgeMinutes),
 		SourceContext = source.SourceContext,
 		RequestId = source.RequestId,
 		Level = source.Level,
@@ -96,7 +99,34 @@ public class SerilogSqlServerQuery(
 				.Elements()
 				.ToDictionary(e => e.Attribute("key")!.Value, e => (object)e.Value)
 	};
-	
+
+	private static string ParseAgeText(int ageMinutes)
+	{
+		if (ageMinutes < 1)
+			return "just now";
+
+		var ts = TimeSpan.FromMinutes(ageMinutes);
+
+		var parts = new List<string>();
+
+		if (ts.Days > 0)
+			parts.Add($"{ts.Days}d");
+		if (ts.Hours > 0)
+			parts.Add($"{ts.Hours}h");
+		if (ts.Minutes > 0 && ts.Days == 0) // Only show minutes if less than a day
+			parts.Add($"{ts.Minutes}m");
+
+		return string.Join(", ", parts);
+	}
+
+
+	private static string CurrentTimeFunction(TimestampType timestampType) => timestampType switch
+	{
+		TimestampType.Utc => "GETUTCDATE()",
+		TimestampType.Local => "GETDATE()",
+		_ => throw new ArgumentOutOfRangeException(nameof(timestampType))
+	};
+
 	private static (string, DynamicParameters? Parameters, IEnumerable<string> SearchTerms) GetWhereClause(Criteria? criteria, TimestampType timestampType)
 	{
 		if (criteria is null) return (string.Empty, null, []);
@@ -116,14 +146,15 @@ public class SerilogSqlServerQuery(
 			terms.Add(($"[Timestamp]<=@toTimestamp", $"Timestamp before {criteria.ToTimestamp}"));
 		}
 
+		string? ageExpr = null;
 		if (criteria.Age.HasValue)
 		{
 			var token = criteria.Age.Value switch
 			{
-				{ Days: > 0 } => "DAY",
-				{ Hours: > 0 } => "HOUR",
-				{ Minutes: > 0 } => "MINUTE",
-				{ Seconds: > 0 } => "SECOND",
+				{ Days: > 0 } => "d",
+				{ Hours: > 0 } => "hh",
+				{ Minutes: > 0 } => "n",
+				{ Seconds: > 0 } => "s",
 				_ => throw new ArgumentException("Unsupported age format")
 			};
 
@@ -136,14 +167,8 @@ public class SerilogSqlServerQuery(
 				_ => throw new ArgumentException("Unsupported age format")
 			};
 
-			var now = timestampType switch
-			{
-				TimestampType.Utc => "GETUTCDATE()",
-				TimestampType.Local => "GETDATE()",
-				_ => throw new ArgumentOutOfRangeException(nameof(timestampType))
-			};
-
-			terms.Add(($"DATEDIFF({token}, [Timestamp], {now})<={ageValue}", $"At most {ageValue} {token} ago"));
+			var dateDiff = $"DATEDIFF({token}, [Timestamp], {CurrentTimeFunction(timestampType)})";
+			terms.Add(($"{dateDiff}<={ageValue}", $"At most {ageValue} {token} ago"));
 		}
 
 		if (!string.IsNullOrEmpty(criteria.SourceContext))
@@ -176,7 +201,8 @@ public class SerilogSqlServerQuery(
 			terms.Add(($"[Exception] LIKE '%' + @exception + '%'", $"Exception contains '{criteria.Exception}'"));
 		}
 
-		return (terms.Any() ? $"WHERE {string.Join(" AND ", terms.Select(item => item.Sql))}" : string.Empty, 
+		return 
+			(terms.Any() ? $"WHERE {string.Join(" AND ", terms.Select(item => item.Sql))}" : string.Empty, 
 			parameters, 
 			terms.Select(item => item.Display));
 	}	
