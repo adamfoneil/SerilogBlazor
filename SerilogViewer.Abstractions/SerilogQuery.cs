@@ -11,6 +11,7 @@ public class SerilogEntry
 	public string MessageTemplate { get; init; } = default!;
 	public string Message { get; init; } = default!;
 	public string? Exception { get; init; }
+	public string? UserName { get; init; }
 	public Dictionary<string, object> Properties { get; init; } = [];
 }	
 
