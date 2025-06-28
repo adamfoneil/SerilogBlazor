@@ -13,8 +13,16 @@ public class SerilogEntry
 	public Dictionary<string, object> Properties { get; init; } = [];
 }	
 
-public abstract class SerilogQuery
+public enum TimestampType
 {
+	Local,
+	Utc
+}
+
+public abstract class SerilogQuery(TimestampType timestampType = TimestampType.Utc)
+{
+	protected readonly TimestampType TimestampType = timestampType;
+
 	public abstract Task<IEnumerable<SerilogEntry>> ExecuteAsync(Criteria? criteria = null, int offset = 0, int limit = 50);
 
 	public class Criteria
@@ -44,8 +52,7 @@ public abstract class SerilogQuery
 			if (string.IsNullOrWhiteSpace(input))
 				return new Criteria();
 
-			var criteria = new Criteria();
-			var tokens = new List<string>();
+			var criteria = new Criteria();			
 			var remainingText = input.Trim();
 
 			// Process tokens with special prefixes

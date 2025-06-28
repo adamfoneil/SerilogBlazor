@@ -7,9 +7,10 @@ using System.Diagnostics;
 namespace SerilogViewer.SqlServer;
 
 public class SerilogSqlServerQuery(
+	TimestampType timestampType,
 	ILogger<SerilogSqlServerQuery> logger,	
 	LoggingRequestIdProvider requestIdProvider,
-	string connectionString, string schemaName, string tableName) : SerilogQuery
+	string connectionString, string schemaName, string tableName) : SerilogQuery(timestampType)
 {
 	private readonly ILogger<SerilogSqlServerQuery> _logger = logger;
 	private readonly LoggingRequestIdProvider _requestIdProvider = requestIdProvider;
@@ -35,7 +36,7 @@ public class SerilogSqlServerQuery(
 		using var cn = new SqlConnection(_connectionString);
 		cn.Open();
 
-		var (whereClause, parameters) = GetWhereClause(criteria);
+		var (whereClause, parameters) = GetWhereClause(criteria, TimestampType);
 
 		var query = 
 			@$"SELECT 
@@ -91,7 +92,7 @@ public class SerilogSqlServerQuery(
 	};
 	
 
-	private static (string, DynamicParameters? Parameters) GetWhereClause(Criteria? criteria)
+	private static (string, DynamicParameters? Parameters) GetWhereClause(Criteria? criteria, TimestampType timestampType)
 	{
 		if (criteria is null) return (string.Empty, null);
 
@@ -108,6 +109,36 @@ public class SerilogSqlServerQuery(
 		{
 			parameters.Add("@toTimestamp", criteria.ToTimestamp.Value);
 			terms.Add($"[Timestamp]<=@toTimestamp");
+		}
+
+		if (criteria.Age.HasValue)
+		{
+			var token = criteria.Age.Value switch
+			{
+				{ Days: > 0 } => "DAY",
+				{ Hours: > 0 } => "HOUR",
+				{ Minutes: > 0 } => "MINUTE",
+				{ Seconds: > 0 } => "SECOND",
+				_ => throw new ArgumentException("Unsupported age format")
+			};
+
+			var ageValue = criteria.Age.Value switch
+			{
+				{ Days: > 0 } => criteria.Age.Value.Days,
+				{ Hours: > 0 } => criteria.Age.Value.Hours,
+				{ Minutes: > 0 } => criteria.Age.Value.Minutes,
+				{ Seconds: > 0 } => criteria.Age.Value.Seconds,
+				_ => throw new ArgumentException("Unsupported age format")
+			};
+
+			var now = timestampType switch
+			{
+				TimestampType.Utc => "GETUTCDATE()",
+				TimestampType.Local => "GETDATE()",
+				_ => throw new ArgumentOutOfRangeException(nameof(timestampType))
+			};
+
+			terms.Add($"DATEDIFF({token}, [Timestamp], {now})<={ageValue}");
 		}
 
 		if (!string.IsNullOrEmpty(criteria.SourceContext))
