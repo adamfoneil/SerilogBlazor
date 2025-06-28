@@ -1,15 +1,17 @@
 ﻿namespace SerilogViewer.Abstractions;
 
-public record SerilogEntry(
-	int Id,
-	DateTime Timestamp,
-	string? SourceContext,
-	string? RequestId,
-	string Level,
-	string MessageTemplate,
-	string Message,
-	string? Exception,
-	Dictionary<string, object> Properties);
+public class SerilogEntry
+{
+	public int Id { get; init; }
+	public DateTime Timestamp { get; init; }
+	public string? SourceContext { get; init; }
+	public string? RequestId { get; init; }
+	public string Level { get; init; } = default!;
+	public string MessageTemplate { get; init; } = default!;
+	public string Message { get; init; } = default!;
+	public string? Exception { get; init; }
+	public Dictionary<string, object> Properties { get; init; } = [];
+}	
 
 public abstract class SerilogQuery
 {

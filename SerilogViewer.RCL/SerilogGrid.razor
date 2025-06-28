@@ -57,7 +57,7 @@
 </div>
 
 @code {
-    [Parameter] public SerilogEntry[] Entries { get; set; } = [];
+    [Parameter] public IEnumerable<SerilogEntry> Entries { get; set; } = [];
     
     private HashSet<int> expandedRows = new();
     

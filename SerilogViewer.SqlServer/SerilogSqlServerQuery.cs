@@ -7,15 +7,28 @@ using System.Diagnostics;
 namespace SerilogViewer.SqlServer;
 
 public class SerilogSqlServerQuery(
-	ILogger<SerilogSqlServerQuery> logger,
+	ILogger<SerilogSqlServerQuery> logger,	
+	LoggingRequestIdProvider requestIdProvider,
 	string connectionString, string schemaName, string tableName) : SerilogQuery
 {
 	private readonly ILogger<SerilogSqlServerQuery> _logger = logger;
+	private readonly LoggingRequestIdProvider _requestIdProvider = requestIdProvider;
 	private readonly string _connectionString = connectionString;
 	private readonly string _schemaName = schemaName;
 	private readonly string _tableName = tableName;
 
-	private static int _nextRequestId = 0;
+	private class SerilogSqlServerEntry
+	{
+		public int Id { get; init; }
+		public DateTime Timestamp { get; init; }
+		public string? SourceContext { get; init; }
+		public string? RequestId { get; init; }
+		public string Level { get; init; } = default!;
+		public string MessageTemplate { get; init; } = default!;
+		public string Message { get; init; } = default!;
+		public string? Exception { get; init; }
+		public string? PropertyXml { get; init; }		
+	}
 
 	public override async Task<IEnumerable<SerilogEntry>> ExecuteAsync(Criteria? criteria = null, int offset = 0, int limit = 50)
 	{
@@ -25,13 +38,15 @@ public class SerilogSqlServerQuery(
 		var (whereClause, parameters) = GetWhereClause(criteria);
 
 		var query = 
-			@$"SELECT * 
+			@$"SELECT 
+				[Id], [Timestamp], [SourceContext], [RequestId], [Level], 
+				[MessageTemplate], [Message], [Exception], [Properties] AS [PropertyXml]
 			FROM [{_schemaName}].[{_tableName}] 
 			{whereClause} 
 			ORDER BY [Timestamp] DESC 
 			OFFSET {offset} ROWS FETCH NEXT {limit} ROWS ONLY";
 
-		_logger.BeginRequestId($"request{++_nextRequestId}");
+		_logger.BeginRequestId(_requestIdProvider.NextId());
 
 		_logger.LogDebug("Querying serilog: {query}", query);
 
@@ -39,11 +54,11 @@ public class SerilogSqlServerQuery(
 		bool error = false;
 		try
 		{
-			var results = await cn.QueryAsync<SerilogEntry>(query, parameters);
+			var results = await cn.QueryAsync<SerilogSqlServerEntry>(query, parameters);
 
 			// todo: apply non-query criteria (e.g., HasProperties, HassPropertyValues)
 
-			return results;
+			return results.Select(ToSerilogEntry);
 		}
 		catch (Exception exc)
 		{
@@ -57,6 +72,24 @@ public class SerilogSqlServerQuery(
 			_logger.LogInformation("Serilog query {status} in {elapsed} ms", error ? "failed" : "succeeded", sw.ElapsedMilliseconds);
 		}
 	}
+
+	private SerilogEntry ToSerilogEntry(SerilogSqlServerEntry source) => new()
+	{
+		Id = source.Id,
+		Timestamp = source.Timestamp,
+		SourceContext = source.SourceContext,
+		RequestId = source.RequestId,
+		Level = source.Level,
+		MessageTemplate = source.MessageTemplate,
+		Message = source.Message,
+		Exception = source.Exception,
+		Properties = string.IsNullOrEmpty(source.PropertyXml)
+			? []
+			: System.Xml.Linq.XElement.Parse(source.PropertyXml)
+				.Elements()
+				.ToDictionary(e => e.Attribute("key")!.Value, e => (object)e.Value)
+	};
+	
 
 	private static (string, DynamicParameters? Parameters) GetWhereClause(Criteria? criteria)
 	{
