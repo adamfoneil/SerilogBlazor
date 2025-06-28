@@ -100,7 +100,7 @@ public class SerilogSqlServerQuery(
 				.ToDictionary(e => e.Attribute("key")!.Value, e => (object)e.Value)
 	};
 
-	private static string ParseAgeText(int ageMinutes)
+	public static string ParseAgeText(int ageMinutes)
 	{
 		if (ageMinutes < 1)
 			return "just now";
