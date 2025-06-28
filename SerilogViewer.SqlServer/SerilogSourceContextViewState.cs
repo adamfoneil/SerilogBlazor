@@ -1,8 +1,5 @@
-﻿using System.Data.Common;
-using Dapper;
-using Microsoft.Data.SqlClient;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Infrastructure;
+﻿using Microsoft.EntityFrameworkCore;
+using SerilogViewer.Abstractions.IndexedLogContext;
 using SerilogViewer.Abstractions.SourceContextView;
 
 namespace SerilogViewer.SqlServer;
@@ -10,74 +7,45 @@ namespace SerilogViewer.SqlServer;
 public static class SerilogSourceContextViewState
 {
 	public static async Task<SourceContextViewItem[]> QuerySourceContextViewItemsAsync<TDbContext>(
-		this TDbContext dbContext, string userName) where TDbContext : ISourceContextViewState
+		this TDbContext dbContext, string userName) where TDbContext : ISourceContextViewState, IIndexedLogContext
 	{
 		if (dbContext is not DbContext context)
 			throw new ArgumentException("DbContext must derive from EntityFramework DbContext", nameof(dbContext));
 
-		// Get the underlying database connection
-		var connection = context.Database.GetDbConnection();
-		
-		// Execute the T-SQL query to get source context summary data
-		var query = @"
-			SELECT 
-				[SourceContext], 
-				[Level], 
-				MAX([Timestamp]) AS [LatestTimestamp], 
-				COUNT(1) AS [Count],
-				DATEDIFF(minute, MAX([Timestamp]), GETUTCDATE()) AS [AgeMinutes]
-			FROM [log].[Serilog]
-			GROUP BY [SourceContext], [Level]
-			ORDER BY MAX([Timestamp]) DESC";
+		var currentTime = DateTime.UtcNow;
 
-		// Ensure connection is open
-		var shouldCloseConnection = connection.State != System.Data.ConnectionState.Open;
-		if (shouldCloseConnection)
-		{
-			await connection.OpenAsync();
-		}
-
-		try
-		{
-			var summaryData = await connection.QueryAsync<SourceContextSummary>(query);
-
-			// Get visibility settings for the user
-			var visibilitySettings = await dbContext.SourceContexts
-				.Where(sc => sc.UserName == userName)
-				.ToArrayAsync();
-
-			// Combine the data and calculate AgeText
-			var result = summaryData.Select(item => new SourceContextViewItem
+		// Use EF Core LINQ query to get source context summary data
+		var summaryData = await context.Set<SerilogEntry>()
+			.GroupBy(entry => new { entry.SourceContext, entry.Level })
+			.Select(group => new
 			{
-				SourceContext = item.SourceContext ?? "",
-				Level = item.Level,
-				LatestTimestamp = item.LatestTimestamp,
-				Count = item.Count,
-				AgeText = SerilogSqlServerQuery.ParseAgeText(item.AgeMinutes),
-				IsVisible = visibilitySettings
-					.FirstOrDefault(vs => vs.SourceContext == item.SourceContext && vs.Level == item.Level)
-					?.IsVisible ?? true // Default to visible if no setting exists
-			}).ToArray();
+				SourceContext = group.Key.SourceContext,
+				Level = group.Key.Level,
+				LatestTimestamp = group.Max(e => e.Timestamp),
+				Count = group.Count()
+			})
+			.OrderByDescending(item => item.LatestTimestamp)
+			.ToArrayAsync();
 
-			return result;
-		}
-		finally
+		// Get visibility settings for the user
+		var visibilitySettings = await dbContext.SourceContexts
+			.Where(sc => sc.UserName == userName)
+			.ToArrayAsync();
+
+		// Combine the data and calculate AgeText
+		var result = summaryData.Select(item => new SourceContextViewItem
 		{
-			if (shouldCloseConnection)
-			{
-				await connection.CloseAsync();
-			}
-		}
-	}
+			SourceContext = item.SourceContext ?? "",
+			Level = item.Level,
+			LatestTimestamp = item.LatestTimestamp,
+			Count = item.Count,
+			AgeText = SerilogSqlServerQuery.ParseAgeText((int)(currentTime - item.LatestTimestamp).TotalMinutes),
+			IsVisible = visibilitySettings
+				.FirstOrDefault(vs => vs.SourceContext == item.SourceContext && vs.Level == item.Level)
+				?.IsVisible ?? true // Default to visible if no setting exists
+		}).ToArray();
 
-	// Internal class to hold the raw query results
-	private class SourceContextSummary
-	{
-		public string? SourceContext { get; set; }
-		public string Level { get; set; } = default!;
-		public DateTime LatestTimestamp { get; set; }
-		public int Count { get; set; }
-		public int AgeMinutes { get; set; }
+		return result;
 	}
 
 	public static async Task SetSourceContextVisibilityAsync(
