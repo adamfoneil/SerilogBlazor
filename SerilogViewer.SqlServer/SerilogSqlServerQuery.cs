@@ -36,7 +36,7 @@ public class SerilogSqlServerQuery(
 		using var cn = new SqlConnection(_connectionString);
 		cn.Open();
 
-		var (whereClause, parameters) = GetWhereClause(criteria, TimestampType);
+		var (whereClause, parameters, _) = GetWhereClause(criteria, TimestampType);
 
 		var query = 
 			@$"SELECT 
@@ -74,6 +74,12 @@ public class SerilogSqlServerQuery(
 		}
 	}
 
+	protected override IEnumerable<string> GetSearchTerms(Criteria criteria)
+	{
+		var (_, _, searchTerms) = GetWhereClause(criteria, TimestampType);
+		return searchTerms;
+	}
+
 	private SerilogEntry ToSerilogEntry(SerilogSqlServerEntry source) => new()
 	{
 		Id = source.Id,
@@ -91,24 +97,23 @@ public class SerilogSqlServerQuery(
 				.ToDictionary(e => e.Attribute("key")!.Value, e => (object)e.Value)
 	};
 	
-
-	private static (string, DynamicParameters? Parameters) GetWhereClause(Criteria? criteria, TimestampType timestampType)
+	private static (string, DynamicParameters? Parameters, IEnumerable<string> SearchTerms) GetWhereClause(Criteria? criteria, TimestampType timestampType)
 	{
-		if (criteria is null) return (string.Empty, null);
+		if (criteria is null) return (string.Empty, null, []);
 
-		List<string> terms = [];
+		List<(string Sql, string Display)> terms = [];
 		var parameters = new DynamicParameters();
 
 		if (criteria.FromTimestamp.HasValue)
 		{
 			parameters.Add("@fromTimestamp", criteria.FromTimestamp.Value);
-			terms.Add($"[Timestamp]>=@fromTimestamp");
+			terms.Add(($"[Timestamp]>=@fromTimestamp", $"Timestamp after {criteria.FromTimestamp}"));
 		}
 
 		if (criteria.ToTimestamp.HasValue)
 		{
 			parameters.Add("@toTimestamp", criteria.ToTimestamp.Value);
-			terms.Add($"[Timestamp]<=@toTimestamp");
+			terms.Add(($"[Timestamp]<=@toTimestamp", $"Timestamp before {criteria.ToTimestamp}"));
 		}
 
 		if (criteria.Age.HasValue)
@@ -138,39 +143,41 @@ public class SerilogSqlServerQuery(
 				_ => throw new ArgumentOutOfRangeException(nameof(timestampType))
 			};
 
-			terms.Add($"DATEDIFF({token}, [Timestamp], {now})<={ageValue}");
+			terms.Add(($"DATEDIFF({token}, [Timestamp], {now})<={ageValue}", $"At most {ageValue} {token} ago"));
 		}
 
 		if (!string.IsNullOrEmpty(criteria.SourceContext))
 		{
 			parameters.Add("@sourceContext", criteria.SourceContext);
-			terms.Add($"[SourceContext] LIKE '%' + @sourceContext + '%'");
+			terms.Add(($"[SourceContext] LIKE '%' + @sourceContext + '%'", $"Source context contains '{criteria.SourceContext}'"));
 		}
 
 		if (!string.IsNullOrEmpty(criteria.RequestId))
 		{
 			parameters.Add("@requestId", criteria.RequestId);
-			terms.Add($"[RequestId]=@requestId");
+			terms.Add(($"[RequestId]=@requestId", $"Request Id = {criteria.RequestId}"));
 		}
 
 		if (!string.IsNullOrEmpty(criteria.Level))
 		{
 			parameters.Add("@level", criteria.Level);
-			terms.Add($"[Level]=@level");
+			terms.Add(($"[Level]=@level", $"Level = {criteria.Level}"));
 		}
 
 		if (!string.IsNullOrEmpty(criteria.Message))
 		{
 			parameters.Add("@message", criteria.Message);
-			terms.Add($"[Message] LIKE '%' + @message + '%'");
+			terms.Add(($"[Message] LIKE '%' + @message + '%'", $"Message contains '{criteria.Message}'"));
 		}
 
 		if (!string.IsNullOrEmpty(criteria.Exception))
 		{
 			parameters.Add("@exception", criteria.Exception);
-			terms.Add($"[Exception] LIKE '%' + @exception + '%'");
+			terms.Add(($"[Exception] LIKE '%' + @exception + '%'", $"Exception contains '{criteria.Exception}'"));
 		}
 
-		return (terms.Any() ? $"WHERE {string.Join(" AND ", terms)}" : string.Empty, parameters);
-	}
+		return (terms.Any() ? $"WHERE {string.Join(" AND ", terms.Select(item => item.Sql))}" : string.Empty, 
+			parameters, 
+			terms.Select(item => item.Display));
+	}	
 }

@@ -1,0 +1,43 @@
+<div>	
+	<input type="text" @bind-value="_searchText" @bind-value:after="oninput" placeholder="Search..." class="form-control" />
+
+	<div>
+		<!--prev/next paging controls-->
+	</div>
+</div>
+
+<details>
+	<summary>Search Tips</summary>
+	<ul>
+		<li>Enclose text in square brackets to search in the <strong>Source Context</strong> field</li>
+		<li>Add an age expression by starting with a minus sign <code>-</code> followed by a duration such as <code>15m</code> or <code>2hr</code></li>
+		<li>Use the <code>@@</code> sign to specify a level (i.e. Error, Warning, Information). Partial text like <code>err</code> and <code>info</code> works</li>
+		<li>Use <code>!</code> to search the Exception field</li>
+		<li>Use <code>#</code> to search the RequestId field</li>
+		<li>Any other text will search the <strong>Message</strong> field</li>
+	</ul>
+
+	<p>Examples:</p>
+	<ul>
+		<li><code>hold on there -30 [MyApp]</code> means <code>Message contains "hold on there"</code> and <code>SourceContext contains 'MyApp'</code> and <code>Age less than 30 minutes ago</code></li>
+		<li><code>#564</code> means <code>RequestId contains '564'</code></li>		
+	</ul>
+</details>
+
+@code {
+	private string _searchText = string.Empty;
+	
+	[Parameter]
+	public EventCallback<string> SearchTextChanged { get; set; }
+
+	private async Task OnSearchTextChanged()
+	{
+		await SearchTextChanged.InvokeAsync(_searchText);
+	}
+
+	protected override void OnParametersSet()
+	{
+		base.OnParametersSet();
+		
+	}
+}

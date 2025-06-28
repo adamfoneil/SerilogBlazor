@@ -25,6 +25,14 @@ public abstract class SerilogQuery(TimestampType timestampType = TimestampType.U
 
 	public abstract Task<IEnumerable<SerilogEntry>> ExecuteAsync(Criteria? criteria = null, int offset = 0, int limit = 50);
 
+	protected abstract IEnumerable<string> GetSearchTerms(Criteria criteria);
+
+	public string[] ParseCriteria(string input)
+	{
+		var criteria = Criteria.ParseExpression(input);
+		return [.. GetSearchTerms(criteria)];
+	}
+
 	public class Criteria
 	{
 		public DateTime? FromTimestamp { get; set; }
@@ -116,7 +124,7 @@ public abstract class SerilogQuery(TimestampType timestampType = TimestampType.U
 
 		private static string ProcessAge(string input, Criteria criteria)
 		{
-			var regex = new System.Text.RegularExpressions.Regex(@"-(\d+)(d|h|hr|m)\b");
+			var regex = new System.Text.RegularExpressions.Regex(@"-(\d+)(d|h|hr|m|s)\b");
 			var match = regex.Match(input);
 			if (match.Success)
 			{
@@ -129,6 +137,7 @@ public abstract class SerilogQuery(TimestampType timestampType = TimestampType.U
 					"h" => TimeSpan.FromHours(amount),
 					"hr" => TimeSpan.FromHours(amount),
 					"m" => TimeSpan.FromMinutes(amount),
+					"s" => TimeSpan.FromSeconds(amount),
 					_ => throw new ArgumentException($"Unknown time unit: {unit}")
 				};
 				
