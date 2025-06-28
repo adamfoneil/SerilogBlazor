@@ -3,6 +3,7 @@ using SampleApp.Components;
 using SampleApp.Data;
 using Serilog;
 using Serilog.Sinks.MSSqlServer;
+using SerilogViewer.Abstractions;
 using SerilogViewer.SqlServer;
 
 var logLevels = new ApplicationLogLevels();
@@ -29,7 +30,7 @@ builder.Host.UseSerilog();
 builder.Services.AddRazorComponents()
 	.AddInteractiveServerComponents();
 
-builder.Services.AddSerilogQuery(AppDbContextFactory.ConnectionString, "log", "Serilog");
+builder.Services.AddSerilogQuery(AppDbContextFactory.ConnectionString, "log", "Serilog", TimestampType.Local);
 
 builder.Services.AddSerilogCleanup(new() 
 { 

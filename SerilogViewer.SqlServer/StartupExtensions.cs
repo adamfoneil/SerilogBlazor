@@ -9,12 +9,13 @@ namespace SerilogViewer.SqlServer;
 
 public static class StartupExtensions
 {
-	public static void AddSerilogQuery(this IServiceCollection services, string connectionString, string schemaName = "dbo", string tableName = "Serilog")
+	public static void AddSerilogQuery(this IServiceCollection services, string connectionString, string schemaName = "dbo", string tableName = "Serilog", TimestampType timestampType = TimestampType.Utc)
 	{
 		services.AddSingleton<LoggingRequestIdProvider>();
 
 		services.AddSingleton<SerilogQuery>(sp =>
 			new SerilogSqlServerQuery(				
+				timestampType,
 				sp.GetRequiredService<ILogger<SerilogSqlServerQuery>>(),
 				sp.GetRequiredService<LoggingRequestIdProvider>(),
 				connectionString, schemaName, tableName

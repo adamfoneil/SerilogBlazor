@@ -42,6 +42,7 @@ public class CriteriaParsing
 		Assert.AreEqual("12345", output.RequestId);
 	}
 
+	[TestMethod]
 	public void ExceptionText()
 	{
 		var input = "!NullReferenceException \"dandy warhols\"";
