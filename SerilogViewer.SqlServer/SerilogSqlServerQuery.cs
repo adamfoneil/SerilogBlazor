@@ -145,26 +145,54 @@ public class SerilogSqlServerQuery(
 			parameters.Add("@toTimestamp", criteria.ToTimestamp.Value);
 			terms.Add(($"[Timestamp]<=@toTimestamp", $"Timestamp before {criteria.ToTimestamp}"));
 		}
-		
+
 		if (criteria.Age.HasValue)
 		{
-			var token = criteria.Age.Value switch
-			{
-				{ Days: > 0 } => "d",
-				{ Hours: > 0 } => "hh",
-				{ Minutes: > 0 } => "n",
-				{ Seconds: > 0 } => "s",
-				_ => throw new ArgumentException("Unsupported age format")
-			};
+			var ts = criteria.Age.Value;
+			string token;
+			int ageValue;
 
-			var ageValue = criteria.Age.Value switch
+			// Determine the most appropriate time unit for DATEDIFF
+			if (ts.Days >= 30 && ts.Days % 30 == 0)
 			{
-				{ Days: > 0 } => criteria.Age.Value.Days,
-				{ Hours: > 0 } => criteria.Age.Value.Hours,
-				{ Minutes: > 0 } => criteria.Age.Value.Minutes,
-				{ Seconds: > 0 } => criteria.Age.Value.Seconds,
-				_ => throw new ArgumentException("Unsupported age format")
-			};
+				// Use months for multiples of 30 days
+				token = "mm";
+				ageValue = ts.Days / 30;
+			}
+			else if (ts.Days >= 7 && ts.Days % 7 == 0)
+			{
+				// Use weeks for multiples of 7 days
+				token = "wk";
+				ageValue = ts.Days / 7;
+			}
+			else if (ts.Days > 0)
+			{
+				// Use days
+				token = "d";
+				ageValue = ts.Days;
+			}
+			else if (ts.Hours > 0)
+			{
+				// Use hours
+				token = "hh";
+				ageValue = ts.Hours;
+			}
+			else if (ts.Minutes > 0)
+			{
+				// Use minutes
+				token = "n";
+				ageValue = ts.Minutes;
+			}
+			else if (ts.Seconds > 0)
+			{
+				// Use seconds
+				token = "s";
+				ageValue = ts.Seconds;
+			}
+			else
+			{
+				throw new ArgumentException("Unsupported age format");
+			}
 
 			var dateDiff = $"DATEDIFF({token}, [Timestamp], {CurrentTimeFunction(timestampType)})";
 			terms.Add(($"{dateDiff}<={ageValue}", $"At most {ageValue} {token} ago"));

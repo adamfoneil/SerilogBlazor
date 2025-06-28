@@ -61,6 +61,52 @@ public class CriteriaParsing
 	}
 
 	[TestMethod]
+	public void WeeklyAge()
+	{
+		var input = "error logs -2wk";
+		var output = SerilogQuery.Criteria.ParseExpression(input);
+		Assert.AreEqual("error logs", output.Message);
+		Assert.AreEqual(TimeSpan.FromDays(14), output.Age); // 2 weeks = 14 days
+	}
+
+	[TestMethod]
+	public void MonthlyAge()
+	{
+		var input = "error logs -3mon";
+		var output = SerilogQuery.Criteria.ParseExpression(input);
+		Assert.AreEqual("error logs", output.Message);
+		Assert.AreEqual(TimeSpan.FromDays(90), output.Age); // 3 months = 90 days
+	}
+
+	[TestMethod]
+	public void SingleWeekAge()
+	{
+		var input = "-1wk";
+		var output = SerilogQuery.Criteria.ParseExpression(input);
+		Assert.IsNull(output.Message);
+		Assert.AreEqual(TimeSpan.FromDays(7), output.Age); // 1 week = 7 days
+	}
+
+	[TestMethod]
+	public void SingleMonthAge()
+	{
+		var input = "-1mon";
+		var output = SerilogQuery.Criteria.ParseExpression(input);
+		Assert.IsNull(output.Message);
+		Assert.AreEqual(TimeSpan.FromDays(30), output.Age); // 1 month = 30 days
+	}
+
+	[TestMethod]
+	public void MixedCriteriaWithWeeks()
+	{
+		var input = "@warn -2wk [MyService]";
+		var output = SerilogQuery.Criteria.ParseExpression(input);
+		Assert.AreEqual("Warning", output.Level);
+		Assert.AreEqual(TimeSpan.FromDays(14), output.Age);
+		Assert.AreEqual("MyService", output.SourceContext);
+	}
+
+	[TestMethod]
 	public void RequestIdReplacement()
 	{
 		// Test that the regex pattern used in SearchBar.AddRequestId correctly removes existing RequestIds
