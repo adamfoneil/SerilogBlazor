@@ -53,7 +53,7 @@ public abstract class SerilogQuery(TimestampType timestampType = TimestampType.U
 			 [{string}] = SourceContext (assume wildcards around it)
 			 @{string} = Level (can be partial like "warn" "info" or "err")
 			 #{string} = RequestId
-			 -{string} = age expression (e.g., -7d for up to 7 days ago, or -30m for up to 30 minutes ago), supported types: d, h, hr, m
+			 -{string} = age expression (e.g., -7d for up to 7 days ago, or -30m for up to 30 minutes ago), supported types: d, h, hr, m, s, wk, mon
 			!{string} = exception text
 			{string} = anything not punctuated is assumed to be a message search term
 			*/
@@ -125,7 +125,7 @@ public abstract class SerilogQuery(TimestampType timestampType = TimestampType.U
 
 		private static string ProcessAge(string input, Criteria criteria)
 		{
-			var regex = new System.Text.RegularExpressions.Regex(@"-(\d+)(d|h|hr|m|s)\b");
+			var regex = new System.Text.RegularExpressions.Regex(@"-(\d+)(d|h|hr|m|s|wk|mon)\b");
 			var match = regex.Match(input);
 			if (match.Success)
 			{
@@ -139,6 +139,8 @@ public abstract class SerilogQuery(TimestampType timestampType = TimestampType.U
 					"hr" => TimeSpan.FromHours(amount),
 					"m" => TimeSpan.FromMinutes(amount),
 					"s" => TimeSpan.FromSeconds(amount),
+					"wk" => TimeSpan.FromDays(amount * 7),
+					"mon" => TimeSpan.FromDays(amount * 30),
 					_ => throw new ArgumentException($"Unknown time unit: {unit}")
 				};
 				

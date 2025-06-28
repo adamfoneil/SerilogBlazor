@@ -61,6 +61,24 @@ public class CriteriaParsing
 	}
 
 	[TestMethod]
+	public void WeeklyAge()
+	{
+		var input = "error logs -2wk";
+		var output = SerilogQuery.Criteria.ParseExpression(input);
+		Assert.AreEqual("error logs", output.Message);
+		Assert.AreEqual(TimeSpan.FromDays(14), output.Age); // 2 weeks = 14 days
+	}
+
+	[TestMethod]
+	public void MonthlyAge()
+	{
+		var input = "error logs -3mon";
+		var output = SerilogQuery.Criteria.ParseExpression(input);
+		Assert.AreEqual("error logs", output.Message);
+		Assert.AreEqual(TimeSpan.FromDays(90), output.Age); // 3 months = 90 days
+	}
+
+	[TestMethod]
 	public void RequestIdReplacement()
 	{
 		// Test that the regex pattern used in SearchBar.AddRequestId correctly removes existing RequestIds
