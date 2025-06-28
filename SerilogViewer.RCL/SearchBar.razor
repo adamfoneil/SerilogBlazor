@@ -5,7 +5,7 @@
 
 	<div class="paging-controls">
 		<button type="button" class="paging-button" @onclick="PreviousPage" disabled="@(page == 0)">‹</button>
-		<button type="button" class="paging-button" @onclick="NextPage">›</button>
+		<button type="button" class="paging-button" @onclick="NextPage" disabled="@(!hasMoreResults)">›</button>
 	</div>
 </div>
 
@@ -45,6 +45,7 @@
 	private string[] searchTerms = [];
 	private SerilogQuery.Criteria? criteria;
 	private int page = 0;
+	private bool hasMoreResults = true;
 
 	const int pageSize = 50;
 
@@ -57,6 +58,7 @@
 	private async Task OnSearchTextChanged()
 	{
 		page = 0; // Reset to first page when search text changes
+		hasMoreResults = true; // Reset this flag when search changes
 		await ExecuteSearch();
 	}
 
@@ -71,14 +73,22 @@
 
 	private async Task NextPage()
 	{
-		page++;
-		await ExecuteSearch();
+		if (hasMoreResults)
+		{
+			page++;
+			await ExecuteSearch();
+		}
 	}
 
 	private async Task ExecuteSearch()
 	{
 		(criteria, searchTerms) = Query.ParseCriteria(searchText);
 		var results = await Query.ExecuteAsync(criteria, page * pageSize, pageSize);
+		
+		// Check if we have more results by requesting one extra item
+		var checkResults = await Query.ExecuteAsync(criteria, (page + 1) * pageSize, 1);
+		hasMoreResults = checkResults.Any();
+		
 		await SearchTextChanged.InvokeAsync(searchText);
 		await SearchExecuted.InvokeAsync(results);
 	}
