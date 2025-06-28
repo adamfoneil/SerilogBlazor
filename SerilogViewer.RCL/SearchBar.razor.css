@@ -34,30 +34,33 @@
 }
 
 .paging-button {
-    min-width: 32px;
-    height: 32px;
-    padding: 4px 8px;
-    border: 1px solid #ced4da;
-    border-radius: 4px;
-    background-color: #fff;
-    color: #495057;
+    min-width: 40px;
+    height: 48px;
+    padding: 12px 16px;
+    border: 2px solid #0d6efd;
+    border-radius: 8px;
+    background-color: #0d6efd;
+    color: #ffffff;
     cursor: pointer;
     transition: all 0.15s ease;
-    font-size: 14px;
+    font-size: 16px;
+    font-weight: 500;
 }
 
 .paging-button:hover:not(:disabled) {
-    background-color: #e9ecef;
-    border-color: #adb5bd;
+    background-color: #0b5ed7;
+    border-color: #0a58ca;
 }
 
 .paging-button:disabled {
-    opacity: 0.65;
+    opacity: 0.5;
     cursor: not-allowed;
-    background-color: #e9ecef;
+    background-color: #6c757d;
+    border-color: #6c757d;
+    color: #ffffff;
 }
 
 .paging-button:focus {
     outline: 0;
-    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+    box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.25);
 }
