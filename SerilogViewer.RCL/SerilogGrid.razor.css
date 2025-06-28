@@ -8,7 +8,7 @@
 
 .serilog-grid-header {
 	display: grid;
-	grid-template-columns: 60px 180px 200px 120px 80px 1fr 1fr 40px;
+	grid-template-columns: 60px 180px 250px 150px 100px 1fr 40px;
 	background-color: #f8f9fa;
 	border-bottom: 2px solid #e1e5e9;
 	font-weight: 600;
@@ -16,7 +16,7 @@
 
 .serilog-grid-row {
 	display: grid;
-	grid-template-columns: 60px 180px 200px 120px 80px 1fr 1fr 40px;
+	grid-template-columns: 60px 180px 250px 150px 100px 1fr 40px;
 	border-bottom: 1px solid #e1e5e9;
 	transition: background-color 0.15s ease;
 }
@@ -147,14 +147,14 @@
 @@media (max-width: 1200px) {
 	.serilog-grid-header,
 	.serilog-grid-row {
-		grid-template-columns: 50px 150px 150px 100px 70px 1fr 1fr 40px;
+		grid-template-columns: 50px 150px 150px 100px 70px 1fr 40px;
 	}
 }
 
 @@media (max-width: 768px) {
 	.serilog-grid-header,
 	.serilog-grid-row {
-		grid-template-columns: 40px 120px 120px 80px 60px 1fr 1fr 30px;
+		grid-template-columns: 40px 120px 120px 80px 60px 1fr 30px;
 	}
 
 	.header-cell, .data-cell {

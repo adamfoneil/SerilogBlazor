@@ -1,5 +1,3 @@
-@using SerilogViewer.Abstractions
-
 <div class="serilog-grid">
     <!-- Header Row -->
     <div class="serilog-grid-header">
@@ -7,11 +5,9 @@
         <div class="header-cell">Timestamp</div>
         <div class="header-cell">Source Context</div>
         <div class="header-cell">Request ID</div>
-        <div class="header-cell">Level</div>
-        <div class="header-cell">Message Template</div>
+        <div class="header-cell">Level</div>        
         <div class="header-cell">Message</div>
-        <div class="header-cell">Exception</div>
-        <div class="header-cell"></div> <!-- Expand button column -->
+        <div class="header-cell"></div>        
     </div>
 
     <!-- Data Rows -->
@@ -22,8 +18,7 @@
             <div class="data-cell">@entry.Timestamp.ToString("yyyy-MM-dd HH:mm:ss")</div>
             <div class="data-cell">@entry.SourceContext</div>
             <div class="data-cell">@entry.RequestId</div>
-            <div class="data-cell level-@entry.Level.ToLower()">@entry.Level</div>
-            <div class="data-cell">@entry.MessageTemplate</div>
+            <div class="data-cell level-@entry.Level.ToLower()">@entry.Level</div>            
             <div class="data-cell">@entry.Message</div>            
             <div class="data-cell expand-cell">
                 <button class="expand-button" @onclick="@(() => ToggleExpand(entry.Id))">
