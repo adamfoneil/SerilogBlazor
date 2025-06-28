@@ -41,7 +41,131 @@ public abstract class SerilogQuery
 			{string} = anything not punctuated is assumed to be a message search term
 			*/
 
-			throw new NotImplementedException();
+			if (string.IsNullOrWhiteSpace(input))
+				return new Criteria();
+
+			var criteria = new Criteria();
+			var tokens = new List<string>();
+			var remainingText = input.Trim();
+
+			// Process tokens with special prefixes
+			remainingText = ProcessSourceContext(remainingText, criteria);
+			remainingText = ProcessLevel(remainingText, criteria);
+			remainingText = ProcessRequestId(remainingText, criteria);
+			remainingText = ProcessAge(remainingText, criteria);
+			remainingText = ProcessException(remainingText, criteria);
+			
+			// Process quoted messages
+			remainingText = ProcessQuotedMessage(remainingText, criteria);
+
+			// Whatever remains is treated as message text
+			if (!string.IsNullOrWhiteSpace(remainingText))
+			{
+				if (string.IsNullOrEmpty(criteria.Message))
+					criteria.Message = remainingText.Trim();
+				else
+					criteria.Message = remainingText.Trim() + " " + criteria.Message;
+			}
+
+			return criteria;
+		}
+
+		private static string ProcessSourceContext(string input, Criteria criteria)
+		{
+			var regex = new System.Text.RegularExpressions.Regex(@"\[([^\]]+)\]");
+			var match = regex.Match(input);
+			if (match.Success)
+			{
+				criteria.SourceContext = match.Groups[1].Value;
+				input = regex.Replace(input, "").Trim();
+			}
+			return input;
+		}
+
+		private static string ProcessLevel(string input, Criteria criteria)
+		{
+			var regex = new System.Text.RegularExpressions.Regex(@"@(\w+)");
+			var match = regex.Match(input);
+			if (match.Success)
+			{
+				var levelInput = match.Groups[1].Value.ToLower();
+				criteria.Level = MapLevel(levelInput);
+				input = regex.Replace(input, "").Trim();
+			}
+			return input;
+		}
+
+		private static string ProcessRequestId(string input, Criteria criteria)
+		{
+			var regex = new System.Text.RegularExpressions.Regex(@"#(\w+)");
+			var match = regex.Match(input);
+			if (match.Success)
+			{
+				criteria.RequestId = match.Groups[1].Value;
+				input = regex.Replace(input, "").Trim();
+			}
+			return input;
+		}
+
+		private static string ProcessAge(string input, Criteria criteria)
+		{
+			var regex = new System.Text.RegularExpressions.Regex(@"-(\d+)(d|h|hr|m)\b");
+			var match = regex.Match(input);
+			if (match.Success)
+			{
+				var amount = int.Parse(match.Groups[1].Value);
+				var unit = match.Groups[2].Value;
+				
+				criteria.Age = unit switch
+				{
+					"d" => TimeSpan.FromDays(amount),
+					"h" => TimeSpan.FromHours(amount),
+					"hr" => TimeSpan.FromHours(amount),
+					"m" => TimeSpan.FromMinutes(amount),
+					_ => throw new ArgumentException($"Unknown time unit: {unit}")
+				};
+				
+				input = regex.Replace(input, "").Trim();
+			}
+			return input;
+		}
+
+		private static string ProcessException(string input, Criteria criteria)
+		{
+			var regex = new System.Text.RegularExpressions.Regex(@"!(\w+)");
+			var match = regex.Match(input);
+			if (match.Success)
+			{
+				criteria.Exception = match.Groups[1].Value;
+				input = regex.Replace(input, "").Trim();
+			}
+			return input;
+		}
+
+		private static string ProcessQuotedMessage(string input, Criteria criteria)
+		{
+			var regex = new System.Text.RegularExpressions.Regex(@"""([^""]+)""");
+			var match = regex.Match(input);
+			if (match.Success)
+			{
+				criteria.Message = match.Groups[1].Value;
+				input = regex.Replace(input, "").Trim();
+			}
+			return input;
+		}
+
+		private static string MapLevel(string input)
+		{
+			return input.ToLower() switch
+			{
+				"err" or "error" => "Error",
+				"warn" or "warning" => "Warning",
+				"info" or "information" => "Info",
+				"debug" => "Debug",
+				"trace" => "Trace",
+				"fatal" => "Fatal",
+				_ => char.ToUpper(input[0]) + input[1..].ToLower()
+			};
 		}
 	}	
 }
