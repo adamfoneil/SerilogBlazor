@@ -146,7 +146,6 @@ public class SerilogSqlServerQuery(
 			terms.Add(($"[Timestamp]<=@toTimestamp", $"Timestamp before {criteria.ToTimestamp}"));
 		}
 
-		string? ageExpr = null;
 		if (criteria.Age.HasValue)
 		{
 			var token = criteria.Age.Value switch
