@@ -10,7 +10,8 @@ public static class SqlServerColumnOptions
 		AdditionalColumns =
 		[
 			new SqlColumn("SourceContext", SqlDbType.NVarChar, allowNull: true, dataLength: 256),
-			new SqlColumn("RequestId", SqlDbType.NVarChar, allowNull: true, dataLength: 64)
+			new SqlColumn("RequestId", SqlDbType.NVarChar, allowNull: true, dataLength: 64),
+			new SqlColumn("UserName", SqlDbType.NVarChar, allowNull: true, dataLength: 100),
 		]
 	};
 }
