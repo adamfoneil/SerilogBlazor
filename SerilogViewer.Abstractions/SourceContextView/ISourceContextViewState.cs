@@ -17,5 +17,6 @@ public class SourceContextViewItem
 	public string Level { get; set; } = default!;
 	public DateTime LatestTimestamp { get; set; }
 	public string AgeText { get; set; } = default!;
+	public int Count { get; set; }
 	public bool IsVisible { get; set; }
 }
