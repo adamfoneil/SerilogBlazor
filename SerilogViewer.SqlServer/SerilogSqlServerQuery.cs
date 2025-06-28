@@ -42,7 +42,7 @@ public class SerilogSqlServerQuery(
 
 		var query = 
 			@$"SELECT 
-				[Id], [Timestamp], DATEDIFF(n, [Timestamp], {CurrentTimeFunction(TimestampType)}) AS [AgeMinutes], 
+				[Id], [Timestamp], DATEDIFF(n, [Timestamp], {SqlServerHelpers.CurrentTimeFunction(TimestampType)}) AS [AgeMinutes], 
 				[SourceContext], [RequestId], [Level], [MessageTemplate], 
 				[Message], [Exception], [Properties] AS [PropertyXml], [UserName]
 			FROM [{_schemaName}].[{_tableName}] 
@@ -100,14 +100,7 @@ public class SerilogSqlServerQuery(
 			: System.Xml.Linq.XElement.Parse(source.PropertyXml)
 				.Elements()
 				.ToDictionary(e => e.Attribute("key")!.Value, e => (object)e.Value)
-	};	
-
-	private static string CurrentTimeFunction(TimestampType timestampType) => timestampType switch
-	{
-		TimestampType.Utc => "GETUTCDATE()",
-		TimestampType.Local => "GETDATE()",
-		_ => throw new ArgumentOutOfRangeException(nameof(timestampType))
-	};
+	};		
 
 	private static (string, DynamicParameters? Parameters, IEnumerable<string> SearchTerms) GetWhereClause(Criteria? criteria, TimestampType timestampType)
 	{
@@ -176,7 +169,7 @@ public class SerilogSqlServerQuery(
 				throw new ArgumentException("Unsupported age format");
 			}
 
-			var dateDiff = $"DATEDIFF({token}, [Timestamp], {CurrentTimeFunction(timestampType)})";
+			var dateDiff = $"DATEDIFF({token}, [Timestamp], {SqlServerHelpers.CurrentTimeFunction(timestampType)})";
 			terms.Add(($"{dateDiff}<={ageValue}", $"At most {ageValue} {token} ago"));
 		}
 
