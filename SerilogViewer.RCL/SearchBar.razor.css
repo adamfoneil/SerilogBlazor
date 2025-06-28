@@ -1,0 +1,44 @@
+.search-container {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 16px;
+}
+
+.search-input {
+    flex: 1;
+}
+
+.paging-controls {
+    display: flex;
+    gap: 4px;
+}
+
+.paging-button {
+    min-width: 32px;
+    height: 32px;
+    padding: 4px 8px;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    background-color: #fff;
+    color: #495057;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    font-size: 14px;
+}
+
+.paging-button:hover:not(:disabled) {
+    background-color: #e9ecef;
+    border-color: #adb5bd;
+}
+
+.paging-button:disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
+    background-color: #e9ecef;
+}
+
+.paging-button:focus {
+    outline: 0;
+    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+}

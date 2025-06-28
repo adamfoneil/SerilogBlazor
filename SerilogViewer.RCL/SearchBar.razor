@@ -1,10 +1,11 @@
 @inject SerilogQuery Query
 
-<div>	
-	<input type="text" @bind-value="searchText" @bind-value:after="OnSearchTextChanged" placeholder="Search..." class="form-control" />
+<div class="search-container">	
+	<input type="text" @bind-value="searchText" @bind-value:after="OnSearchTextChanged" placeholder="Search..." class="form-control search-input" />
 
-	<div>
-		<!--prev/next paging controls-->
+	<div class="paging-controls">
+		<button type="button" class="paging-button" @onclick="PreviousPage" disabled="@(page == 0)">‹</button>
+		<button type="button" class="paging-button" @onclick="NextPage">›</button>
 	</div>
 </div>
 
@@ -54,6 +55,27 @@
 	public EventCallback<IEnumerable<SerilogEntry>> SearchExecuted { get; set; }
 
 	private async Task OnSearchTextChanged()
+	{
+		page = 0; // Reset to first page when search text changes
+		await ExecuteSearch();
+	}
+
+	private async Task PreviousPage()
+	{
+		if (page > 0)
+		{
+			page--;
+			await ExecuteSearch();
+		}
+	}
+
+	private async Task NextPage()
+	{
+		page++;
+		await ExecuteSearch();
+	}
+
+	private async Task ExecuteSearch()
 	{
 		(criteria, searchTerms) = Query.ParseCriteria(searchText);
 		var results = await Query.ExecuteAsync(criteria, page * pageSize, pageSize);
