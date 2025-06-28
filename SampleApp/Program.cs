@@ -22,15 +22,13 @@ Log.Logger = logLevels
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddSingleton(logLevels);
-
 builder.Host.UseSerilog();
 
 // Add services to the container.
 builder.Services.AddRazorComponents()
 	.AddInteractiveServerComponents();
 
-builder.Services.AddSerilogQuery(AppDbContextFactory.ConnectionString, "log", "Serilog", TimestampType.Local);
+builder.Services.AddSerilogUtilities(AppDbContextFactory.ConnectionString, logLevels, "log", "Serilog", TimestampType.Local);
 
 builder.Services.AddSerilogCleanup(new() 
 { 

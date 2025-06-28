@@ -9,9 +9,20 @@ namespace SerilogViewer.SqlServer;
 
 public static class StartupExtensions
 {
-	public static void AddSerilogQuery(this IServiceCollection services, string connectionString, string schemaName = "dbo", string tableName = "Serilog", TimestampType timestampType = TimestampType.Utc)
+	public static void AddSerilogUtilities(this IServiceCollection services, 
+		string connectionString, LogLevels logLevels, 
+		string schemaName = "dbo", string tableName = "Serilog", TimestampType timestampType = TimestampType.Utc)
 	{
+		services.AddSingleton(logLevels);
 		services.AddSingleton<LoggingRequestIdProvider>();
+
+		services.AddSingleton<SerilogSourceContextMetricsQuery>(sp =>
+			new SerilogSqlServerSourceContextMetricsQuery(
+				timestampType,
+				sp.GetRequiredService<ILogger<SerilogSqlServerSourceContextMetricsQuery>>(),
+				sp.GetRequiredService<LoggingRequestIdProvider>(),
+				connectionString, schemaName, tableName
+		));
 
 		services.AddSingleton<SerilogQuery>(sp =>
 			new SerilogSqlServerQuery(				
