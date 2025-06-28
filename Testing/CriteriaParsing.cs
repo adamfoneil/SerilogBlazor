@@ -43,6 +43,15 @@ public class CriteriaParsing
 	}
 
 	[TestMethod]
+	public void RequestIdWithMessage()
+	{
+		var input = "#abc-123 with message";
+		var output = SerilogQuery.Criteria.ParseExpression(input);
+		Assert.AreEqual("abc-123", output.RequestId);
+		Assert.AreEqual("with message", output.Message);
+	}
+
+	[TestMethod]
 	public void ExceptionText()
 	{
 		var input = "!NullReferenceException \"dandy warhols\"";
