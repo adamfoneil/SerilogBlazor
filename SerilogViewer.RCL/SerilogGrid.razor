@@ -19,7 +19,14 @@
                 @entry.Timestamp.ToString("yyyy-MM-dd HH:mm:ss") - @entry.AgeText
             </div>
             <div class="data-cell">@entry.SourceContext</div>
-            <div class="data-cell">@entry.RequestId</div>
+            <div class="data-cell">
+                @if (!string.IsNullOrWhiteSpace(entry.RequestId))
+                {
+                    <button class="request-id-button" @onclick="@(() => OnRequestIdClicked(entry.RequestId))">
+                        @entry.RequestId
+                    </button>
+                }
+            </div>
             <div class="data-cell level-@entry.Level.ToLower()">@entry.Level</div>            
             <div class="data-cell">@entry.Message</div>            
             <div class="data-cell expand-cell">
@@ -60,6 +67,7 @@
 
 @code {
     [Parameter] public IEnumerable<SerilogEntry> Entries { get; set; } = [];
+    [Parameter] public EventCallback<string> RequestIdClicked { get; set; }
     
     private HashSet<int> expandedRows = new();
     
@@ -73,5 +81,10 @@
         {
             expandedRows.Add(entryId);
         }
+    }
+
+    private async Task OnRequestIdClicked(string requestId)
+    {
+        await RequestIdClicked.InvokeAsync(requestId);
     }
 }
