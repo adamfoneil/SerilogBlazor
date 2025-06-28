@@ -21,6 +21,7 @@ public abstract class SerilogQuery
 	{
 		public DateTime? FromTimestamp { get; set; }
 		public DateTime? ToTimestamp { get; set; }
+		public TimeSpan? Age { get; set; }
 		public string? SourceContext { get; set; }
 		public string? RequestId { get; set; }
 		public string? Level { get; set; }
@@ -28,5 +29,19 @@ public abstract class SerilogQuery
 		public string? Exception { get; set; }
 		public HashSet<string> HasProperties { get; set; } = [];
 		public Dictionary<string, object> HassPropertyValues { get; set; } = [];
+
+		public static Criteria ParseExpression(string input)
+		{
+			/*
+			 [{string}] = SourceContext (assume wildcards around it)
+			 @{string} = Level (can be partial like "warn" "info" or "err")
+			 #{string} = RequestId
+			 -{string} = age expression (e.g., -7d for up to 7 days ago, or -30m for up to 30 minutes ago), supported types: d, h, hr, m
+			!{string} = exception text
+			{string} = anything not punctuated is assumed to be a message search term
+			*/
+
+			throw new NotImplementedException();
+		}
 	}	
 }
