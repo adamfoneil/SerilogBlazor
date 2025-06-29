@@ -9,5 +9,5 @@
 .source-context-grid {
 	margin-left:30px;
 	display: grid;
-	grid-template-columns: auto auto auto auto;
+	grid-template-columns: auto auto auto auto auto;
 }
