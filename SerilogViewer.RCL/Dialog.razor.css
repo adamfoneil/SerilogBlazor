@@ -6,6 +6,8 @@ dialog {
     background-color: #ffffff;
     max-width: 90vw;
     max-height: 90vh;
+    display: flex;
+    flex-direction: column;
 }
 
 dialog::backdrop {
