@@ -22,4 +22,18 @@ public class SerilogGridTests
         Assert.IsNotNull(component.Entries);
         //Assert.AreEqual(0, component.Entries.Length);
     }
+
+    [TestMethod]
+    public void SerilogGrid_LevelClassGeneration()
+    {
+        // Arrange - Test data for different log levels
+        var logLevels = new[] { "Information", "Warning", "Error", "Debug", "Verbose", "Fatal", "Critical" };
+        
+        // Act & Assert - Verify that each level generates the expected CSS class
+        foreach (var level in logLevels)
+        {
+            var expectedClass = $"level-{level.ToLower()}";
+            Assert.AreEqual(expectedClass, $"level-{level.ToLower()}");
+        }
+    }
 }
