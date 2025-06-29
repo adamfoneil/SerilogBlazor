@@ -19,7 +19,9 @@ Following is a list of logging pain points and how this project addresses them.
   ![image](https://github.com/user-attachments/assets/aa45b46f-0fe3-4814-ab36-f097ca1f9c5a)
 
   You can see which levels are in effect on which namespaces via the [SourceContextFilter](https://github.com/adamfoneil/SerilogViewer/blob/e83c1c5927c03bc47f8a0eecc70d097eaf513f23/SerilogViewer.RCL/SourceContextFilter.razor#L26).
-  Todo: screenshot
+  
+  ![image](https://github.com/user-attachments/assets/953c275c-a31f-440a-9e34-0597fad0c79d)
+
 </details>
 
 <details>
