@@ -1,20 +1,20 @@
-@if (!Visible) return;
-
-<dialog>
+<dialog @ref="dialogElement" style="width: @Width; height: @Height;">
 	<div class="dialog-header">
 		<div>@Title</div>
-		<button type="button" class="close-button" onclick="this.closest('dialog').close();">×</button>
+		<button type="button" class="close-button" @onclick="CloseDialog">Ã—</button>
 	</div>
-	<div>
+	<div class="dialog-content">
 		@ChildContent
 	</div>	
 	<div class="dialog-footer">
-		<button type="button">OK</button>
-		<button type="button" onclick="this.closest('dialog').close();">Cancel</button>
+		<button type="button" class="dialog-button primary" @onclick="OnOKClicked">OK</button>
+		<button type="button" class="dialog-button" @onclick="CloseDialog">Cancel</button>
 	</div>
 </dialog>
 
 @code {
+	private ElementReference dialogElement;
+
 	[Parameter]
 	public bool Visible { get; set; } = false;
 
@@ -35,4 +35,40 @@
 
 	[Parameter]
 	public EventCallback ClickedOK { get; set; }
+
+	[Inject]
+	private IJSRuntime JSRuntime { get; set; } = default!;
+
+	protected override async Task OnParametersSetAsync()
+	{
+		if (Visible)
+		{
+			await ShowDialog();
+		}
+		else
+		{
+			await HideDialog();
+		}
+	}
+
+	private async Task ShowDialog()
+	{
+		await JSRuntime.InvokeVoidAsync("showDialog", dialogElement);
+	}
+
+	private async Task HideDialog()
+	{
+		await JSRuntime.InvokeVoidAsync("hideDialog", dialogElement);
+	}
+
+	private async Task CloseDialog()
+	{
+		await VisibleChanged.InvokeAsync(false);
+	}
+
+	private async Task OnOKClicked()
+	{
+		await ClickedOK.InvokeAsync();
+		await CloseDialog();
+	}
 }
