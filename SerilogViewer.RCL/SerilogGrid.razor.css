@@ -1,3 +1,5 @@
+/* Level colors directly defined to avoid CSS scoping issues */
+
 .serilog-grid {
 	width: 100%;
 	font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -71,6 +73,14 @@
 
 .level-verbose {
 	color: #8e8e93;
+}
+
+.level-fatal {
+	color: #ff3b30;
+}
+
+.level-critical {
+	color: #ff3b30;
 }
 
 .expand-cell {

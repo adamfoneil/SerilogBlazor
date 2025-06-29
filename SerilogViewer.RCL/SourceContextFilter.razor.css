@@ -1,3 +1,5 @@
+/* Level colors directly defined to avoid CSS scoping issues */
+
 .level-group-key {
 	font-weight:bold
 }
@@ -10,4 +12,66 @@
 	margin-left:30px;
 	display: grid;
 	grid-template-columns: auto auto auto auto auto;
+}
+
+/* Level heading styling with badges */
+.level-group summary {
+	cursor: pointer;
+	font-weight: 600;
+	padding: 8px 0;
+	display: flex;
+	align-items: center;
+	gap: 8px;
+}
+
+.level-group summary:hover {
+	opacity: 0.8;
+}
+
+.level-heading-badge {
+	display: inline-block;
+	padding: 4px 12px;
+	border-radius: 16px;
+	font-size: 11px;
+	font-weight: 700;
+	text-transform: uppercase;
+	letter-spacing: 0.5px;
+	min-width: 80px;
+	text-align: center;
+}
+
+/* Level-specific badge styles */
+.level-heading-badge.level-information {
+    color: #0c84ff;
+    background-color: #e7f3ff;
+}
+
+.level-heading-badge.level-warning {
+    color: #ff9500;
+    background-color: #fff3e0;
+}
+
+.level-heading-badge.level-error {
+    color: #ff3b30;
+    background-color: #ffebee;
+}
+
+.level-heading-badge.level-debug {
+    color: #8e8e93;
+    background-color: #f5f5f5;
+}
+
+.level-heading-badge.level-verbose {
+    color: #8e8e93;
+    background-color: #f5f5f5;
+}
+
+.level-heading-badge.level-fatal {
+    color: #ff3b30;
+    background-color: #ffebee;
+}
+
+.level-heading-badge.level-critical {
+    color: #ff3b30;
+    background-color: #ffebee;
 }

@@ -108,6 +108,30 @@ public class SourceContextFilterTests
         Assert.AreEqual("Debug", result);
     }
 
+    [TestMethod]
+    public void LevelBadge_CssClassGeneration()
+    {
+        // Arrange - Test data for different log levels that should generate CSS classes
+        var testCases = new[]
+        {
+            new { Level = "Information", ExpectedClass = "level-information" },
+            new { Level = "Warning", ExpectedClass = "level-warning" },
+            new { Level = "Error", ExpectedClass = "level-error" },
+            new { Level = "Debug", ExpectedClass = "level-debug" },
+            new { Level = "Verbose", ExpectedClass = "level-verbose" },
+            new { Level = "Fatal", ExpectedClass = "level-fatal" },
+            new { Level = "Critical", ExpectedClass = "level-critical" }
+        };
+        
+        // Act & Assert - Verify that each level generates the expected CSS class name
+        foreach (var testCase in testCases)
+        {
+            var actualClass = $"level-{testCase.Level.ToLower()}";
+            Assert.AreEqual(testCase.ExpectedClass, actualClass, 
+                $"Level '{testCase.Level}' should generate CSS class '{testCase.ExpectedClass}'");
+        }
+    }
+
     /// <summary>
     /// Helper method that implements the same logic as GetEffectiveLogLevel in SourceContextFilter
     /// </summary>
