@@ -9,7 +9,7 @@ namespace SerilogViewer.Abstractions;
 /// </summary>
 public abstract class LogLevels
 {
-	public abstract Dictionary<string, LogEventLevel> LoggingLevels { get; }
+	public abstract Dictionary<string, LoggingLevelSwitch> LoggingLevels { get; }
 
 	public LoggerConfiguration GetConfiguration(LogEventLevel minimumLevel = LogEventLevel.Information)
 	{
@@ -18,7 +18,7 @@ public abstract class LogLevels
 
 		foreach (var kp in LoggingLevels)
 		{
-			loggerConfig = loggerConfig.MinimumLevel.Override(kp.Key, new LoggingLevelSwitch(kp.Value));
+			loggerConfig = loggerConfig.MinimumLevel.Override(kp.Key, kp.Value);
 		}
 
 		return loggerConfig;

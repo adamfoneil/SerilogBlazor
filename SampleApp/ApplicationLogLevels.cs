@@ -1,15 +1,16 @@
-﻿using Serilog.Events;
+﻿using Serilog.Core;
+using Serilog.Events;
 using SerilogViewer.Abstractions;
 
 namespace SampleApp;
 
 public class ApplicationLogLevels : LogLevels
 {
-	public override Dictionary<string, LogEventLevel> LoggingLevels => new()
+	public override Dictionary<string, LoggingLevelSwitch> LoggingLevels => new()
 	{
-		["System"] = LogEventLevel.Warning,
-		["Microsoft"] = LogEventLevel.Warning,
-		["SampleApp"] = LogEventLevel.Debug,
-		["SerilogViewer.SqlServer"] = LogEventLevel.Debug
+		["System"] = new(LogEventLevel.Warning),
+		["Microsoft"] = new(LogEventLevel.Warning),
+		["SampleApp"] = new(LogEventLevel.Debug),
+		["SerilogViewer.SqlServer"] = new(LogEventLevel.Debug)
 	};
 }
