@@ -8,6 +8,18 @@ Following is a list of logging pain points and how this project addresses them.
 
 <details>
   <summary>Unexpected log levels</summary>
+  
+  Over the years, I've had a hard time getting log levels and namespaces right -- that is, getting the desired level of logging at the right places in my code. Also, I didn't know there was a way to change levels at runtime without restarting my apps.
+
+  This project does these things:
+  - Offers the [LogLevels](https://github.com/adamfoneil/SerilogViewer/blob/master/SerilogViewer.Abstractions/LogLevels.cs) abstract class.
+  - Implement this in your project to define your default logging levels by namespace prefix. Sample implementation is [ApplicationLogLevels](https://github.com/adamfoneil/SerilogViewer/blob/master/SampleApp/ApplicationLogLevels.cs).
+  - Configure levels at runtime via the [LevelToggle](https://github.com/adamfoneil/SerilogViewer/blob/master/SerilogViewer.RCL/LevelToggle.razor) component
+  
+  ![image](https://github.com/user-attachments/assets/aa45b46f-0fe3-4814-ab36-f097ca1f9c5a)
+
+  You can see which levels are in effect on which namespaces via the [SourceContextFilter](https://github.com/adamfoneil/SerilogViewer/blob/e83c1c5927c03bc47f8a0eecc70d097eaf513f23/SerilogViewer.RCL/SourceContextFilter.razor#L26).
+  Todo: screenshot
 </details>
 
 <details>
