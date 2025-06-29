@@ -1,3 +1,23 @@
+/* CSS variables for Serilog levels - shared between components */
+:root {
+    --level-information-color: #0c84ff;
+    --level-warning-color: #ff9500;
+    --level-error-color: #ff3b30;
+    --level-debug-color: #8e8e93;
+    --level-verbose-color: #8e8e93;
+    --level-fatal-color: #ff3b30;
+    --level-critical-color: #ff3b30;
+    
+    /* Badge background colors with lighter tints */
+    --level-information-bg: #e7f3ff;
+    --level-warning-bg: #fff3e0;
+    --level-error-bg: #ffebee;
+    --level-debug-bg: #f5f5f5;
+    --level-verbose-bg: #f5f5f5;
+    --level-fatal-bg: #ffebee;
+    --level-critical-bg: #ffebee;
+}
+
 .level-group-key {
 	font-weight:bold
 }
@@ -10,4 +30,66 @@
 	margin-left:30px;
 	display: grid;
 	grid-template-columns: auto auto auto auto auto;
+}
+
+/* Level heading styling with badges */
+.level-group summary {
+	cursor: pointer;
+	font-weight: 600;
+	padding: 8px 0;
+	display: flex;
+	align-items: center;
+	gap: 8px;
+}
+
+.level-group summary:hover {
+	opacity: 0.8;
+}
+
+.level-heading-badge {
+	display: inline-block;
+	padding: 4px 12px;
+	border-radius: 16px;
+	font-size: 11px;
+	font-weight: 700;
+	text-transform: uppercase;
+	letter-spacing: 0.5px;
+	min-width: 80px;
+	text-align: center;
+}
+
+/* Level-specific badge styles */
+.level-heading-badge.level-information {
+    color: var(--level-information-color);
+    background-color: var(--level-information-bg);
+}
+
+.level-heading-badge.level-warning {
+    color: var(--level-warning-color);
+    background-color: var(--level-warning-bg);
+}
+
+.level-heading-badge.level-error {
+    color: var(--level-error-color);
+    background-color: var(--level-error-bg);
+}
+
+.level-heading-badge.level-debug {
+    color: var(--level-debug-color);
+    background-color: var(--level-debug-bg);
+}
+
+.level-heading-badge.level-verbose {
+    color: var(--level-verbose-color);
+    background-color: var(--level-verbose-bg);
+}
+
+.level-heading-badge.level-fatal {
+    color: var(--level-fatal-color);
+    background-color: var(--level-fatal-bg);
+}
+
+.level-heading-badge.level-critical {
+    color: var(--level-critical-color);
+    background-color: var(--level-critical-bg);
 }
