@@ -10,6 +10,7 @@
 
 <hr />
 
+<LevelToggle />
 <SourceContextFilter TDbContext="ApplicationDbContext" />
 <SearchBar @ref="searchBar" @rendermode="InteractiveServer" SearchExecuted="OnSearchExecuted" />
 <SerilogGrid Entries="@entries" RequestIdClicked="OnRequestIdClicked" @rendermode="InteractiveServer" />

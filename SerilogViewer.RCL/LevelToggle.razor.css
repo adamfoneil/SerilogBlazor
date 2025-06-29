@@ -1,0 +1,4 @@
+.namespace-grid {
+	display:grid;
+	grid-template-columns: min-content min-content
+}

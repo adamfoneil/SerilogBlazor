@@ -1,0 +1,18 @@
+@using Microsoft.AspNetCore.Components.Forms
+@using Serilog.Events
+@inject LogLevels LogLevels
+
+<div class="namespace-grid">	
+	@foreach (var kp in LogLevels.LoggingLevels)
+	{
+		<div>@kp.Key</div>
+		<div>
+			<InputSelect TValue="LogEventLevel" @bind-Value="kp.Value.MinimumLevel">
+				@foreach (var option in Enum.GetValues<LogEventLevel>())
+				{
+					<option value="option">@option</option>
+				}
+			</InputSelect>
+		</div>
+	}
+</div>
