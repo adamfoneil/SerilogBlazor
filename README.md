@@ -27,7 +27,7 @@ Following is a list of logging pain points and how this project addresses them.
 </details>
 
 <details>
-  <summary>Stack traces have too much info, are hard to make sense of</summary>
+  <summary>Stack traces are too hard to read</summary>
 </details>
 
 I'd like a log view that helps focus my attention on distinct issues. There's still a place for the traditional scrolling table view, but one thing I want to do here is to improve upon this classic view with a card view of distinct recurring issues.
