@@ -9,12 +9,12 @@
 	{
 		<div class="level-group">
 			<details>
-				<summary>@levelGrp.Key</summary>
+				<summary>@levelGrp.Key (@levelGrp.Count())</summary>
 				<div class="level-group-body">
 					@foreach (var metricGrp in levelGrp.GroupBy(row => GetNamespaceRoot(row.SourceContext)))
 					{
 						<details>
-							<summary>@metricGrp.Key</summary>
+							<summary>@metricGrp.Key (@metricGrp.Count())</summary>
 							<div class="source-context-grid">
 								@foreach (var item in metricGrp)
 								{
