@@ -10,15 +10,16 @@
 
 <hr />
 
-<LevelToggle />
+<LevelToggle OnLogLevelsChanged="OnLogLevelsChanged" />
 <hr />
-<SourceContextFilter TDbContext="ApplicationDbContext" />
+<SourceContextFilter @ref="sourceContextFilter" TDbContext="ApplicationDbContext" />
 <SearchBar @ref="searchBar" @rendermode="InteractiveServer" SearchExecuted="OnSearchExecuted" />
 <SerilogGrid Entries="@entries" RequestIdClicked="OnRequestIdClicked" @rendermode="InteractiveServer" />
 
 @code {
 	private IEnumerable<SerilogEntry> entries = [];
 	private SearchBar? searchBar;
+	private SourceContextFilter<ApplicationDbContext>? sourceContextFilter;
 
 	private void LogThis()
 	{
@@ -48,6 +49,14 @@
 		if (searchBar is not null)
 		{
 			await searchBar.AddRequestId(requestId);
+		}
+	}
+
+	private async Task OnLogLevelsChanged()
+	{
+		if (sourceContextFilter is not null)
+		{
+			await sourceContextFilter.RefreshAsync();
 		}
 	}
 }
