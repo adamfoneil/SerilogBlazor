@@ -3,6 +3,7 @@
 @inject SerilogSourceContextMetricsQuery Query
 @typeparam TDbContext where TDbContext : DbContext, ISourceContextViewState
 @inject IDbContextFactory<TDbContext> DbFactory
+@inject LogLevels LogLevels
 
 <div>
 	@foreach (var levelGrp in metricsResults.GroupBy(row => row.Level))
