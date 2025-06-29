@@ -10,7 +10,7 @@
 			<InputSelect TValue="LogEventLevel" @bind-Value="kp.Value.MinimumLevel">
 				@foreach (var option in Enum.GetValues<LogEventLevel>())
 				{
-					<option value="option">@option</option>
+					<option value="@option">@option</option>
 				}
 			</InputSelect>
 		</div>
