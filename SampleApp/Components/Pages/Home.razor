@@ -10,9 +10,15 @@
 
 <hr />
 
+<button @onclick="() => showDialog = true">Open Dialog</button>
+
+<Dialog Title="Sample Dialog" @bind-Visible="showDialog">
+	<SourceContextFilter @ref="sourceContextFilter" />
+</Dialog>
+
 <LevelToggle OnLogLevelsChanged="OnLogLevelsChanged" />
 <hr />
-<SourceContextFilter @ref="sourceContextFilter" TDbContext="ApplicationDbContext" />
+
 <SearchBar @ref="searchBar" @rendermode="InteractiveServer" SearchExecuted="OnSearchExecuted" />
 <SerilogGrid Entries="@entries" RequestIdClicked="OnRequestIdClicked" @rendermode="InteractiveServer" />
 
@@ -20,6 +26,7 @@
 	private IEnumerable<SerilogEntry> entries = [];
 	private SearchBar? searchBar;
 	private SourceContextFilter? sourceContextFilter;
+	private bool showDialog;
 
 	private void LogThis()
 	{

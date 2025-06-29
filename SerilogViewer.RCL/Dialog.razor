@@ -1,3 +1,5 @@
+@if (!Visible) return;
+
 <dialog>
 	<div class="dialog-header">
 		<div>@Title</div>
@@ -13,6 +15,12 @@
 </dialog>
 
 @code {
+	[Parameter]
+	public bool Visible { get; set; } = false;
+
+	[Parameter]
+	public EventCallback<bool> VisibleChanged { get; set; }
+
 	[Parameter]
 	public string Title { get; set; } = "Dialog Title";
 
