@@ -1,22 +1,4 @@
-/* CSS variables for Serilog levels - shared between components */
-:root {
-    --level-information-color: #0c84ff;
-    --level-warning-color: #ff9500;
-    --level-error-color: #ff3b30;
-    --level-debug-color: #8e8e93;
-    --level-verbose-color: #8e8e93;
-    --level-fatal-color: #ff3b30;
-    --level-critical-color: #ff3b30;
-    
-    /* Badge background colors with lighter tints */
-    --level-information-bg: #e7f3ff;
-    --level-warning-bg: #fff3e0;
-    --level-error-bg: #ffebee;
-    --level-debug-bg: #f5f5f5;
-    --level-verbose-bg: #f5f5f5;
-    --level-fatal-bg: #ffebee;
-    --level-critical-bg: #ffebee;
-}
+/* Level colors directly defined to avoid CSS scoping issues */
 
 .serilog-grid {
 	width: 100%;
@@ -74,31 +56,31 @@
 }
 
 .level-information {
-	color: var(--level-information-color);
+	color: #0c84ff;
 }
 
 .level-warning {
-	color: var(--level-warning-color);
+	color: #ff9500;
 }
 
 .level-error {
-	color: var(--level-error-color);
+	color: #ff3b30;
 }
 
 .level-debug {
-	color: var(--level-debug-color);
+	color: #8e8e93;
 }
 
 .level-verbose {
-	color: var(--level-verbose-color);
+	color: #8e8e93;
 }
 
 .level-fatal {
-	color: var(--level-fatal-color);
+	color: #ff3b30;
 }
 
 .level-critical {
-	color: var(--level-critical-color);
+	color: #ff3b30;
 }
 
 .expand-cell {
