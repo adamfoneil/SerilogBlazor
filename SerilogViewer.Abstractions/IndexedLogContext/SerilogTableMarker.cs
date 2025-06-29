@@ -21,6 +21,7 @@ public class SerilogTableMarkerConfiguration : IEntityTypeConfiguration<SerilogT
 {
 	public void Configure(EntityTypeBuilder<SerilogTableMarker> builder)
 	{
+		builder.ToTable("SerilogTableMarker", "serilog");
 		builder.Property(e => e.SchemaName).HasMaxLength(128).IsRequired();
 		builder.Property(e => e.TableName).HasMaxLength(255).IsRequired();
 		builder.HasIndex(builder => new { builder.SchemaName, builder.TableName }).IsUnique();

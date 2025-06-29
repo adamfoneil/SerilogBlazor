@@ -1,8 +1,5 @@
 @using Microsoft.EntityFrameworkCore
-@using SerilogViewer.Abstractions.SourceContextView
 @inject SerilogSourceContextMetricsQuery Query
-@typeparam TDbContext where TDbContext : DbContext, ISourceContextViewState
-@inject IDbContextFactory<TDbContext> DbFactory
 @inject LogLevels LogLevels
 
 <div>
@@ -21,11 +18,10 @@
 							<summary>@metricGrp.Key (@metricGrp.Count())</summary>
 							<div class="source-context-grid">
 								@foreach (var item in metricGrp)
-								{
+								{									
 									<div>@item.SourceContext</div>
 									<div>@item.Count</div>
-									<div>@item.LatestTimestamp - @item.AgeText</div>
-									<div>@item.IsVisible</div>
+									<div>@item.LatestTimestamp - @item.AgeText</div>									
 									<div>@GetEffectiveLogLevel(item.SourceContext)</div>
 								}
 							</div>
@@ -55,15 +51,7 @@
 
 	private async Task Refresh()
 	{
-		metricsResults = await Query.ExecuteAsync();
-		
-		using var db = DbFactory.CreateDbContext();
-		var userSettings = await db.SourceContexts.Where(row => row.UserName == UserName).ToListAsync();
-
-		foreach (var item in metricsResults.Join(userSettings, m => (m.Level, m.SourceContext), us => (us.Level, us.SourceContext), (metric, setting) => new { Metric = metric, Setting = setting }))
-		{
-			item.Metric.IsVisible = item.Setting.IsVisible;
-		}
+		metricsResults = await Query.ExecuteAsync();	
 	}
 
 	public async Task RefreshAsync()
