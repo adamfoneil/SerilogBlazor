@@ -7,7 +7,7 @@
 	{
 		<div style="padding-right:1rem">@kp.Key</div>
 		<div>
-			<InputSelect TValue="LogEventLevel" @bind-Value="kp.Value.MinimumLevel">
+			<InputSelect TValue="LogEventLevel" @bind-Value="kp.Value.MinimumLevel" @bind-Value:after="OnLogLevelChanged">
 				@foreach (var option in Enum.GetValues<LogEventLevel>())
 				{
 					<option value="@option">@option</option>
@@ -16,3 +16,12 @@
 		</div>
 	}
 </div>
+
+@code {
+	[Parameter] public EventCallback OnLogLevelsChanged { get; set; }
+
+	private async Task OnLogLevelChanged()
+	{
+		await OnLogLevelsChanged.InvokeAsync();
+	}
+}

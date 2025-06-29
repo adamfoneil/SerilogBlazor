@@ -7,14 +7,16 @@ namespace SerilogViewer.Abstractions;
 /// <summary>
 /// Define logging levels for different namespaces that can be toggled at runtime
 /// </summary>
-public abstract class LogLevels
+public abstract class LogLevels(LogEventLevel defaultMinLevel = LogEventLevel.Information)
 {
 	public abstract Dictionary<string, LoggingLevelSwitch> LoggingLevels { get; }
 
-	public LoggerConfiguration GetConfiguration(LogEventLevel minimumLevel = LogEventLevel.Information)
+	public readonly LogEventLevel DefaultLevel = defaultMinLevel;
+
+	public LoggerConfiguration GetConfiguration()
 	{
 		var loggerConfig = new LoggerConfiguration()
-			.MinimumLevel.ControlledBy(new LoggingLevelSwitch(minimumLevel));
+			.MinimumLevel.ControlledBy(new LoggingLevelSwitch(DefaultLevel));
 
 		foreach (var kp in LoggingLevels)
 		{
