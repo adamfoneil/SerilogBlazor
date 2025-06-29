@@ -1,3 +1,4 @@
+@using Microsoft.JSInterop
 <dialog @ref="dialogElement" style="width: @Width; height: @Height;">
 	<div class="dialog-header">
 		<div>@Title</div>
@@ -58,7 +59,14 @@
 
 	private async Task HideDialog()
 	{
-		await JSRuntime.InvokeVoidAsync("hideDialog", dialogElement);
+		try
+		{
+			await JSRuntime.InvokeVoidAsync("hideDialog", dialogElement);
+		}
+		catch
+		{
+			// ignore
+		}		
 	}
 
 	private async Task CloseDialog()
