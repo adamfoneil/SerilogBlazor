@@ -1,4 +1,7 @@
 @using Microsoft.JSInterop
+
+@if (!Visible) return;
+
 <dialog @ref="dialogElement" style="width: @Width; height: @Height;">
 	<div class="dialog-header">
 		<div>@Title</div>
