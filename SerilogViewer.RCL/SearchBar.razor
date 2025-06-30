@@ -1,4 +1,8 @@
+@using Microsoft.EntityFrameworkCore
+@using SerilogViewer.Abstractions.SavedSearches
+@typeparam TDbContext where TDbContext : DbContext, ISerilogSavedSearches
 @inject SerilogQuery Query
+@inject IDbContextFactory<TDbContext> DbFactory
 
 <div class="search-container">	
 	<input type="text" @bind-value="searchText" @bind-value:after="OnSearchTextChanged" placeholder="Search..." class="form-control search-input" />
@@ -8,6 +12,10 @@
 		<button type="button" class="paging-button" @onclick="NextPage" disabled="@(!hasMoreResults)">›</button>
 	</div>
 </div>
+
+<details>
+	<summary>Saved Searches</summary>
+</details>
 
 @if (searchTerms.Any())
 {
@@ -47,8 +55,12 @@
 	private SerilogQuery.Criteria? criteria;
 	private int page = 0;
 	private bool hasMoreResults = true;
+	private SerilogSavedSearch[] savedSearches = [];
 
 	const int pageSize = 50;
+
+	[Parameter]
+	public string UserName { get; set; } = string.Empty; // Set this from the authenticated user context
 
 	[Parameter]
 	public EventCallback<string> SearchTextChanged { get; set; }
@@ -61,6 +73,12 @@
 		page = 0; // Reset to first page when search text changes
 		hasMoreResults = true; // Reset this flag when search changes
 		await ExecuteSearch();
+	}
+
+	protected override async Task OnInitializedAsync()
+	{
+		using var db = DbFactory.CreateDbContext();
+		savedSearches = await db.SerilogSavedSearches.Where(row => row.UserName == this.UserName).ToArrayAsync();
 	}
 
 	private async Task PreviousPage()

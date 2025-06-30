@@ -19,12 +19,12 @@
 <LevelToggle OnLogLevelsChanged="OnLogLevelsChanged" />
 <hr />
 
-<SearchBar @ref="searchBar" @rendermode="InteractiveServer" SearchExecuted="OnSearchExecuted" />
+<SearchBar TDbContext="ApplicationDbContext" @ref="searchBar" @rendermode="InteractiveServer" SearchExecuted="OnSearchExecuted" />
 <SerilogGrid Entries="@entries" RequestIdClicked="OnRequestIdClicked" @rendermode="InteractiveServer" />
 
 @code {
 	private IEnumerable<SerilogEntry> entries = [];
-	private SearchBar? searchBar;
+	private SearchBar<ApplicationDbContext>? searchBar;
 	private SourceContextFilter? sourceContextFilter;
 	private bool showDialog;
 
