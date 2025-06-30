@@ -8,6 +8,7 @@
 	<input type="text" @bind-value="searchText" @bind-value:after="OnSearchTextChanged" placeholder="Search..." class="form-control search-input" />
 
 	<div class="paging-controls">
+		@*save search button here -- should display dialog that prompts for search name*@
 		<button type="button" class="paging-button" @onclick="PreviousPage" disabled="@(page == 0)">‹</button>
 		<button type="button" class="paging-button" @onclick="NextPage" disabled="@(!hasMoreResults)">›</button>
 	</div>
@@ -15,6 +16,7 @@
 
 <details>
 	<summary>Saved Searches</summary>
+	@*list saved searches here, should be able to delete them*@
 </details>
 
 @if (searchTerms.Any())
