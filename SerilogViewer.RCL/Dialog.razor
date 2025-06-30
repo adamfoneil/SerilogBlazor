@@ -15,6 +15,7 @@
 
 @code {
 	private ElementReference dialogElement;
+	private bool previousVisible = false;
 
 	[Parameter]
 	public bool Visible { get; set; } = false;
@@ -40,15 +41,20 @@
 	[Inject]
 	private IJSRuntime JSRuntime { get; set; } = default!;
 
-	protected override async Task OnParametersSetAsync()
+	protected override async Task OnAfterRenderAsync(bool firstRender)
 	{
-		if (Visible)
+		// Only handle visibility changes after render when JavaScript interop is available
+		if (previousVisible != Visible)
 		{
-			await ShowDialog();
-		}
-		else
-		{
-			await HideDialog();
+			if (Visible)
+			{
+				await ShowDialog();
+			}
+			else
+			{
+				await HideDialog();
+			}
+			previousVisible = Visible;
 		}
 	}
 
@@ -59,14 +65,7 @@
 
 	private async Task HideDialog()
 	{
-		try
-		{
-			await JSRuntime.InvokeVoidAsync("hideDialog", dialogElement);
-		}
-		catch
-		{
-			// ignore
-		}		
+		await JSRuntime.InvokeVoidAsync("hideDialog", dialogElement);
 	}
 
 	private async Task CloseDialog()
