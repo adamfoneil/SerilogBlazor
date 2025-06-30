@@ -8,7 +8,7 @@
 	<input type="text" @bind-value="searchText" @bind-value:after="OnSearchTextChanged" placeholder="Search..." class="form-control search-input" />
 
 	<div class="paging-controls">
-		@*save search button here -- should display dialog that prompts for search name*@
+		<button type="button" class="paging-button" @onclick="ShowSaveDialog" disabled="@(string.IsNullOrWhiteSpace(searchText))" title="Save current search">💾</button>
 		<button type="button" class="paging-button" @onclick="PreviousPage" disabled="@(page == 0)">‹</button>
 		<button type="button" class="paging-button" @onclick="NextPage" disabled="@(!hasMoreResults)">›</button>
 	</div>
@@ -16,7 +16,24 @@
 
 <details>
 	<summary>Saved Searches</summary>
-	@*list saved searches here, should be able to delete them, also click on them to invoke*@
+	@if (savedSearches.Any())
+	{
+		<ul class="saved-searches-list">
+			@foreach (var search in savedSearches)
+			{
+				<li class="saved-search-item">
+					<button type="button" class="saved-search-button" @onclick="() => ExecuteSavedSearch(search)" title="Execute this search">
+						@search.SearchName
+					</button>
+					<button type="button" class="delete-search-button" @onclick="() => DeleteSavedSearch(search)" title="Delete this search">×</button>
+				</li>
+			}
+		</ul>
+	}
+	else
+	{
+		<p>No saved searches yet. Save your current search using the 💾 button above.</p>
+	}
 </details>
 
 @if (searchTerms.Any())
@@ -51,6 +68,17 @@
 	</ul>
 </details>
 
+<Dialog @bind-Visible="showSaveDialog" Title="Save Search" Width="400px" Height="200px" ClickedOK="SaveSearch">
+	<div class="save-search-form">
+		<label for="searchName">Search Name:</label>
+		<input type="text" id="searchName" @bind="newSearchName" @bind:event="oninput" placeholder="Enter a name for this search..." class="form-control" />
+		@if (!string.IsNullOrWhiteSpace(saveErrorMessage))
+		{
+			<div class="error-message">@saveErrorMessage</div>
+		}
+	</div>
+</Dialog>
+
 @code {
 	private string searchText = string.Empty;
 	private string[] searchTerms = [];
@@ -58,6 +86,9 @@
 	private int page = 0;
 	private bool hasMoreResults = true;
 	private SerilogSavedSearch[] savedSearches = [];
+	private bool showSaveDialog = false;
+	private string newSearchName = string.Empty;
+	private string saveErrorMessage = string.Empty;
 
 	const int pageSize = 50;
 
@@ -80,7 +111,10 @@
 	protected override async Task OnInitializedAsync()
 	{
 		using var db = DbFactory.CreateDbContext();
-		savedSearches = await db.SerilogSavedSearches.Where(row => row.UserName == this.UserName).ToArrayAsync();
+		savedSearches = await db.SerilogSavedSearches
+			.Where(row => row.UserName == this.UserName)
+			.OrderBy(s => s.SearchName)
+			.ToArrayAsync();
 	}
 
 	private async Task PreviousPage()
@@ -131,5 +165,95 @@
 		page = 0; // Reset to first page when search changes
 		hasMoreResults = true; // Reset this flag when search changes
 		await ExecuteSearch();
+	}
+
+	private void ShowSaveDialog()
+	{
+		newSearchName = string.Empty;
+		saveErrorMessage = string.Empty;
+		showSaveDialog = true;
+	}
+
+	private async Task SaveSearch()
+	{
+		if (string.IsNullOrWhiteSpace(newSearchName))
+		{
+			saveErrorMessage = "Please enter a search name.";
+			return;
+		}
+
+		if (string.IsNullOrWhiteSpace(searchText))
+		{
+			saveErrorMessage = "No search expression to save.";
+			return;
+		}
+
+		try
+		{
+			using var db = DbFactory.CreateDbContext();
+			
+			// Check if search name already exists for this user
+			var existingSearch = await db.SerilogSavedSearches
+				.FirstOrDefaultAsync(s => s.UserName == UserName && s.SearchName == newSearchName);
+			
+			if (existingSearch != null)
+			{
+				// Update existing search
+				existingSearch.Expression = searchText;
+				existingSearch.UpdatedAt = DateTime.UtcNow;
+			}
+			else
+			{
+				// Create new search
+				var newSearch = new SerilogSavedSearch
+				{
+					UserName = UserName,
+					SearchName = newSearchName,
+					Expression = searchText,
+					CreatedAt = DateTime.UtcNow
+				};
+				db.SerilogSavedSearches.Add(newSearch);
+			}
+
+			await db.SaveChangesAsync();
+			
+			// Refresh saved searches list
+			savedSearches = await db.SerilogSavedSearches
+				.Where(row => row.UserName == UserName)
+				.OrderBy(s => s.SearchName)
+				.ToArrayAsync();
+			
+			showSaveDialog = false;
+		}
+		catch (Exception ex)
+		{
+			saveErrorMessage = $"Error saving search: {ex.Message}";
+		}
+	}
+
+	private async Task ExecuteSavedSearch(SerilogSavedSearch savedSearch)
+	{
+		searchText = savedSearch.Expression;
+		page = 0;
+		hasMoreResults = true;
+		await ExecuteSearch();
+	}
+
+	private async Task DeleteSavedSearch(SerilogSavedSearch savedSearch)
+	{
+		try
+		{
+			using var db = DbFactory.CreateDbContext();
+			db.SerilogSavedSearches.Remove(savedSearch);
+			await db.SaveChangesAsync();
+			
+			// Refresh saved searches list
+			savedSearches = savedSearches.Where(s => s.Id != savedSearch.Id).ToArray();
+		}
+		catch
+		{
+			// In a real application, you might want to show this error to the user
+			// For now, we'll just ignore deletion errors
+		}
 	}
 }
