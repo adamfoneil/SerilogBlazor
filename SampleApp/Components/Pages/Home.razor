@@ -10,15 +10,10 @@
 
 <hr />
 
-<button @onclick="() => showDialog = true">Open Dialog</button>
-
-<Dialog Title="Source Contexts" @bind-Visible="showDialog" Width="700px">
-	<SourceContextFilter @ref="sourceContextFilter" />
-</Dialog>
-
 <LevelToggle OnLogLevelsChanged="OnLogLevelsChanged" />
 <hr />
 
+<SourceContextFilter @ref="sourceContextFilter" />
 <SearchBar TDbContext="ApplicationDbContext" @ref="searchBar" @rendermode="InteractiveServer" SearchExecuted="OnSearchExecuted" />
 <SerilogGrid Entries="@entries" RequestIdClicked="OnRequestIdClicked" @rendermode="InteractiveServer" />
 
