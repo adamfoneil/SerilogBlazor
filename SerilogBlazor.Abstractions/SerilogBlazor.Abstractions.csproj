@@ -4,7 +4,9 @@
     <TargetFramework>net9.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <RootNamespace>SerilogViewer.Abstractions</RootNamespace>
+    <RootNamespace>SerilogBlazor.Abstractions</RootNamespace>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <PackageId>Serilog.Blazor.Abstractions</PackageId>
   </PropertyGroup>
 
   <ItemGroup>
