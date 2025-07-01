@@ -16,11 +16,11 @@
 		<PackageReference Include="Serilog.Sinks.Console" Version="6.0.0" />
 		<PackageReference Include="Serilog.Sinks.MSSqlServer" Version="8.2.0" />
 	</ItemGroup>
-	
-  <ItemGroup>
-    <ProjectReference Include="..\SerilogViewer.Abstractions\SerilogViewer.Abstractions.csproj" />
-    <ProjectReference Include="..\SerilogViewer.RCL\SerilogViewer.RCL.csproj" />
-    <ProjectReference Include="..\SerilogViewer.SqlServer\SerilogViewer.SqlServer.csproj" />
-  </ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\SerilogBlazor.Abstractions\SerilogBlazor.Abstractions.csproj" />
+	  <ProjectReference Include="..\SerilogBlazor.RCL\SerilogBlazor.RCL.csproj" />
+	  <ProjectReference Include="..\SerilogBlazor.SqlServer\SerilogBlazor.SqlServer.csproj" />
+	</ItemGroup>
 
 </Project>

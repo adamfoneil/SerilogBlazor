@@ -1,6 +1,6 @@
 ﻿using Serilog.Core;
 using Serilog.Events;
-using SerilogViewer.Abstractions;
+using SerilogBlazor.Abstractions;
 
 namespace SampleApp;
 

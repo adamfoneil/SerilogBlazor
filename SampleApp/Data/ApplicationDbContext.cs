@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
-using SerilogViewer.Abstractions.IndexedLogContext;
-using SerilogViewer.Abstractions.SavedSearches;
+using SerilogBlazor.Abstractions.IndexedLogContext;
+using SerilogBlazor.Abstractions.SavedSearches;
 
 namespace SampleApp.Data;
 

@@ -1,0 +1,91 @@
+@using SerilogBlazor.Abstractions
+<div class="serilog-grid">
+    <!-- Header Row -->
+    <div class="serilog-grid-header">
+        <div class="header-cell">ID</div>
+        <div class="header-cell">Timestamp/Age</div>
+        <div class="header-cell">Source Context</div>
+        <div class="header-cell">Request ID</div>
+        <div class="header-cell">Level</div>        
+        <div class="header-cell">Message</div>
+        <div class="header-cell"></div>        
+    </div>
+
+    <!-- Data Rows -->
+    @foreach (var entry in Entries)
+    {
+        <div class="serilog-grid-row @(expandedRows.Contains(entry.Id) ? "expanded" : "")">
+            <div class="data-cell">@entry.Id</div>
+            <div class="data-cell">
+                @entry.Timestamp.ToString("yyyy-MM-dd HH:mm:ss") - @entry.AgeText
+            </div>
+            <div class="data-cell">@entry.SourceContext</div>
+            <div class="data-cell">
+                @if (!string.IsNullOrWhiteSpace(entry.RequestId))
+                {
+                    <button class="request-id-button" @onclick="@(() => OnRequestIdClicked(entry.RequestId))">
+                        @entry.RequestId
+                    </button>
+                }
+            </div>
+            <div class="data-cell level-@entry.Level.ToLower()">@entry.Level</div>            
+            <div class="data-cell">@entry.Message</div>            
+            <div class="data-cell expand-cell">
+                <button class="expand-button" @onclick="@(() => ToggleExpand(entry.Id))">
+                    @(expandedRows.Contains(entry.Id) ? "▼" : "▶")
+                </button>
+            </div>
+        </div>
+
+        @if (expandedRows.Contains(entry.Id))
+        {
+            <div class="serilog-grid-details">
+                @if (!string.IsNullOrWhiteSpace(entry.Exception))
+                {
+                    <div class="detail-section">
+                        <h4>Exception:</h4>
+                        <pre class="exception-text">@entry.Exception</pre>
+                    </div>
+                }
+                
+                @if (entry.Properties?.Any() == true)
+                {
+                    <div class="detail-section">
+                        <h4>Properties:</h4>
+                        <div class="properties-grid">
+                            @foreach (var prop in entry.Properties)
+                            {
+                                <div class="property-key">@prop.Key:</div>
+                                <div class="property-value">@prop.Value?.ToString()</div>
+                            }
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+    }
+</div>
+
+@code {
+    [Parameter] public IEnumerable<SerilogEntry> Entries { get; set; } = [];
+    [Parameter] public EventCallback<string> RequestIdClicked { get; set; }
+    
+    private HashSet<int> expandedRows = new();
+    
+    private void ToggleExpand(int entryId)
+    {
+        if (expandedRows.Contains(entryId))
+        {
+            expandedRows.Remove(entryId);
+        }
+        else
+        {
+            expandedRows.Add(entryId);
+        }
+    }
+
+    private async Task OnRequestIdClicked(string requestId)
+    {
+        await RequestIdClicked.InvokeAsync(requestId);
+    }
+}

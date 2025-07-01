@@ -53,9 +53,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\SerilogViewer.Abstractions\SerilogViewer.Abstractions.csproj" />
-    <ProjectReference Include="..\SerilogViewer.RCL\SerilogViewer.RCL.csproj" />
-    <ProjectReference Include="..\SerilogViewer.SqlServer\SerilogViewer.SqlServer.csproj" />
     <ProjectReference Include="..\SampleApp\SampleApp.csproj" />
   </ItemGroup>
 

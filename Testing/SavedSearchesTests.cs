@@ -1,5 +1,4 @@
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using SerilogViewer.Abstractions.SavedSearches;
+using SerilogBlazor.Abstractions.SavedSearches;
 
 namespace Testing;
 

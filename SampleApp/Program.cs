@@ -4,8 +4,8 @@ using SampleApp.Components;
 using SampleApp.Data;
 using Serilog;
 using Serilog.Sinks.MSSqlServer;
-using SerilogViewer.Abstractions;
-using SerilogViewer.SqlServer;
+using SerilogBlazor.Abstractions;
+using SerilogBlazor.SqlServer;
 
 var logLevels = new ApplicationLogLevels();
 

@@ -1,4 +1,4 @@
-using SerilogViewer.Abstractions;
+using SerilogBlazor.Abstractions;
 
 namespace Testing;
 

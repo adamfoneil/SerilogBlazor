@@ -1,7 +1,5 @@
-using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.DependencyInjection;
-using SerilogViewer.Abstractions;
-using SerilogViewer.RCL;
+using SerilogBlazor.RCL;
 
 namespace Testing;
 
