@@ -8,8 +8,13 @@
 		<div class="level-group">
 			<details>
 				<summary>
-					<span class="level-heading-badge level-@levelGrp.Key.ToLower()">@levelGrp.Key</span>
-					<span>(@levelGrp.Count())</span>
+					<span class="level-heading-badge level-@levelGrp.Key.ToLower()">@levelGrp.Key</span>					
+					<span>
+						@foreach (var metricGrp in levelGrp.GroupBy(row => GetNamespaceRoot(row.SourceContext)))
+						{
+							<span style="margin-right:.5rem">@metricGrp.Key - @metricGrp.Count()</span>
+						}
+					</span>
 				</summary>
 				<div class="level-group-body">
 					@foreach (var metricGrp in levelGrp.GroupBy(row => GetNamespaceRoot(row.SourceContext)))
