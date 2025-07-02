@@ -3,5 +3,5 @@
   <Project Path="SerilogBlazor.Abstractions/SerilogBlazor.Abstractions.csproj" />
   <Project Path="SerilogBlazor.RCL/SerilogBlazor.RCL.csproj" />
   <Project Path="SerilogBlazor.SqlServer/SerilogBlazor.SqlServer.csproj" />
-  <Project Path="Testing/Testing.csproj" />
+  <Project Path="Testing/Test.Abstractions.csproj" Id="33544dfa-e679-b406-8abe-b57f0e990966" />
 </Solution>
