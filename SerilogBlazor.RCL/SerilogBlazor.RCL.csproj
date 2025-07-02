@@ -14,7 +14,7 @@
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <RepositoryUrl>https://github.com/adamfoneil/SerilogBlazor</RepositoryUrl>
     <PackageTags>serilog; blazor</PackageTags>
-    <Version>0.9.3-alpha</Version>    
+    <Version>0.9.4-alpha</Version>    
   </PropertyGroup>
 
   <ItemGroup>
@@ -31,7 +31,5 @@
   <ItemGroup>
     <PackageReference Include="Serilog.Blazor.Abstractions" Version="1.0.0" />
   </ItemGroup>
-
-
 
 </Project>
