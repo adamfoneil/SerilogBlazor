@@ -9,7 +9,7 @@ Following is a list of logging pain points and how this project addresses them.
 <details>
   <summary>Unexpected log levels</summary>
   
-  Over the years, I've had a hard time getting log levels and namespaces right -- that is, getting the desired level of logging at the right places in my code. Also, I didn't until recently know there was a way to change levels at runtime without restarting my apps.
+  Over the years, I've had a hard time getting log levels and namespaces right -- that is, getting the desired level of logging at the right places in my code. Also, I didn't know until recently know there was a way to change levels at runtime without restarting my apps.
 
   This project does these things:
   - Offers the [LogLevels](https://github.com/adamfoneil/SerilogViewer/blob/master/SerilogViewer.Abstractions/LogLevels.cs) abstract class.
