@@ -7,7 +7,22 @@
     <RootNamespace>SerilogBlazor.Abstractions</RootNamespace>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <PackageId>Serilog.Blazor.Abstractions</PackageId>
+    <Title>Serilog.Blazor.Abstractions</Title>
+    <Authors>Adam O'Neil</Authors>
+    <Description>Base classes for Serilog Blazor components</Description>
+    <Copyright>Copyright (c) 2025 Adam O'Neil</Copyright>
+    <PackageProjectUrl>https://github.com/adamfoneil/SerilogBlazor</PackageProjectUrl>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <RepositoryUrl>https://github.com/adamfoneil/SerilogBlazor</RepositoryUrl>
+    <PackageTags>serilog; blazor</PackageTags>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\README.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Coravel" Version="6.0.2" />
