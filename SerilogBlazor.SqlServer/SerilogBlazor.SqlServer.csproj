@@ -4,7 +4,25 @@
     <TargetFramework>net9.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <PackageId>Serilog.Blazor.SqlServer</PackageId>
+    <Title>Serilog Blazor components for SQL Server</Title>
+    <Authors>Adam O'Neil</Authors>
+    <Company>Adam O'Neil</Company>
+    <Description>Serilog Blazor components for SQL Server</Description>
+    <Copyright>Copyright (c) 2025 Adam O'Neil</Copyright>
+    <PackageProjectUrl>https://github.com/adamfoneil/SerilogBlazor</PackageProjectUrl>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <RepositoryUrl>https://github.com/adamfoneil/SerilogBlazor</RepositoryUrl>
+    <PackageTags>serilog; blazor</PackageTags>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\README.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+  </ItemGroup>
 
  
   <ItemGroup>
