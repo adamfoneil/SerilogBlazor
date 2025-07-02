@@ -65,14 +65,17 @@
 		await InvokeAsync(StateHasChanged);
 	}
 
-	private string GetNamespaceRoot(string @namespace)
+	private string GetNamespaceRoot(string? @namespace)
 	{
+		if (string.IsNullOrWhiteSpace(@namespace)) return string.Empty;
 		var parts = @namespace.Split('.');
 		return (parts.Length == 0) ? @namespace : parts[0];
 	}
 
-	private string GetEffectiveLogLevel(string sourceContext)
+	private string GetEffectiveLogLevel(string? sourceContext)
 	{
+		if (string.IsNullOrWhiteSpace(sourceContext)) return LogLevels.DefaultLevel.ToString();
+
 		// Find the longest matching prefix from LogLevels.LoggingLevels
 		string? bestMatch = null;
 		int bestMatchLength = 0;
