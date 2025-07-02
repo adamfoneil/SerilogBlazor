@@ -2,7 +2,7 @@
     display: flex;
     align-items: center;
     gap: 8px;
-    margin-bottom: 16px;
+    margin-bottom: 4px;
 }
 
 .search-input {
@@ -145,4 +145,8 @@
     color: #dc3545;
     font-size: 14px;
     margin-top: 4px;
+}
+
+details {
+    margin-bottom:8px
 }
