@@ -75,3 +75,8 @@
     color: #ff3b30;
     background-color: #ffebee;
 }
+
+hr {
+	margin-top: 0.25rem;
+	margin-bottom: 0.25rem;
+}
