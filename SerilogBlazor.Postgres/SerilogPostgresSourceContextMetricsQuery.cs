@@ -22,7 +22,7 @@ public class SerilogPostgresSourceContextMetricsQuery(
 	private class InternalSourceContextMetricsResult
 	{
 		public string SourceContext { get; init; } = default!;
-		public int Level { get; init; } // Postgres stores level as int
+		public string Level { get; init; } = default!;
 		public DateTime LatestTimestamp { get; init; }
 		public int Count { get; init; }
 		public int AgeMinutes { get; init; }
@@ -36,13 +36,13 @@ public class SerilogPostgresSourceContextMetricsQuery(
 		var query =
 			$@"WITH source AS (
 				SELECT
-					""SourceContext"", ""Level"", MAX(""Timestamp"") AS ""LatestTimestamp"", COUNT(1) AS ""Count""
+					""source_context"" AS ""SourceContext"", ""level"" AS ""Level"", MAX(""timestamp"") AS ""LatestTimestamp"", COUNT(1) AS ""Count""
 				FROM
 					""{_schemaName}"".""{_tableName}""
 				WHERE
-					""SourceContext"" IS NOT NULL
+					""source_context"" IS NOT NULL
 				GROUP BY
-					""SourceContext"", ""Level""
+					""source_context"", ""level""
 			)
 			SELECT src.*, EXTRACT(EPOCH FROM ({PostgresHelpers.CurrentTimeFunction(_timestampType)} - ""LatestTimestamp""))/60 AS ""AgeMinutes""
 			FROM source AS src";
@@ -74,7 +74,7 @@ public class SerilogPostgresSourceContextMetricsQuery(
 	private SourceContextMetricsResult ToBaseType(InternalSourceContextMetricsResult source) => new()
 	{
 		SourceContext = source.SourceContext,
-		Level = PostgresHelpers.LevelIntToString(source.Level), // Convert int to string for UI
+		Level = source.Level,
 		LatestTimestamp = source.LatestTimestamp,
 		Count = source.Count,
 		AgeText = DateHelper.ParseAgeText(source.AgeMinutes)

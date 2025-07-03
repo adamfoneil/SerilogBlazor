@@ -26,7 +26,7 @@ public class SerilogPostgresQuery(
 		public int AgeMinutes { get; init; } // calculated as EXTRACT(EPOCH FROM (now() - timestamp))/60
 		public string? SourceContext { get; init; }
 		public string? RequestId { get; init; }
-		public int Level { get; init; } // Postgres stores level as int
+		public string Level { get; init; } = default!;
 		public string MessageTemplate { get; init; } = default!;
 		public string Message { get; init; } = default!;
 		public string? UserName { get; init; }
@@ -43,13 +43,13 @@ public class SerilogPostgresQuery(
 
 		var query = 
 			@$"SELECT 
-				""Id"", ""Timestamp"", 
-				EXTRACT(EPOCH FROM ({PostgresHelpers.CurrentTimeFunction(TimestampType)} - ""Timestamp""))/60 AS ""AgeMinutes"", 
-				""SourceContext"", ""RequestId"", ""Level"", ""MessageTemplate"", 
-				""Message"", ""Exception"", ""Properties"" AS ""PropertyJson"", ""UserName""
+				""id"" AS ""Id"", ""timestamp"" AS ""Timestamp"", 
+				EXTRACT(EPOCH FROM ({PostgresHelpers.CurrentTimeFunction(TimestampType)} - ""timestamp""))/60 AS ""AgeMinutes"", 
+				""source_context"" AS ""SourceContext"", ""request_id"" AS ""RequestId"", ""level"" AS ""Level"", ""message_template"" AS ""MessageTemplate"", 
+				""message"" AS ""Message"", ""exception"" AS ""Exception"", ""properties"" AS ""PropertyJson"", ""user_name"" AS ""UserName""
 			FROM ""{_schemaName}"".""{_tableName}""
 			{whereClause} 
-			ORDER BY ""Timestamp"" DESC 
+			ORDER BY ""timestamp"" DESC 
 			LIMIT {limit} OFFSET {offset}";
 
 		_logger.BeginRequestId(_requestIdProvider.NextId());
@@ -92,7 +92,7 @@ public class SerilogPostgresQuery(
 		AgeText = DateHelper.ParseAgeText(source.AgeMinutes),
 		SourceContext = source.SourceContext,
 		RequestId = source.RequestId,
-		Level = PostgresHelpers.LevelIntToString(source.Level), // Convert int to string for UI
+		Level = source.Level,
 		MessageTemplate = source.MessageTemplate,
 		Message = source.Message,
 		Exception = source.Exception,
@@ -195,39 +195,38 @@ public class SerilogPostgresQuery(
 				throw new ArgumentException("Unsupported age format");
 			}
 
-			var ageDiff = $"{PostgresHelpers.CurrentTimeFunction(timestampType)} - \"Timestamp\"";
+			var ageDiff = $"{PostgresHelpers.CurrentTimeFunction(timestampType)} - \"timestamp\"";
 			terms.Add(($"{ageDiff} <= {intervalExpression}", displayText));
 		}
 
 		if (!string.IsNullOrEmpty(criteria.SourceContext))
 		{
 			parameters.Add("@sourceContext", $"%{criteria.SourceContext}%");
-			terms.Add(($"\"SourceContext\" ILIKE @sourceContext", $"Source context contains '{criteria.SourceContext}'"));
+			terms.Add(($"\"source_context\" ILIKE @sourceContext", $"Source context contains '{criteria.SourceContext}'"));
 		}
 
 		if (!string.IsNullOrEmpty(criteria.RequestId))
 		{
 			parameters.Add("@requestId", criteria.RequestId);
-			terms.Add(($"\"RequestId\"=@requestId", $"Request Id = {criteria.RequestId}"));
+			terms.Add(($"\"request_id\"=@requestId", $"Request Id = {criteria.RequestId}"));
 		}
 
 		if (!string.IsNullOrEmpty(criteria.Level))
-		{
-			var levelInt = PostgresHelpers.LevelStringToInt(criteria.Level);
-			parameters.Add("@level", levelInt);
-			terms.Add(($"\"Level\"=@level", $"Level = {criteria.Level}"));
+		{			
+			parameters.Add("@level", criteria.Level);
+			terms.Add(($"\"level\"=@level", $"Level = {criteria.Level}"));
 		}
 
 		if (!string.IsNullOrEmpty(criteria.Message))
 		{
 			parameters.Add("@message", $"%{criteria.Message}%");
-			terms.Add(($"\"Message\" ILIKE @message", $"Message contains '{criteria.Message}'"));
+			terms.Add(($"\"message\" ILIKE @message", $"Message contains '{criteria.Message}'"));
 		}
 
 		if (!string.IsNullOrEmpty(criteria.Exception))
 		{
 			parameters.Add("@exception", $"%{criteria.Exception}%");
-			terms.Add(($"\"Exception\" ILIKE @exception", $"Exception contains '{criteria.Exception}'"));
+			terms.Add(($"\"exception\" ILIKE @exception", $"Exception contains '{criteria.Exception}'"));
 		}
 
 		return 

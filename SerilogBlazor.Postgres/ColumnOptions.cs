@@ -6,7 +6,7 @@ namespace SerilogBlazor.Postgres;
 public static class PostgresColumnOptions
 {
 	public static IDictionary<string, ColumnWriterBase> Default => new Dictionary<string, ColumnWriterBase>
-	{
+	{		
 		{ "timestamp", new TimestampColumnWriter(NpgsqlDbType.Timestamp) },
 		{ "level", new LevelColumnWriter(true, NpgsqlDbType.Varchar) },
 		{ "message", new RenderedMessageColumnWriter(NpgsqlDbType.Text) },
