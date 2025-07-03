@@ -66,6 +66,8 @@ Example: [SampleApp](https://github.com/adamfoneil/SerilogBlazor/blob/f7d98814e2
 
 This has a saved search feature that requires an EF Core DbContext implementing this interface [ISerilogSavedSearches](https://github.com/adamfoneil/SerilogBlazor/blob/master/SerilogBlazor.Abstractions/SavedSearches/ISerilogSavedSearches.cs).
 
+After implementing this interface on your DbContext, add a migration to add the underlying table to your database.
+
 </details>
 
 # Getting Started
@@ -78,9 +80,9 @@ This has a saved search feature that requires an EF Core DbContext implementing 
 var logLevels = new ApplicationLogLevels();
 
 Log.Logger = logLevels
-	.GetConfiguration()
-	.WriteTo // blah blah blah -- details omitted for clarity	
-	.CreateLogger();
+  .GetConfiguration()
+  .WriteTo // blah blah blah -- details omitted for clarity
+  .CreateLogger();
 ```
 4. If using the , add an EF Core `IDbContextFactory<T>` to your startup. [Example](https://github.com/adamfoneil/SerilogBlazor/blob/f7d98814e280582c8d1ffbe32e5e4b5a1b0ab7b3/SampleApp/Program.cs#L32).
 
@@ -96,6 +98,48 @@ builder.Services.AddSerilogUtilities({your connection string}, logLevels, "log",
 
 # Goodies and Extensions
 
+## BeginRequestId
+Correlating log entries in API or non-SPA web apps can be done with ASP.NET Core's `HttpContext.TraceIdentifier` property. This is not helpful in Blazor due to how it works with `HttpContext`. As an alternative, this library provides a generic log correlation extension method [BeginRequestId](https://github.com/adamfoneil/SerilogBlazor/blob/728e242bc2d91bf10779831ba843587c0c2e4631/SerilogBlazor.Abstractions/LoggerExtensions.cs#L10). Use this at the beginning of a method where you want to ensure that all logs written in that scope have a common identifier. [Example](https://github.com/adamfoneil/SerilogBlazor/blob/728e242bc2d91bf10779831ba843587c0c2e4631/SampleApp/Components/Pages/Home.razor#L30). This works with `LoggingRequestIdProvider` to provide an auto-incrementing value when it's called.
+
+```csharp
+@inject LoggingRequestIdProvider RequestId
+
+private void LogThis()
+{
+  // attach an id to all logging in this method
+  Logger.BeginRequestId(RequestId);
+
+  Logger.LogInformation("This is an info log message");
+
+  Logger.LogDebug("This is a debug message");
+
+  // logs from this method call will be correlated with requestId in scope here
+  SampleService.DoWork();
+}
+```
+
+## SerilogCleanup
+Implement retention periods for various log levels with the `AddSerilogCleanup` method, used at startup:
+
+```csharp
+builder.Services.AddSerilogCleanup(new() 
+{ 
+  ConnectionString = {your connection string}, 
+  TableName = "log.Serilog", // your serilog table name
+  Debug = 5, // retention period in days
+  Information = 20,
+  Warning = 20,
+  Error = 20
+});
+```
+
+Then in your pipeline, call `RunSerilogCleanup` with a desired interval. This uses [Coravel Scheduling](https://docs.coravel.net/Scheduler/), so use its syntax for setting the interval.
+
+```csharp
+var app = builder.Build();
+
+app.Services.RunSerilogCleanup(interval => interval.DailyAt(0, 0)); 
+```
 
 # Motivation
 
