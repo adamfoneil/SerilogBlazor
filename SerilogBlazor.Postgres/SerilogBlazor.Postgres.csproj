@@ -28,7 +28,7 @@
   <ItemGroup>
     <PackageReference Include="Dapper" Version="2.1.66" />
     <PackageReference Include="Npgsql" Version="9.0.0" />
-    <PackageReference Include="Serilog.Blazor.Abstractions" Version="1.0.0" />
+    <PackageReference Include="Serilog.Blazor.Abstractions" Version="1.0.2" />
     <PackageReference Include="Serilog.Sinks.PostgreSQL" Version="2.3.0" />
     <PackageReference Include="Coravel" Version="6.0.2" />
   </ItemGroup>
