@@ -82,12 +82,12 @@ var logLevels = new ApplicationLogLevels();
 Log.Logger = logLevels
   .GetConfiguration()  
   .WriteTo.MSSqlServer({your connection string}, new MSSqlServerSinkOptions()
-	{
-		AutoCreateSqlTable = true,
-		TableName = "Serilog", // whatever table name you like
-		SchemaName = "log", // whatever schema you like
-	}, columnOptions: SqlServerColumnOptions.Default) // this is important
-	.Enrich.FromLogContext()
+  {
+    AutoCreateSqlTable = true,
+    TableName = "Serilog", // whatever table name you like
+    SchemaName = "log", // whatever schema you like
+  }, columnOptions: SqlServerColumnOptions.Default) // this is important
+  .Enrich.FromLogContext()
   .CreateLogger();
 ```
 4. If using the , add an EF Core `IDbContextFactory<T>` to your startup. [Example](https://github.com/adamfoneil/SerilogBlazor/blob/f7d98814e280582c8d1ffbe32e5e4b5a1b0ab7b3/SampleApp/Program.cs#L32).
