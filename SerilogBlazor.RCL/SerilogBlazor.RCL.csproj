@@ -14,11 +14,11 @@
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <RepositoryUrl>https://github.com/adamfoneil/SerilogBlazor</RepositoryUrl>
     <PackageTags>serilog; blazor</PackageTags>
-    <Version>0.9.6-alpha</Version>    
+    <Version>0.9.7-alpha</Version>    
   </PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Serilog.Blazor.Abstractions" Version="1.0.1" />
+		<PackageReference Include="Serilog.Blazor.Abstractions" Version="1.0.2" />
 	</ItemGroup>
 	
   <ItemGroup>
