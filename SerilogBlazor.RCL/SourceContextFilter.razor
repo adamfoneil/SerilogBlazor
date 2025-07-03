@@ -21,7 +21,7 @@
 					@foreach (var metricGrp in levelGrp.GroupBy(row => GetNamespaceRoot(row.SourceContext)))
 					{
 						<details>
-							<summary>@metricGrp.Key - @metricGrp.Count()</summary>
+							<summary>@metricGrp.Key - @metricGrp.Count() categories [ @metricGrp.Sum(item => item.Count).ToString("n0") logs ]</summary>
 							<div class="source-context-grid">
 								@foreach (var item in metricGrp)
 								{
