@@ -1,15 +1,28 @@
-This is a collection of Blazor components to improve your Serilog experience, currently targeting SQL Server and Blazor Server.
+This is a collection of Blazor components to improve your Serilog experience, currently targeting SQL Server and Blazor Server. NuGet packages:
 
-**Log level changer:**
+- [Serilog.Blazor.SqlServer](https://www.nuget.org/packages/Serilog.Blazor.SqlServer)
+- [Serilog.Blazor.RCL](https://www.nuget.org/packages/Serilog.Blazor.RCL)
+- PostgreSQL support coming soon
 
-Use this to change log levels at runtime in your app for whatever namespaces/source contexts you define. This is handy when you need to temporarily increase log detail in a specific area to troubleshoot a production issue.
+# Components
 
-![image](https://github.com/user-attachments/assets/aa45b46f-0fe3-4814-ab36-f097ca1f9c5a)
+<details>
+  <summary>LevelToggle</summary>
+  
+  Use this to change log levels at runtime in your app for whatever namespaces/source contexts you define. This is handy when you need to temporarily increase log detail in a specific area to troubleshoot a production issue.
 
+  ![image](https://github.com/user-attachments/assets/aa45b46f-0fe3-4814-ab36-f097ca1f9c5a)
 
-**Grid view:**
+  Source: [LevelToggle](https://github.com/adamfoneil/SerilogBlazor/blob/master/SerilogBlazor.RCL/LevelToggle.razor)
+  
+  Example: [SampleApp](https://github.com/adamfoneil/SerilogBlazor/blob/f7d98814e280582c8d1ffbe32e5e4b5a1b0ab7b3/SampleApp/Components/Pages/Home.razor#L14)
+  
+</details>
 
-Scrolling grid of log entries.
+<details>
+  <summary>SerilogGrid</summary>
+
+  Scrolling grid of log entries.
 
 ![image](https://github.com/user-attachments/assets/24655719-9ff2-473f-9745-87e4b1ebd8e5)
 
@@ -17,62 +30,75 @@ Expands to show exception detail and properties.
 
 ![image](https://github.com/user-attachments/assets/ece06237-93bd-4d41-b6e2-6ee503e217af)
 
-**Source Context Filter**
+Source: [SerilogGrid](https://github.com/adamfoneil/SerilogBlazor/blob/master/SerilogBlazor.RCL/SerilogGrid.razor)
+
+Example: [SampleApp](https://github.com/adamfoneil/SerilogBlazor/blob/f7d98814e280582c8d1ffbe32e5e4b5a1b0ab7b3/SampleApp/Components/Pages/Home.razor#L19)
+
+</details>
+
+<details>
+  <summary>SourceContextFilter</summary>
 
 Zoom out to see total log entries by level and source context.
 
 ![image](https://github.com/user-attachments/assets/3163a2d9-77e3-4f1d-855a-36ffbb1a1427)
 
+Source: [SourceContextFilter](https://github.com/adamfoneil/SerilogBlazor/blob/master/SerilogBlazor.RCL/SourceContextFilter.razor)
 
-**Search Bar**
+Example: [SampleApp](https://github.com/adamfoneil/SerilogBlazor/blob/f7d98814e280582c8d1ffbe32e5e4b5a1b0ab7b3/SampleApp/Components/Pages/Home.razor#L17)
 
-Search your logs with a variety of shortcuts. Save searches for easy reuse.
+</details>
+
+<details>
+  <summary>SearchBar</summary>
+
+Search your logs with a variety of shortcuts. Save searches for easy reuse. Supported syntax:
+- enclose text in square brackets to search the **source context** field.
+- use a pound sign prefix to search the **request Id** property.
+- use the @ sign prefix to search the log level, e.g. `@warn` or `@err` or `@info`
+- use a minus sign prefix followed by number and duration unit, e.g. `-15m` for within 15 minutes or `-1d` for one day ago
 
 ![image](https://github.com/user-attachments/assets/d11a83e8-4e30-4dde-bf74-f468aff20528)
 
+Source: [SearchBar](https://github.com/adamfoneil/SerilogBlazor/blob/master/SerilogBlazor.RCL/SearchBar.razor)
 
-# Problem Statement
+Example: [SampleApp](https://github.com/adamfoneil/SerilogBlazor/blob/f7d98814e280582c8d1ffbe32e5e4b5a1b0ab7b3/SampleApp/Components/Pages/Home.razor#L18)
+
+This has a saved search feature that requires an EF Core DbContext implementing this interface [ISerilogSavedSearches](https://github.com/adamfoneil/SerilogBlazor/blob/master/SerilogBlazor.Abstractions/SavedSearches/ISerilogSavedSearches.cs).
+
+</details>
+
+# Getting Started
+
+1. Install the SQL Server and RCL packages listed above.
+2. Implement abstract class [LogLevels](https://github.com/adamfoneil/SerilogBlazor/blob/master/SerilogBlazor.Abstractions/LogLevels.cs) in your app. Example: [ApplicationLogLevels](https://github.com/adamfoneil/SerilogBlazor/blob/master/SampleApp/ApplicationLogLevels.cs)
+3. In your app startup, create your `ApplicationLogLevels` instance (or whatever you decide to call it), and use it as the basis of your Serilog configuration. Example:
+
+```csharp
+var logLevels = new ApplicationLogLevels();
+
+Log.Logger = logLevels
+	.GetConfiguration()
+	.WriteTo // blah blah blah -- details omitted for clarity	
+	.CreateLogger();
+```
+4. If using the , add an EF Core `IDbContextFactory<T>` to your startup. [Example](https://github.com/adamfoneil/SerilogBlazor/blob/f7d98814e280582c8d1ffbe32e5e4b5a1b0ab7b3/SampleApp/Program.cs#L32).
+
+4. Call extension method [AddSerilogUtilities](https://github.com/adamfoneil/SerilogBlazor/blob/f7d98814e280582c8d1ffbe32e5e4b5a1b0ab7b3/SerilogBlazor.SqlServer/StartupExtensions.cs#L12) in your app startup. Example:
+
+```csharp
+// to enable search bar saved searches. You might already have a db context being added somewhere, but it needs to be a factory specifically for this library. Lifetime doesn't matter. I use singleton here, but it can be scoped
+builder.Services.AddDbContextFactory<ApplicationDbContext>(config => config.UseSqlServer({your connection string}), ServiceLifetime.Singleton);
+
+// adds log level toggle and infrastructure for querying Serilog table. Use your serilog table name and schema. Also, chang ethe TimestampType according to how log entries are timestamped. I'm using Local in the example here
+builder.Services.AddSerilogUtilities({your connection string}, logLevels, "log", "Serilog", TimestampType.Local);
+``` 
+
+# Goodies and Extensions
+
+
+# Motivation
 
 When self-hosting Serilog, there's no built-in log view experience. You have to query the serilog table manually and/or build your own UI or query feature. There are products like Seq and Graylog that provide a very polished log search and view exeperience, but have costs of their own. The reason for self-hosting to begin with is to avoid those costs. Furthermore, traditional homegrown log viewers have not provided the kind of insights and capabilities I'm looking for when examining logs. The goal for this project is to build the most capable log view experience I can, addressing longstanding pain points I've come across -- then offer it as a Razor Class Library NuGet package. 
 
 With .NET Aspire coming online recently, it has potential to disrupt and improve logging in ASP.NET Core due to its integrated open telemetry support and viewer dashboards. So, I'm very late to this party, and this project may be irrelevant in the short term. But I'm not convinced yet that Aspire's logging/otel does everything I want it to. Furthermore, many apps implement Serilog already, and I think there's a case for meeting apps where they are rather than pushing them to implement Aspire. (I want Aspire to succeed, and am happy to keep tabs on it as it evolves.)
-
-Following is a list of logging pain points and how this project addresses them.
-
-<details>
-  <summary>Unexpected log levels</summary>
-  
-  Over the years, I've had a hard time getting log levels and namespaces right -- that is, getting the desired level of logging at the right places in my code. Also, I didn't know until recently know there was a way to change levels at runtime without restarting my apps.
-
-  This project does these things:
-  - Offers the [LogLevels](https://github.com/adamfoneil/SerilogViewer/blob/master/SerilogViewer.Abstractions/LogLevels.cs) abstract class.
-  - Implement this in your project to define your default logging levels by namespace prefix. Sample implementation is [ApplicationLogLevels](https://github.com/adamfoneil/SerilogViewer/blob/master/SampleApp/ApplicationLogLevels.cs).
-  - Configure levels at runtime via the [LevelToggle](https://github.com/adamfoneil/SerilogViewer/blob/master/SerilogViewer.RCL/LevelToggle.razor) component
-  
-  
-
-  You can see which levels are in effect on which namespaces via the [SourceContextFilter](https://github.com/adamfoneil/SerilogViewer/blob/e83c1c5927c03bc47f8a0eecc70d097eaf513f23/SerilogViewer.RCL/SourceContextFilter.razor#L26).
-  
-  ![image](https://github.com/user-attachments/assets/953c275c-a31f-440a-9e34-0597fad0c79d)
-
-</details>
-
-<details>
-  <summary>Difficulties with correlation/deep tracing</summary>
-</details>
-
-<details>
-  <summary>Query limitations due to XML dependency in SQL Server sink</summary>
-</details>
-
-<details>
-  <summary>Logs getting too big</summary>
-</details>
-
-<details>
-  <summary>No built-in alerting</summary>
-</details>
-
-<details>
-  <summary>Stack traces are too hard to read</summary>
-</details>
