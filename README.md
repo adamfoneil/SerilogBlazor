@@ -90,7 +90,7 @@ Log.Logger = logLevels
   .Enrich.FromLogContext()
   .CreateLogger();
 ```
-4. If using the , add an EF Core `IDbContextFactory<T>` to your startup. [Example](https://github.com/adamfoneil/SerilogBlazor/blob/f7d98814e280582c8d1ffbe32e5e4b5a1b0ab7b3/SampleApp/Program.cs#L32).
+4. If using the SearchBar, add an EF Core `IDbContextFactory<T>` to your startup. [Example](https://github.com/adamfoneil/SerilogBlazor/blob/f7d98814e280582c8d1ffbe32e5e4b5a1b0ab7b3/SampleApp/Program.cs#L32).
 
 4. Call extension method [AddSerilogUtilities](https://github.com/adamfoneil/SerilogBlazor/blob/f7d98814e280582c8d1ffbe32e5e4b5a1b0ab7b3/SerilogBlazor.SqlServer/StartupExtensions.cs#L12) in your app startup. Example:
 
