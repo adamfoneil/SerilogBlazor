@@ -74,14 +74,20 @@ After implementing this interface on your DbContext, add a migration to add the 
 
 1. Install the SQL Server and RCL packages listed above.
 2. Implement abstract class [LogLevels](https://github.com/adamfoneil/SerilogBlazor/blob/master/SerilogBlazor.Abstractions/LogLevels.cs) in your app. Example: [ApplicationLogLevels](https://github.com/adamfoneil/SerilogBlazor/blob/master/SampleApp/ApplicationLogLevels.cs)
-3. In your app startup, create your `ApplicationLogLevels` instance (or whatever you decide to call it), and use it as the basis of your Serilog configuration. Example:
+3. In your app startup, create your `ApplicationLogLevels` instance (or whatever you decide to call it), and use it as the basis of your Serilog configuration. Also be sure to include the [SqlServerColumnOptions.Default](https://github.com/adamfoneil/SerilogBlazor/blob/master/SerilogBlazor.SqlServer/ColumnOptions.cs) `columnOptions` argument. This ensures the `SourceContext` is captured as a dedicated column in your logs. Example:
 
 ```csharp
 var logLevels = new ApplicationLogLevels();
 
 Log.Logger = logLevels
-  .GetConfiguration()
-  .WriteTo // blah blah blah -- details omitted for clarity
+  .GetConfiguration()  
+  .WriteTo.MSSqlServer({your connection string}, new MSSqlServerSinkOptions()
+	{
+		AutoCreateSqlTable = true,
+		TableName = "Serilog", // whatever table name you like
+		SchemaName = "log", // whatever schema you like
+	}, columnOptions: SqlServerColumnOptions.Default) // this is important
+	.Enrich.FromLogContext()
   .CreateLogger();
 ```
 4. If using the , add an EF Core `IDbContextFactory<T>` to your startup. [Example](https://github.com/adamfoneil/SerilogBlazor/blob/f7d98814e280582c8d1ffbe32e5e4b5a1b0ab7b3/SampleApp/Program.cs#L32).
