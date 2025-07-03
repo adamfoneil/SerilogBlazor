@@ -137,4 +137,41 @@ public class CriteriaParsing
 		var cleaned5 = regex.Replace(input5, "").Trim();
 		Assert.AreEqual("error  message", cleaned5);
 	}
+
+	[TestMethod]
+	public void SourceContextReplacement()
+	{
+		// Test that the regex pattern used in SearchBar.AddSourceContext correctly removes existing SourceContexts
+		var regex = new System.Text.RegularExpressions.Regex(@"\[[^\]]+\]");
+		
+		// Test with existing SourceContext in middle
+		var input1 = "error message [OldApp] more text";
+		var cleaned1 = regex.Replace(input1, "").Trim();
+		Assert.AreEqual("error message  more text", cleaned1);
+		
+		// Test with SourceContext at the beginning
+		var input2 = "[OldApp] error message";
+		var cleaned2 = regex.Replace(input2, "").Trim();
+		Assert.AreEqual("error message", cleaned2);
+		
+		// Test with SourceContext at the end
+		var input3 = "error message [OldApp]";
+		var cleaned3 = regex.Replace(input3, "").Trim();
+		Assert.AreEqual("error message", cleaned3);
+		
+		// Test with no SourceContext
+		var input4 = "error message";
+		var cleaned4 = regex.Replace(input4, "").Trim();
+		Assert.AreEqual("error message", cleaned4);
+		
+		// Test with multiple SourceContexts (edge case)
+		var input5 = "[FirstApp] error [SecondApp] message";
+		var cleaned5 = regex.Replace(input5, "").Trim();
+		Assert.AreEqual("error  message", cleaned5);
+
+		// Test with nested brackets (edge case)
+		var input6 = "error [App.With.Dots] message";
+		var cleaned6 = regex.Replace(input6, "").Trim();
+		Assert.AreEqual("error  message", cleaned6);
+	}
 }

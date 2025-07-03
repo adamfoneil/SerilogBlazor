@@ -168,6 +168,25 @@
 		await ExecuteSearch();
 	}
 
+	public async Task AddSourceContext(string sourceContext)
+	{
+		if (string.IsNullOrWhiteSpace(sourceContext))
+			return;
+
+		// Remove any existing SourceContext from the search text
+		var regex = new System.Text.RegularExpressions.Regex(@"\[[^\]]+\]");
+		var cleanedSearchText = regex.Replace(searchText, "").Trim();
+		
+		// Add the new SourceContext
+		searchText = string.IsNullOrWhiteSpace(cleanedSearchText) 
+			? $"[{sourceContext}]" 
+			: $"{cleanedSearchText} [{sourceContext}]";
+		
+		page = 0; // Reset to first page when search changes
+		hasMoreResults = true; // Reset this flag when search changes
+		await ExecuteSearch();
+	}
+
 	private void ShowSaveDialog()
 	{
 		newSearchName = string.Empty;
