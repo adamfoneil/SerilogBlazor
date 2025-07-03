@@ -1,8 +1,8 @@
 This is a collection of Blazor components to improve your Serilog experience, currently targeting SQL Server and Blazor Server. NuGet packages:
 
 - [Serilog.Blazor.SqlServer](https://www.nuget.org/packages/Serilog.Blazor.SqlServer)
+- [Serilog.Blazor.Postgres](https://www.nuget.org/packages/Serilog.Blazor.Postgres)
 - [Serilog.Blazor.RCL](https://www.nuget.org/packages/Serilog.Blazor.RCL)
-- PostgreSQL support coming soon
 
 # Components
 
@@ -70,7 +70,7 @@ After implementing this interface on your DbContext, add a migration to add the 
 
 </details>
 
-# Getting Started (SQL Server package)
+# Getting Started (SQL Server)
 
 1. Install the SQL Server and RCL packages listed above.
 2. Implement abstract class [LogLevels](https://github.com/adamfoneil/SerilogBlazor/blob/master/SerilogBlazor.Abstractions/LogLevels.cs) in your app. Example: [ApplicationLogLevels](https://github.com/adamfoneil/SerilogBlazor/blob/master/SampleApp/ApplicationLogLevels.cs)
@@ -101,6 +101,32 @@ builder.Services.AddDbContextFactory<ApplicationDbContext>(config => config.UseS
 // adds log level toggle and infrastructure for querying Serilog table. Use your serilog table name and schema. Also, chang ethe TimestampType according to how log entries are timestamped. I'm using Local in the example here
 builder.Services.AddSerilogUtilities({your connection string}, logLevels, "log", "Serilog", TimestampType.Local);
 ``` 
+
+# Getting Started (Postgres)
+1. Install the Postgres and RCL packages listed above.
+2. Implement abstract class [LogLevels](https://github.com/adamfoneil/SerilogBlazor/blob/master/SerilogBlazor.Abstractions/LogLevels.cs) in your app.
+3. In your app startup, initialize Serilog with user your `LogLevels` class (whatever you call it) and call a couple of the provided extension methods. Note the use of custom column options [PostgresColumnOptions](https://github.com/adamfoneil/SerilogBlazor/blob/master/SerilogBlazor.Postgres/ColumnOptions.cs).
+
+```csharp
+var logLevels = new ApplicationLogLevels();
+
+Log.Logger = logLevels
+	.GetConfiguration()
+	.WriteTo.Console() // optional, but I use this
+	.WriteTo.PostgreSQL({your connection string}, "serilog", columnOptions: PostgresColumnOptions.Default, needAutoCreateTable: true)	
+	.Enrich.FromLogContext()	
+	.CreateLogger();
+
+builder.Services.AddSerilog();
+builder.Services.AddSerilogUtilities({your connection string}, logLevels, "public", "serilog", TimestampType.Utc);
+```
+4. After initial startup for the first time, run this SQL script on your Postgres database to add the `id` column. It's not created by default when you use custom column options.
+
+```sql
+ALTER TABLE serilog ADD id serial PRIMARY KEY
+```
+
+Now your ready to build your own Serilog viewer page. Refer [sample](https://github.com/adamfoneil/SerilogBlazor/blob/master/SampleApp/Components/Pages/Home.razor) above for ideas.
 
 # Goodies and Extensions
 
