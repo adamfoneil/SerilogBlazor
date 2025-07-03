@@ -54,6 +54,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\SerilogBlazor.Abstractions\SerilogBlazor.Abstractions.csproj" />
+    <ProjectReference Include="..\SerilogBlazor.Postgres\SerilogBlazor.Postgres.csproj" />
   </ItemGroup>
 
   <ItemGroup>
