@@ -55,11 +55,11 @@
 		}
 	}
 
-	private async Task OnSourceContextClicked(string sourceContext)
+	private async Task OnSourceContextClicked(string sourceContextData)
 	{
 		if (searchBar is not null)
 		{
-			await searchBar.AddSourceContext(sourceContext);
+			await searchBar.AddSourceContext(sourceContextData);
 		}
 	}
 

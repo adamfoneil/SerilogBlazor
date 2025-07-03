@@ -168,19 +168,33 @@
 		await ExecuteSearch();
 	}
 
-	public async Task AddSourceContext(string sourceContext)
+	public async Task AddSourceContext(string sourceContextData)
 	{
-		if (string.IsNullOrWhiteSpace(sourceContext))
+		if (string.IsNullOrWhiteSpace(sourceContextData))
 			return;
 
-		// Remove any existing SourceContext from the search text
-		var regex = new System.Text.RegularExpressions.Regex(@"\[[^\]]+\]");
-		var cleanedSearchText = regex.Replace(searchText, "").Trim();
+		// Parse the sourceContext and logLevel from the combined string
+		var parts = sourceContextData.Split('|');
+		var sourceContext = parts[0];
+		var logLevel = parts.Length > 1 ? parts[1] : null;
+
+		// Remove any existing SourceContext and LogLevel from the search text
+		var sourceContextRegex = new System.Text.RegularExpressions.Regex(@"\[[^\]]+\]");
+		var logLevelRegex = new System.Text.RegularExpressions.Regex(@"@@\w+");
+		var cleanedSearchText = sourceContextRegex.Replace(searchText, "");
+		cleanedSearchText = logLevelRegex.Replace(cleanedSearchText, "").Trim();
 		
-		// Add the new SourceContext
-		searchText = string.IsNullOrWhiteSpace(cleanedSearchText) 
-			? $"[{sourceContext}]" 
-			: $"{cleanedSearchText} [{sourceContext}]";
+		// Build the new search terms
+		var searchTerms = new List<string>();
+		if (!string.IsNullOrWhiteSpace(cleanedSearchText))
+			searchTerms.Add(cleanedSearchText);
+		
+		searchTerms.Add($"[{sourceContext}]");
+		
+		if (!string.IsNullOrWhiteSpace(logLevel))
+			searchTerms.Add($"@@{logLevel}");
+		
+		searchText = string.Join(" ", searchTerms);
 		
 		page = 0; // Reset to first page when search changes
 		hasMoreResults = true; // Reset this flag when search changes
