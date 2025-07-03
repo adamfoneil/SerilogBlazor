@@ -1,6 +1,7 @@
 <Solution>
   <Project Path="SampleApp/SampleApp.csproj" Id="bbea7058-49fa-43a4-8c48-abdc8cb61183" />
   <Project Path="SerilogBlazor.Abstractions/SerilogBlazor.Abstractions.csproj" />
+  <Project Path="SerilogBlazor.Postgres/SerilogBlazor.Postgres.csproj" Id="c5ea5907-4ada-4f26-9521-a5b24f2e84ca" />
   <Project Path="SerilogBlazor.RCL/SerilogBlazor.RCL.csproj" />
   <Project Path="SerilogBlazor.SqlServer/SerilogBlazor.SqlServer.csproj" />
   <Project Path="Test.Abstractions/Test.Abstractions.csproj" />
