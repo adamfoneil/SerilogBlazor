@@ -13,6 +13,8 @@ This is a collection of Blazor components to improve your Serilog experience, cu
 
   ![image](https://github.com/user-attachments/assets/aa45b46f-0fe3-4814-ab36-f097ca1f9c5a)
 
+  You define your own levels of course. Screenshot above is just a sample.
+
   Source: [LevelToggle](https://github.com/adamfoneil/SerilogBlazor/blob/master/SerilogBlazor.RCL/LevelToggle.razor)
   
   Example: [SampleApp](https://github.com/adamfoneil/SerilogBlazor/blob/f7d98814e280582c8d1ffbe32e5e4b5a1b0ab7b3/SampleApp/Components/Pages/Home.razor#L14)
