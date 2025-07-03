@@ -10,7 +10,7 @@
 			<details>
 				<summary>
 					<span class="level-heading-badge level-@levelGrp.Key.ToLower()">@levelGrp.Key</span>					
-					<span>
+					<span class="level-heading-topics">
 						@foreach (var metricGrp in levelGrp.GroupBy(row => GetNamespaceRoot(row.SourceContext)))
 						{
 							<span style="margin-right:.5rem">@metricGrp.Key - @metricGrp.Count()</span>

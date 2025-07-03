@@ -181,8 +181,6 @@
 		
 		// Build the new search terms
 		var searchTerms = new List<string>();
-		if (!string.IsNullOrWhiteSpace(cleanedSearchText))
-			searchTerms.Add(cleanedSearchText);
 		
 		searchTerms.Add($"[{selection.SourceContext}]");
 		

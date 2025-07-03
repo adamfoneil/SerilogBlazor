@@ -53,6 +53,7 @@ public class SerilogSqlServerQuery(
 		_logger.BeginRequestId(_requestIdProvider.NextId());
 
 		_logger.LogDebug("Querying serilog: {query}", query);
+		parameters?.LogParameters(_logger);
 
 		var sw = Stopwatch.StartNew();
 		bool error = false;
