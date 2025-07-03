@@ -55,11 +55,11 @@
 		}
 	}
 
-	private async Task OnSourceContextClicked(string sourceContextData)
+	private async Task OnSourceContextClicked(SourceContextFilterSelection selection)
 	{
 		if (searchBar is not null)
 		{
-			await searchBar.AddSourceContext(sourceContextData);
+			await searchBar.AddSourceContext(selection);
 		}
 	}
 

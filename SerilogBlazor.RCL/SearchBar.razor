@@ -168,15 +168,10 @@
 		await ExecuteSearch();
 	}
 
-	public async Task AddSourceContext(string sourceContextData)
+	public async Task AddSourceContext(SourceContextFilterSelection selection)
 	{
-		if (string.IsNullOrWhiteSpace(sourceContextData))
+		if (selection is null || string.IsNullOrWhiteSpace(selection.SourceContext))
 			return;
-
-		// Parse the sourceContext and logLevel from the combined string
-		var parts = sourceContextData.Split('|');
-		var sourceContext = parts[0];
-		var logLevel = parts.Length > 1 ? parts[1] : null;
 
 		// Remove any existing SourceContext and LogLevel from the search text
 		var sourceContextRegex = new System.Text.RegularExpressions.Regex(@"\[[^\]]+\]");
@@ -189,10 +184,10 @@
 		if (!string.IsNullOrWhiteSpace(cleanedSearchText))
 			searchTerms.Add(cleanedSearchText);
 		
-		searchTerms.Add($"[{sourceContext}]");
+		searchTerms.Add($"[{selection.SourceContext}]");
 		
-		if (!string.IsNullOrWhiteSpace(logLevel))
-			searchTerms.Add($"@@{logLevel}");
+		if (!string.IsNullOrWhiteSpace(selection.LogLevel))
+			searchTerms.Add($"@@{selection.LogLevel}");
 		
 		searchText = string.Join(" ", searchTerms);
 		

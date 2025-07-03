@@ -1,4 +1,5 @@
 @using Microsoft.EntityFrameworkCore
+@using SerilogBlazor.Abstractions
 @inject SerilogSourceContextMetricsQuery Query
 @inject LogLevels LogLevels
 
@@ -44,7 +45,7 @@
 
 	[Parameter] public string? UserName { get; set; }
 
-	[Parameter] public EventCallback<string> SourceContextClicked { get; set; }
+	[Parameter] public EventCallback<SourceContextFilterSelection> SourceContextClicked { get; set; }
 
 	protected override async Task OnInitializedAsync()
 	{
@@ -69,7 +70,7 @@
 
 	private async Task OnSourceContextClick(string sourceContext, string logLevel)
 	{
-		await SourceContextClicked.InvokeAsync($"{sourceContext}|{logLevel}");
+		await SourceContextClicked.InvokeAsync(new SourceContextFilterSelection(sourceContext, logLevel));
 	}
 
 	private string GetNamespaceRoot(string? @namespace)
