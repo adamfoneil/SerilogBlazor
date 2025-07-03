@@ -33,8 +33,4 @@
     <PackageReference Include="Coravel" Version="6.0.2" />
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\SerilogBlazor.Abstractions\SerilogBlazor.Abstractions.csproj" />
-  </ItemGroup>
-
 </Project>
