@@ -20,11 +20,11 @@
 					@foreach (var metricGrp in levelGrp.GroupBy(row => GetNamespaceRoot(row.SourceContext)))
 					{
 						<details>
-							<summary>@metricGrp.Key (@metricGrp.Count())</summary>
+							<summary>@metricGrp.Key - @metricGrp.Count()</summary>
 							<div class="source-context-grid">
 								@foreach (var item in metricGrp)
-								{									
-									<div>@item.SourceContext</div>
+								{
+									<div><a @onclick="(async () => await SourceContextClicked.InvokeAsync(item.SourceContext))" @onclick:preventDefault>@item.SourceContext</a></div>
 									<div>@item.Count</div>
 									<div>@item.LatestTimestamp - @item.AgeText</div>									
 									<div>@GetEffectiveLogLevel(item.SourceContext)</div>
@@ -43,6 +43,8 @@
 	private IEnumerable<SourceContextMetricsResult> metricsResults = [];	
 
 	[Parameter] public string? UserName { get; set; }
+
+	[Parameter] public EventCallback<string> SourceContextClicked { get; set; }
 
 	protected override async Task OnInitializedAsync()
 	{
