@@ -180,7 +180,7 @@ public abstract class SerilogQuery(TimestampType timestampType = TimestampType.U
 			{
 				"err" or "error" => "Error",
 				"warn" or "warning" => "Warning",
-				"info" or "information" => "Info",
+				"info" or "information" or "inf" => "Information",
 				"debug" => "Debug",
 				"trace" => "Trace",
 				"fatal" => "Fatal",
