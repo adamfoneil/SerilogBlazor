@@ -187,7 +187,7 @@
 		searchTerms.Add($"[{selection.SourceContext}]");
 		
 		if (!string.IsNullOrWhiteSpace(selection.LogLevel))
-			searchTerms.Add($"@@{selection.LogLevel}");
+			searchTerms.Add($"@{selection.LogLevel}");
 		
 		searchText = string.Join(" ", searchTerms);
 		
