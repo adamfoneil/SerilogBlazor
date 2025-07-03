@@ -70,7 +70,7 @@ After implementing this interface on your DbContext, add a migration to add the 
 
 </details>
 
-# Getting Started
+# Getting Started (SQL Server package)
 
 1. Install the SQL Server and RCL packages listed above.
 2. Implement abstract class [LogLevels](https://github.com/adamfoneil/SerilogBlazor/blob/master/SerilogBlazor.Abstractions/LogLevels.cs) in your app. Example: [ApplicationLogLevels](https://github.com/adamfoneil/SerilogBlazor/blob/master/SampleApp/ApplicationLogLevels.cs)
