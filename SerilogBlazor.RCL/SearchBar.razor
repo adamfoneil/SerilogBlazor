@@ -168,6 +168,34 @@
 		await ExecuteSearch();
 	}
 
+	public async Task AddSourceContext(SourceContextFilterSelection selection)
+	{
+		if (selection is null || string.IsNullOrWhiteSpace(selection.SourceContext))
+			return;
+
+		// Remove any existing SourceContext and LogLevel from the search text
+		var sourceContextRegex = new System.Text.RegularExpressions.Regex(@"\[[^\]]+\]");
+		var logLevelRegex = new System.Text.RegularExpressions.Regex(@"@@\w+");
+		var cleanedSearchText = sourceContextRegex.Replace(searchText, "");
+		cleanedSearchText = logLevelRegex.Replace(cleanedSearchText, "").Trim();
+		
+		// Build the new search terms
+		var searchTerms = new List<string>();
+		if (!string.IsNullOrWhiteSpace(cleanedSearchText))
+			searchTerms.Add(cleanedSearchText);
+		
+		searchTerms.Add($"[{selection.SourceContext}]");
+		
+		if (!string.IsNullOrWhiteSpace(selection.LogLevel))
+			searchTerms.Add($"@@{selection.LogLevel}");
+		
+		searchText = string.Join(" ", searchTerms);
+		
+		page = 0; // Reset to first page when search changes
+		hasMoreResults = true; // Reset this flag when search changes
+		await ExecuteSearch();
+	}
+
 	private void ShowSaveDialog()
 	{
 		newSearchName = string.Empty;

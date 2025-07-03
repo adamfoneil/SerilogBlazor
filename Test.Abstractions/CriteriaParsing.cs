@@ -137,4 +137,105 @@ public class CriteriaParsing
 		var cleaned5 = regex.Replace(input5, "").Trim();
 		Assert.AreEqual("error  message", cleaned5);
 	}
+
+	[TestMethod]
+	public void SourceContextReplacement()
+	{
+		// Test that the regex pattern used in SearchBar.AddSourceContext correctly removes existing SourceContexts
+		var regex = new System.Text.RegularExpressions.Regex(@"\[[^\]]+\]");
+		
+		// Test with existing SourceContext in middle
+		var input1 = "error message [OldApp] more text";
+		var cleaned1 = regex.Replace(input1, "").Trim();
+		Assert.AreEqual("error message  more text", cleaned1);
+		
+		// Test with SourceContext at the beginning
+		var input2 = "[OldApp] error message";
+		var cleaned2 = regex.Replace(input2, "").Trim();
+		Assert.AreEqual("error message", cleaned2);
+		
+		// Test with SourceContext at the end
+		var input3 = "error message [OldApp]";
+		var cleaned3 = regex.Replace(input3, "").Trim();
+		Assert.AreEqual("error message", cleaned3);
+		
+		// Test with no SourceContext
+		var input4 = "error message";
+		var cleaned4 = regex.Replace(input4, "").Trim();
+		Assert.AreEqual("error message", cleaned4);
+		
+		// Test with multiple SourceContexts (edge case)
+		var input5 = "[FirstApp] error [SecondApp] message";
+		var cleaned5 = regex.Replace(input5, "").Trim();
+		Assert.AreEqual("error  message", cleaned5);
+
+		// Test with nested brackets (edge case)
+		var input6 = "error [App.With.Dots] message";
+		var cleaned6 = regex.Replace(input6, "").Trim();
+		Assert.AreEqual("error  message", cleaned6);
+	}
+
+	[TestMethod]
+	public void LogLevelReplacement()
+	{
+		// Test that the regex pattern used in SearchBar.AddSourceContext correctly removes existing LogLevels
+		var regex = new System.Text.RegularExpressions.Regex(@"@@\w+");
+		
+		// Test with existing LogLevel in middle
+		var input1 = "error message @@Error more text";
+		var cleaned1 = regex.Replace(input1, "").Trim();
+		Assert.AreEqual("error message  more text", cleaned1);
+		
+		// Test with LogLevel at the beginning
+		var input2 = "@@Warning error message";
+		var cleaned2 = regex.Replace(input2, "").Trim();
+		Assert.AreEqual("error message", cleaned2);
+		
+		// Test with LogLevel at the end
+		var input3 = "error message @@Information";
+		var cleaned3 = regex.Replace(input3, "").Trim();
+		Assert.AreEqual("error message", cleaned3);
+		
+		// Test with no LogLevel
+		var input4 = "error message";
+		var cleaned4 = regex.Replace(input4, "").Trim();
+		Assert.AreEqual("error message", cleaned4);
+		
+		// Test with multiple LogLevels (edge case)
+		var input5 = "@@Error message @@Warning text";
+		var cleaned5 = regex.Replace(input5, "").Trim();
+		Assert.AreEqual("message  text", cleaned5);
+	}
+
+	[TestMethod]
+	public void SourceContextAndLogLevelReplacement()
+	{
+		// Test combined removal of both SourceContext and LogLevel
+		var sourceContextRegex = new System.Text.RegularExpressions.Regex(@"\[[^\]]+\]");
+		var logLevelRegex = new System.Text.RegularExpressions.Regex(@"@@\w+");
+		
+		// Test with both SourceContext and LogLevel
+		var input1 = "error [OldApp] message @@Error more text";
+		var cleaned1 = sourceContextRegex.Replace(input1, "");
+		cleaned1 = logLevelRegex.Replace(cleaned1, "").Trim();
+		Assert.AreEqual("error  message  more text", cleaned1);
+		
+		// Test with both at different positions
+		var input2 = "@@Warning [MyApp] error message";
+		var cleaned2 = sourceContextRegex.Replace(input2, "");
+		cleaned2 = logLevelRegex.Replace(cleaned2, "").Trim();
+		Assert.AreEqual("error message", cleaned2);
+		
+		// Test with only SourceContext
+		var input3 = "error [App] message";
+		var cleaned3 = sourceContextRegex.Replace(input3, "");
+		cleaned3 = logLevelRegex.Replace(cleaned3, "").Trim();
+		Assert.AreEqual("error  message", cleaned3);
+		
+		// Test with only LogLevel  
+		var input4 = "error @@Debug message";
+		var cleaned4 = sourceContextRegex.Replace(input4, "");
+		cleaned4 = logLevelRegex.Replace(cleaned4, "").Trim();
+		Assert.AreEqual("error  message", cleaned4);
+	}
 }

@@ -17,6 +17,10 @@
     <Version>0.9.4-alpha</Version>    
   </PropertyGroup>
 
+	<ItemGroup>
+		<PackageReference Include="Serilog.Blazor.Abstractions" Version="1.0.1" />
+	</ItemGroup>
+	
   <ItemGroup>
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
   </ItemGroup>
@@ -26,10 +30,6 @@
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>
     </None>
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="Serilog.Blazor.Abstractions" Version="1.0.0" />
   </ItemGroup>
 
 </Project>

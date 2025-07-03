@@ -1,4 +1,5 @@
 @using Microsoft.EntityFrameworkCore
+@using SerilogBlazor.Abstractions
 @inject SerilogSourceContextMetricsQuery Query
 @inject LogLevels LogLevels
 
@@ -24,7 +25,7 @@
 							<div class="source-context-grid">
 								@foreach (var item in metricGrp)
 								{
-									<div><a @onclick="(async () => await SourceContextClicked.InvokeAsync(item.SourceContext))" @onclick:preventDefault>@item.SourceContext</a></div>
+									<div><a @onclick="@(() => OnSourceContextClick(item.SourceContext, levelGrp.Key))" @onclick:preventDefault style="cursor:pointer">@item.SourceContext</a></div>
 									<div>@item.Count</div>
 									<div>@item.LatestTimestamp - @item.AgeText</div>									
 									<div>@GetEffectiveLogLevel(item.SourceContext)</div>
@@ -44,7 +45,7 @@
 
 	[Parameter] public string? UserName { get; set; }
 
-	[Parameter] public EventCallback<string> SourceContextClicked { get; set; }
+	[Parameter] public EventCallback<SourceContextFilterSelection> SourceContextClicked { get; set; }
 
 	protected override async Task OnInitializedAsync()
 	{
@@ -65,6 +66,11 @@
 	{
 		await Refresh();
 		await InvokeAsync(StateHasChanged);
+	}
+
+	private async Task OnSourceContextClick(string sourceContext, string logLevel)
+	{
+		await SourceContextClicked.InvokeAsync(new SourceContextFilterSelection(sourceContext, logLevel));
 	}
 
 	private string GetNamespaceRoot(string? @namespace)

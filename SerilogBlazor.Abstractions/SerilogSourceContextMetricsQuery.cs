@@ -1,5 +1,7 @@
 ﻿namespace SerilogBlazor.Abstractions;
 
+public record SourceContextFilterSelection(string SourceContext, string LogLevel);
+
 public class SourceContextMetricsResult
 {
 	public string SourceContext { get; set; } = default!;
