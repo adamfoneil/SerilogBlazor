@@ -38,7 +38,7 @@ public class SerilogSqlServerSourceContextMetricsQuery(
 				SELECT
 					[SourceContext], [Level], MAX([Timestamp]) AS [LatestTimestamp], COUNT(1) AS [Count]
 				FROM
-					[log].[Serilog]
+					[{_schemaName}].[{_tableName}]
 				WHERE
 					[SourceContext] IS NOT NULL
 				GROUP BY
