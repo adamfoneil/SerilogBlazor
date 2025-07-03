@@ -2,9 +2,9 @@ using SerilogBlazor.Abstractions;
 
 namespace SerilogBlazor.Postgres;
 
-internal static class PostgresHelpers
+public static class PostgresHelpers
 {
-	internal static string CurrentTimeFunction(TimestampType timestampType) => timestampType switch
+	public static string CurrentTimeFunction(TimestampType timestampType) => timestampType switch
 	{
 		TimestampType.Utc => "NOW() AT TIME ZONE 'UTC'",
 		TimestampType.Local => "NOW()",
@@ -14,7 +14,7 @@ internal static class PostgresHelpers
 	/// <summary>
 	/// Converts Serilog level integer to string for UI display
 	/// </summary>
-	internal static string LevelIntToString(int levelValue) => levelValue switch
+	public static string LevelIntToString(int levelValue) => levelValue switch
 	{
 		0 => "Verbose",
 		1 => "Debug", 
@@ -28,7 +28,7 @@ internal static class PostgresHelpers
 	/// <summary>
 	/// Converts Serilog level string to integer for queries
 	/// </summary>
-	internal static int LevelStringToInt(string levelString) => levelString switch
+	public static int LevelStringToInt(string levelString) => levelString switch
 	{
 		"Verbose" => 0,
 		"Debug" => 1,
