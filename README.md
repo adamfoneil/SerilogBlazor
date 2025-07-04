@@ -105,7 +105,7 @@ builder.Services.AddSerilogUtilities({your connection string}, logLevels, "log",
 ``` 
 
 # Getting Started (Postgres)
-1. Install the Postgres and RCL packages listed above.
+1. Install the Postgres and RCL packages listed above. (Also the [Serilog.Sinks.MSSqlServer](https://www.nuget.org/packages/Serilog.Sinks.MSSqlServer) if you don't have it yet.)
 2. Implement abstract class [LogLevels](https://github.com/adamfoneil/SerilogBlazor/blob/master/SerilogBlazor.Abstractions/LogLevels.cs) in your app.
 3. In your app startup, initialize Serilog with user your `LogLevels` class (whatever you call it) and call a couple of the provided extension methods. Note the use of custom column options [PostgresColumnOptions](https://github.com/adamfoneil/SerilogBlazor/blob/master/SerilogBlazor.Postgres/ColumnOptions.cs).
 
