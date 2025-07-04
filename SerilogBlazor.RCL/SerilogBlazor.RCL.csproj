@@ -17,9 +17,9 @@
     <Version>1.0.0</Version>    
   </PropertyGroup>
 
-	<ItemGroup>
-		<ProjectReference Include="..\SerilogBlazor.Abstractions\SerilogBlazor.Abstractions.csproj" />
-	</ItemGroup>
+        <ItemGroup>
+                <PackageReference Include="Serilog.Blazor.Abstractions" Version="1.0.3" />
+        </ItemGroup>
 	
   <ItemGroup>
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
