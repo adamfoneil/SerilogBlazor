@@ -2,7 +2,19 @@
 @using Serilog.Events
 @inject LogLevels LogLevels
 
-<div class="namespace-grid">	
+<div class="namespace-grid">
+	<!-- Default level as first entry -->
+	<div style="padding-right:1rem">Default</div>
+	<div>
+		<InputSelect TValue="LogEventLevel" @bind-Value="LogLevels.DefaultLevelSwitch.MinimumLevel" @bind-Value:after="OnLogLevelChanged">
+			@foreach (var option in Enum.GetValues<LogEventLevel>())
+			{
+				<option value="@option">@option</option>
+			}
+		</InputSelect>
+	</div>
+	
+	<!-- Namespace-specific levels -->
 	@foreach (var kp in LogLevels.LoggingLevels)
 	{
 		<div style="padding-right:1rem">@kp.Key</div>
