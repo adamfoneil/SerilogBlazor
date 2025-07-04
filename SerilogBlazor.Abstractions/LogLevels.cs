@@ -13,10 +13,15 @@ public abstract class LogLevels(LogEventLevel defaultMinLevel = LogEventLevel.In
 
 	public readonly LogEventLevel DefaultLevel = defaultMinLevel;
 
+	/// <summary>
+	/// Switch for controlling the default minimum log level at runtime
+	/// </summary>
+	public LoggingLevelSwitch DefaultLevelSwitch { get; } = new(defaultMinLevel);
+
 	public LoggerConfiguration GetConfiguration()
 	{
 		var loggerConfig = new LoggerConfiguration()
-			.MinimumLevel.ControlledBy(new LoggingLevelSwitch(DefaultLevel));
+			.MinimumLevel.ControlledBy(DefaultLevelSwitch);
 
 		foreach (var kp in LoggingLevels)
 		{
