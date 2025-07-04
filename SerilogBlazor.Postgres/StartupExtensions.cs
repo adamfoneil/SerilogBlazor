@@ -11,14 +11,14 @@ public static class StartupExtensions
 {
 	public static void AddSerilogUtilities(this IServiceCollection services, 
 		string connectionString, LogLevels logLevels, 
-		string schemaName = "public", string tableName = "Logs", TimestampType timestampType = TimestampType.Utc)
+		string schemaName = "public", string tableName = "Logs", string timezone)
 	{
 		services.AddSingleton(logLevels);
 		services.AddSingleton<LoggingRequestIdProvider>();
 
 		services.AddSingleton<SerilogSourceContextMetricsQuery>(sp =>
 			new SerilogPostgresSourceContextMetricsQuery(
-				timestampType,
+				timezone,
 				sp.GetRequiredService<ILogger<SerilogPostgresSourceContextMetricsQuery>>(),
 				sp.GetRequiredService<LoggingRequestIdProvider>(),
 				connectionString, schemaName, tableName
@@ -26,7 +26,7 @@ public static class StartupExtensions
 
 		services.AddSingleton<SerilogQuery>(sp =>
 			new SerilogPostgresQuery(				
-				timestampType,
+				timezone,
 				sp.GetRequiredService<ILogger<SerilogPostgresQuery>>(),
 				sp.GetRequiredService<LoggingRequestIdProvider>(),
 				connectionString, schemaName, tableName

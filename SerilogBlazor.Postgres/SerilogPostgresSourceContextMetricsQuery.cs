@@ -7,12 +7,12 @@ using System.Diagnostics;
 namespace SerilogBlazor.Postgres;
 
 public class SerilogPostgresSourceContextMetricsQuery(
-	TimestampType timestampType,
+	string timezone,
 	ILogger<SerilogPostgresSourceContextMetricsQuery> logger,
 	LoggingRequestIdProvider requestIdProvider,
 	string connectionString, string schemaName, string tableName) : SerilogSourceContextMetricsQuery
 {
-	private readonly TimestampType _timestampType = timestampType;
+	private readonly string _timezone = timezone;
 	private readonly ILogger<SerilogPostgresSourceContextMetricsQuery> _logger = logger;
 	private readonly LoggingRequestIdProvider _requestIdProvider = requestIdProvider;
 	private readonly string _connectionString = connectionString;
@@ -44,7 +44,7 @@ public class SerilogPostgresSourceContextMetricsQuery(
 				GROUP BY
 					""source_context"", ""level""
 			)
-			SELECT src.*, EXTRACT(EPOCH FROM ({PostgresHelpers.CurrentTimeFunction(_timestampType)} - ""LatestTimestamp""))/60 AS ""AgeMinutes""
+			SELECT src.*, EXTRACT(EPOCH FROM (NOW() AT TIME ZONE '{_timezone}' - ""LatestTimestamp""))/60 AS ""AgeMinutes""
 			FROM source AS src";
 
 		_logger.BeginRequestId(_requestIdProvider.NextId());

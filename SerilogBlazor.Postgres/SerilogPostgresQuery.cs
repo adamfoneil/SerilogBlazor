@@ -8,11 +8,12 @@ using System.Text.Json;
 namespace SerilogBlazor.Postgres;
 
 public class SerilogPostgresQuery(
-	TimestampType timestampType,
+	string timezone,
 	ILogger<SerilogPostgresQuery> logger,
 	LoggingRequestIdProvider requestIdProvider,
 	string connectionString, string schemaName = "public", string tableName = "serilog") : SerilogQuery
 {
+	private readonly string _timezone = timezone;
 	private readonly ILogger<SerilogPostgresQuery> _logger = logger;
 	private readonly LoggingRequestIdProvider _requestIdProvider = requestIdProvider;
 	private readonly string _connectionString = connectionString;
@@ -39,12 +40,12 @@ public class SerilogPostgresQuery(
 		using var cn = new NpgsqlConnection(_connectionString);
 		await cn.OpenAsync();
 
-		var (whereClause, parameters, _) = GetWhereClause(criteria, TimestampType);
+		var (whereClause, parameters, _) = GetWhereClause(criteria, _timezone);
 
 		var query = 
 			@$"SELECT 
 				""id"" AS ""Id"", ""timestamp"" AS ""Timestamp"", 
-				EXTRACT(EPOCH FROM ({PostgresHelpers.CurrentTimeFunction(TimestampType)} - ""timestamp""))/60 AS ""AgeMinutes"", 
+				EXTRACT(EPOCH FROM (NOW() AT TIME ZONE '{_timezone}' - ""timestamp""))/60 AS ""AgeMinutes"", 
 				""source_context"" AS ""SourceContext"", ""request_id"" AS ""RequestId"", ""level"" AS ""Level"", ""message_template"" AS ""MessageTemplate"", 
 				""message"" AS ""Message"", ""exception"" AS ""Exception"", ""properties"" AS ""PropertyJson"", ""user_name"" AS ""UserName""
 			FROM ""{_schemaName}"".""{_tableName}""
@@ -81,7 +82,7 @@ public class SerilogPostgresQuery(
 
 	protected override IEnumerable<string> GetSearchTerms(Criteria criteria)
 	{
-		var (_, _, searchTerms) = GetWhereClause(criteria, TimestampType);
+		var (_, _, searchTerms) = GetWhereClause(criteria, _timezone);
 		return searchTerms;
 	}
 
@@ -132,7 +133,7 @@ public class SerilogPostgresQuery(
 		}
 	}
 
-	private static (string, DynamicParameters? Parameters, IEnumerable<string> SearchTerms) GetWhereClause(Criteria? criteria, TimestampType timestampType)
+	private static (string, DynamicParameters? Parameters, IEnumerable<string> SearchTerms) GetWhereClause(Criteria? criteria, string timezone)
 	{
 		if (criteria is null) return (string.Empty, null, []);
 
@@ -195,7 +196,7 @@ public class SerilogPostgresQuery(
 				throw new ArgumentException("Unsupported age format");
 			}
 
-			var ageDiff = $"{PostgresHelpers.CurrentTimeFunction(timestampType)} - \"timestamp\"";
+			var ageDiff = $"NOW() AT TIME ZONE '{timezone}' - \"timestamp\"";
 			terms.Add(($"{ageDiff} <= {intervalExpression}", displayText));
 		}
 
