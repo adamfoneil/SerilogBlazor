@@ -15,16 +15,8 @@ public class SerilogEntry
 	public Dictionary<string, object> Properties { get; init; } = [];
 }	
 
-public enum TimestampType
+public abstract class SerilogQuery
 {
-	Local,
-	Utc
-}
-
-public abstract class SerilogQuery(TimestampType timestampType = TimestampType.Utc)
-{
-	protected readonly TimestampType TimestampType = timestampType;
-
 	public abstract Task<IEnumerable<SerilogEntry>> ExecuteAsync(Criteria? criteria = null, int offset = 0, int limit = 50);
 
 	protected abstract IEnumerable<string> GetSearchTerms(Criteria criteria);
