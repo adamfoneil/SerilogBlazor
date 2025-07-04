@@ -128,7 +128,7 @@ builder.Services.AddSerilogUtilities({your connection string}, logLevels, "publi
 ALTER TABLE serilog ADD id serial PRIMARY KEY
 ```
 
-Now your ready to build your own Serilog viewer page. Refer [sample](https://github.com/adamfoneil/SerilogBlazor/blob/master/SampleApp/Components/Pages/Home.razor) above for ideas.
+Now your ready to build your own Serilog viewer page. Refer to [sample](https://github.com/adamfoneil/SerilogBlazor/blob/master/SampleApp/Components/Pages/Home.razor) above for ideas.
 
 # Goodies and Extensions
 
