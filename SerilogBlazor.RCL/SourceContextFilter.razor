@@ -25,10 +25,12 @@
 							<div class="source-context-grid">
 								@foreach (var item in metricGrp)
 								{
-									<div><a @onclick="@(() => OnSourceContextClick(item.SourceContext, levelGrp.Key))" @onclick:preventDefault style="cursor:pointer">@item.SourceContext</a></div>
-									<div>@item.Count</div>
-									<div>@item.LatestTimestamp - @item.AgeText</div>									
-									<div>@GetEffectiveLogLevel(item.SourceContext)</div>
+									<div class="source-context-row" style="display:contents" @onclick="@(() => OnSourceContextClick(item.SourceContext, levelGrp.Key))">
+										<div>@item.SourceContext</div>
+										<div>@item.Count</div>
+										<div>@item.LatestTimestamp - @item.AgeText</div>									
+										<div>@GetEffectiveLogLevel(item.SourceContext)</div>
+									</div>
 								}
 							</div>
 						</details>						
