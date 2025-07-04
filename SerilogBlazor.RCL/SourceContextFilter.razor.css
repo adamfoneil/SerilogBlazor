@@ -14,6 +14,14 @@
 	grid-template-columns: auto auto auto auto;
 }
 
+.source-context-row {
+	cursor: pointer;
+}
+
+.source-context-row:hover > div {
+	background-color: #f8f9fa;
+}
+
 /* Level heading styling with badges */
 .level-group summary {
 	cursor: pointer;
