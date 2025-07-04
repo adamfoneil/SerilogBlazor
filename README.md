@@ -74,7 +74,7 @@ After implementing this interface on your DbContext, add a migration to add the 
 
 # Getting Started (SQL Server)
 
-1. Install the SQL Server and RCL packages listed above.
+1. Install the SQL Server and RCL packages listed above. (Also the [Serilog.Sinks.MSSqlServer](https://www.nuget.org/packages/Serilog.Sinks.MSSqlServer) if you don't have it yet.)
 2. Implement abstract class [LogLevels](https://github.com/adamfoneil/SerilogBlazor/blob/master/SerilogBlazor.Abstractions/LogLevels.cs) in your app. Example: [ApplicationLogLevels](https://github.com/adamfoneil/SerilogBlazor/blob/master/SampleApp/ApplicationLogLevels.cs)
 3. In your app startup, create your `ApplicationLogLevels` instance (or whatever you decide to call it), and use it as the basis of your Serilog configuration. Also be sure to include the [SqlServerColumnOptions.Default](https://github.com/adamfoneil/SerilogBlazor/blob/master/SerilogBlazor.SqlServer/ColumnOptions.cs) `columnOptions` argument. This ensures the `SourceContext` is captured as a dedicated column in your logs. Example:
 
@@ -105,7 +105,7 @@ builder.Services.AddSerilogUtilities({your connection string}, logLevels, "log",
 ``` 
 
 # Getting Started (Postgres)
-1. Install the Postgres and RCL packages listed above. (Also the [Serilog.Sinks.MSSqlServer](https://www.nuget.org/packages/Serilog.Sinks.MSSqlServer) if you don't have it yet.)
+1. Install the Postgres and RCL packages listed above.
 2. Implement abstract class [LogLevels](https://github.com/adamfoneil/SerilogBlazor/blob/master/SerilogBlazor.Abstractions/LogLevels.cs) in your app.
 3. In your app startup, initialize Serilog with user your `LogLevels` class (whatever you call it) and call a couple of the provided extension methods. Note the use of custom column options [PostgresColumnOptions](https://github.com/adamfoneil/SerilogBlazor/blob/master/SerilogBlazor.Postgres/ColumnOptions.cs).
 
