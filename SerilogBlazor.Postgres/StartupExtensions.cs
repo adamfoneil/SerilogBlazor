@@ -10,8 +10,8 @@ namespace SerilogBlazor.Postgres;
 public static class StartupExtensions
 {
 	public static void AddSerilogUtilities(this IServiceCollection services, 
-		string connectionString, LogLevels logLevels, 
-		string schemaName = "public", string tableName = "Logs", string timezone)
+		string connectionString, LogLevels logLevels, string timezone,
+		string schemaName = "public", string tableName = "serilog")
 	{
 		services.AddSingleton(logLevels);
 		services.AddSingleton<LoggingRequestIdProvider>();
@@ -33,7 +33,7 @@ public static class StartupExtensions
 		));
 	}
 
-	public static void AddSerilogCleanup(this IServiceCollection services, SerilogCleanupOptions options)
+	public static void AddSerilogCleanup(this IServiceCollection services, string timezone, SerilogCleanupOptions options)
 	{
 		services.AddSingleton<LoggingRequestIdProvider>();
 
@@ -43,6 +43,7 @@ public static class StartupExtensions
 
 		services.AddSingleton<SerilogCleanup>(sp =>
 			new SerilogPostgresCleanup(
+				timezone,
 				sp.GetRequiredService<LoggingRequestIdProvider>(),				
 				sp.GetRequiredService<ILogger<SerilogPostgresCleanup>>(),
 				sp.GetRequiredService<IOptions<SerilogCleanupOptions>>()
