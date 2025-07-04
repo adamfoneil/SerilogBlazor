@@ -12,6 +12,25 @@ public static class PostgresHelpers
 	};
 
 	/// <summary>
+	/// Generates the appropriate timestamp expression for age calculations,
+	/// handling timezone conversions correctly based on the timestamp type.
+	/// Assumes stored timestamps are in UTC without timezone info.
+	/// </summary>
+	public static string TimestampExpression(TimestampType timestampType, string columnName = "\"timestamp\"") => timestampType switch
+	{
+		TimestampType.Utc => $"{columnName} AT TIME ZONE 'UTC'",
+		TimestampType.Local => $"{columnName} AT TIME ZONE 'UTC' AT TIME ZONE current_setting('timezone')",
+		_ => throw new ArgumentOutOfRangeException(nameof(timestampType))
+	};
+
+	/// <summary>
+	/// Generates the complete age calculation expression for PostgreSQL queries.
+	/// Properly handles timezone conversions to avoid offset issues.
+	/// </summary>
+	public static string AgeCalculationExpression(TimestampType timestampType, string columnName = "\"timestamp\"") =>
+		$"{CurrentTimeFunction(timestampType)} - {TimestampExpression(timestampType, columnName)}";
+
+	/// <summary>
 	/// Converts Serilog level integer to string for UI display
 	/// </summary>
 	public static string LevelIntToString(int levelValue) => levelValue switch

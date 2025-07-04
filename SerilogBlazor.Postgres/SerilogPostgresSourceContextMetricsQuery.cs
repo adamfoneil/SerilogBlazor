@@ -44,7 +44,7 @@ public class SerilogPostgresSourceContextMetricsQuery(
 				GROUP BY
 					""source_context"", ""level""
 			)
-			SELECT src.*, EXTRACT(EPOCH FROM ({PostgresHelpers.CurrentTimeFunction(_timestampType)} - ""LatestTimestamp""))/60 AS ""AgeMinutes""
+			SELECT src.*, EXTRACT(EPOCH FROM ({PostgresHelpers.AgeCalculationExpression(_timestampType, "\"LatestTimestamp\"")}))/60 AS ""AgeMinutes""
 			FROM source AS src";
 
 		_logger.BeginRequestId(_requestIdProvider.NextId());

@@ -44,7 +44,7 @@ public class SerilogPostgresQuery(
 		var query = 
 			@$"SELECT 
 				""id"" AS ""Id"", ""timestamp"" AS ""Timestamp"", 
-				EXTRACT(EPOCH FROM ({PostgresHelpers.CurrentTimeFunction(TimestampType)} - ""timestamp""))/60 AS ""AgeMinutes"", 
+				EXTRACT(EPOCH FROM ({PostgresHelpers.AgeCalculationExpression(TimestampType)}))/60 AS ""AgeMinutes"", 
 				""source_context"" AS ""SourceContext"", ""request_id"" AS ""RequestId"", ""level"" AS ""Level"", ""message_template"" AS ""MessageTemplate"", 
 				""message"" AS ""Message"", ""exception"" AS ""Exception"", ""properties"" AS ""PropertyJson"", ""user_name"" AS ""UserName""
 			FROM ""{_schemaName}"".""{_tableName}""
@@ -195,7 +195,7 @@ public class SerilogPostgresQuery(
 				throw new ArgumentException("Unsupported age format");
 			}
 
-			var ageDiff = $"{PostgresHelpers.CurrentTimeFunction(timestampType)} - \"timestamp\"";
+			var ageDiff = PostgresHelpers.AgeCalculationExpression(timestampType);
 			terms.Add(($"{ageDiff} <= {intervalExpression}", displayText));
 		}
 

@@ -79,4 +79,44 @@ public class PostgresHelpersTests
         // Assert
         Assert.AreEqual("NOW()", result);
     }
+
+    [TestMethod]
+    public void TimestampExpression_Utc_ReturnsTimestampAtUtc()
+    {
+        // Arrange & Act
+        var result = PostgresHelpers.TimestampExpression(SerilogBlazor.Abstractions.TimestampType.Utc);
+        
+        // Assert
+        Assert.AreEqual("\"timestamp\" AT TIME ZONE 'UTC'", result);
+    }
+
+    [TestMethod]
+    public void TimestampExpression_Local_ReturnsTimestampConvertedToLocal()
+    {
+        // Arrange & Act
+        var result = PostgresHelpers.TimestampExpression(SerilogBlazor.Abstractions.TimestampType.Local);
+        
+        // Assert
+        Assert.AreEqual("\"timestamp\" AT TIME ZONE 'UTC' AT TIME ZONE current_setting('timezone')", result);
+    }
+
+    [TestMethod]
+    public void AgeCalculationExpression_Utc_ReturnsCorrectExpression()
+    {
+        // Arrange & Act
+        var result = PostgresHelpers.AgeCalculationExpression(SerilogBlazor.Abstractions.TimestampType.Utc);
+        
+        // Assert
+        Assert.AreEqual("NOW() AT TIME ZONE 'UTC' - \"timestamp\" AT TIME ZONE 'UTC'", result);
+    }
+
+    [TestMethod]
+    public void AgeCalculationExpression_Local_ReturnsCorrectExpression()
+    {
+        // Arrange & Act
+        var result = PostgresHelpers.AgeCalculationExpression(SerilogBlazor.Abstractions.TimestampType.Local);
+        
+        // Assert
+        Assert.AreEqual("NOW() - \"timestamp\" AT TIME ZONE 'UTC' AT TIME ZONE current_setting('timezone')", result);
+    }
 }
