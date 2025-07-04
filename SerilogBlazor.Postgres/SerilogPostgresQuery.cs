@@ -11,7 +11,7 @@ public class SerilogPostgresQuery(
 	TimestampType timestampType,
 	ILogger<SerilogPostgresQuery> logger,
 	LoggingRequestIdProvider requestIdProvider,
-	string connectionString, string schemaName = "public", string tableName = "serilog") : SerilogQuery(timestampType)
+	string connectionString, string schemaName = "public", string tableName = "serilog") : SerilogQuery
 {
 	private readonly ILogger<SerilogPostgresQuery> _logger = logger;
 	private readonly LoggingRequestIdProvider _requestIdProvider = requestIdProvider;

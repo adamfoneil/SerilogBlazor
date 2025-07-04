@@ -29,9 +29,9 @@
   <ItemGroup>
     <PackageReference Include="Dapper" Version="2.1.66" />
     <PackageReference Include="Microsoft.Data.SqlClient" Version="6.0.2" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.4" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="9.0.4" />
-    <PackageReference Include="Serilog.Blazor.Abstractions" Version="1.0.2" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.6" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="9.0.6" />
+    <PackageReference Include="Serilog.Blazor.Abstractions" Version="1.0.3" />
 	<PackageReference Include="Serilog.Sinks.MSSqlServer" Version="8.2.0" />
 	<PackageReference Include="Coravel" Version="6.0.2" />
   </ItemGroup>
