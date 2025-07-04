@@ -6,12 +6,19 @@ using System.Diagnostics;
 
 namespace SerilogBlazor.SqlServer;
 
+public enum TimestampType
+{
+	Local,
+	Utc
+}
+
 public class SerilogSqlServerQuery(
 	TimestampType timestampType,
 	ILogger<SerilogSqlServerQuery> logger,	
 	LoggingRequestIdProvider requestIdProvider,
-	string connectionString, string schemaName, string tableName) : SerilogQuery(timestampType)
+	string connectionString, string schemaName, string tableName) : SerilogQuery
 {
+	private readonly TimestampType _timestampType = timestampType;
 	private readonly ILogger<SerilogSqlServerQuery> _logger = logger;
 	private readonly LoggingRequestIdProvider _requestIdProvider = requestIdProvider;
 	private readonly string _connectionString = connectionString;
@@ -38,11 +45,11 @@ public class SerilogSqlServerQuery(
 		using var cn = new SqlConnection(_connectionString);
 		cn.Open();
 
-		var (whereClause, parameters, _) = GetWhereClause(criteria, TimestampType);
+		var (whereClause, parameters, _) = GetWhereClause(criteria, _timestampType);
 
 		var query = 
 			@$"SELECT 
-				[Id], [Timestamp], DATEDIFF(n, [Timestamp], {SqlServerHelpers.CurrentTimeFunction(TimestampType)}) AS [AgeMinutes], 
+				[Id], [Timestamp], DATEDIFF(n, [Timestamp], {SqlServerHelpers.CurrentTimeFunction(_timestampType)}) AS [AgeMinutes], 
 				[SourceContext], [RequestId], [Level], [MessageTemplate], 
 				[Message], [Exception], [Properties] AS [PropertyXml], [UserName]
 			FROM [{_schemaName}].[{_tableName}] 
@@ -80,7 +87,7 @@ public class SerilogSqlServerQuery(
 
 	protected override IEnumerable<string> GetSearchTerms(Criteria criteria)
 	{
-		var (_, _, searchTerms) = GetWhereClause(criteria, TimestampType);
+		var (_, _, searchTerms) = GetWhereClause(criteria, _timestampType);
 		return searchTerms;
 	}
 
