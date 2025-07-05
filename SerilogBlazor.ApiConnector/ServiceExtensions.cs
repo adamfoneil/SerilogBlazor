@@ -3,8 +3,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Caching.Memory;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using SerilogBlazor.Abstractions;
 
 namespace SerilogBlazor.ApiConnector;
 
@@ -45,7 +45,7 @@ public static class ServiceExtensions
 
 		app.MapGet($"{path}/metrics", async ([FromServices] ILogger<IMetricsQuery> logger, [FromServices] IMemoryCache cache, HttpRequest request, [FromServices] IMetricsQuery query) =>
 		{
-			if (!ValidateHeaderSecret(request, headerSecret, logger)) return Results.Unauthorized();			
+			if (!ValidateHeaderSecret(request, headerSecret, logger)) return Results.Unauthorized();
 
 			try
 			{
@@ -59,6 +59,19 @@ public static class ServiceExtensions
 				logger.LogError(exc, "Error executing Serilog metrics query");
 				return Results.Problem("Error executing Serilog metrics query");
 			}
+		});
+
+		app.MapGet($"{path}/levels", ([FromServices]ILogLevels logLevels, ILogger<ILogLevels> logger, HttpRequest request) =>
+		{
+			if (!ValidateHeaderSecret(request, headerSecret, logger)) return Results.Unauthorized();
+
+			logger.LogDebug("Getting log levels configuration");
+
+			return Results.Ok(new
+			{
+				DefaultLevel = logLevels.DefaultLevelSwitch.MinimumLevel.ToString(),
+				ConfiguredLevels = logLevels.LoggingLevels.ToDictionary(kp => kp.Key, kp => kp.Value.MinimumLevel.ToString())
+			});
 		});
 
 		return app;

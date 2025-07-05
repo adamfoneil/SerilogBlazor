@@ -4,10 +4,17 @@ using Serilog.Events;
 
 namespace SerilogBlazor.Abstractions;
 
+public interface ILogLevels
+{
+	LoggingLevelSwitch DefaultLevelSwitch { get; }
+	Dictionary<string, LoggingLevelSwitch> LoggingLevels { get; }
+	LoggerConfiguration GetConfiguration();
+}
+
 /// <summary>
 /// Define logging levels for different namespaces that can be toggled at runtime
 /// </summary>
-public abstract class LogLevels(LogEventLevel defaultMinLevel = LogEventLevel.Information)
+public abstract class LogLevels(LogEventLevel defaultMinLevel = LogEventLevel.Information) : ILogLevels
 {
 	public abstract Dictionary<string, LoggingLevelSwitch> LoggingLevels { get; }
 
