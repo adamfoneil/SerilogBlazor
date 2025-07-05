@@ -2,9 +2,7 @@
 
 namespace SerilogBlazor.ApiConnector;
 
-internal class MetricsQuery(Func<Task<SourceContextMetricsResult[]>> query)
+public abstract class MetricsQuery
 {
-	private readonly Func<Task<SourceContextMetricsResult[]>> _query = query;
-
-	public async Task<SourceContextMetricsResult[]> ExecuteAsync() => await _query();
+	public abstract Task<SourceContextMetricsResult[]> ExecuteAsync();
 }

@@ -13,12 +13,12 @@ public static class ServiceExtensions
 {
 	public static IServiceCollection AddSerilogApiQueries(
 		this IServiceCollection services, 
-		Func<string?, Task<SerilogEntry[]>> detailQuery,
-		Func<Task<SourceContextMetricsResult[]>> metricsQuery)
+		DetailQuery detailQuery,
+		MetricsQuery metricsQuery)
 	{
 		services.AddMemoryCache();
-		services.AddSingleton(sp => new DetailQuery(detailQuery));
-		services.AddSingleton(sp => new MetricsQuery(metricsQuery));
+		services.AddSingleton(detailQuery);
+		services.AddSingleton(metricsQuery);
 
 		return services;
 	}

@@ -2,9 +2,7 @@
 
 namespace SerilogBlazor.ApiConnector;
 
-internal class DetailQuery(Func<string?, Task<SerilogEntry[]>> query)
+public abstract class DetailQuery
 {
-	private readonly Func<string?, Task<SerilogEntry[]>> _query = query;
-
-	public async Task<SerilogEntry[]> ExecuteAsync(string? search) => await _query(search);
+	public abstract Task<SerilogEntry[]> ExecuteAsync(string? search);
 }
