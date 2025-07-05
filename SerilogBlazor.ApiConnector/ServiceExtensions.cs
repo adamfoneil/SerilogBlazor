@@ -11,7 +11,7 @@ namespace SerilogBlazor.ApiConnector;
 
 public static class ServiceExtensions
 {
-	public static void AddSerilogApiQueries(
+	public static IServiceCollection AddSerilogApiQueries(
 		this IServiceCollection services, 
 		Func<string?, Task<SerilogEntry[]>> detailQuery,
 		Func<Task<SourceContextMetricsResult[]>> metricsQuery)
@@ -19,9 +19,11 @@ public static class ServiceExtensions
 		services.AddMemoryCache();
 		services.AddSingleton(sp => new DetailQuery(detailQuery));
 		services.AddSingleton(sp => new MetricsQuery(metricsQuery));
+
+		return services;
 	}
 
-	public static void MapSerilogEndpoints(this IEndpointRouteBuilder app, string path, string headerSecret, TimeSpan? cacheDuration = null)
+	public static IEndpointRouteBuilder MapSerilogEndpoints(this IEndpointRouteBuilder app, string path, string headerSecret, TimeSpan? cacheDuration = null)
 	{
 		cacheDuration ??= TimeSpan.FromMinutes(1);
 
@@ -60,6 +62,8 @@ public static class ServiceExtensions
 				return Results.Problem("Error executing Serilog metrics query");
 			}
 		});
+
+		return app;
 	}
 
 	private static bool ValidateHeaderSecret<T>(HttpRequest request, string headerSecret, ILogger<T> logger)

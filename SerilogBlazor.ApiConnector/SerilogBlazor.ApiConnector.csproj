@@ -9,7 +9,7 @@
 	</RestoreAdditionalProjectSources>
 	<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
 	<Title>Serilog Blazor API Connector</Title>
-	<Version>1.0.0</Version>
+	<Version>1.0.1</Version>
 	<Authors>Adam O'Neil</Authors>
 	<Company>Adam O'Neil</Company>
 	<Description>Securely expose Serilog data with API endpoints</Description>
@@ -18,6 +18,7 @@
 	<RepositoryUrl>https://github.com/adamfoneil/SerilogBlazor</RepositoryUrl>
 	<PackageTags>serilog; blazor; api</PackageTags>
 	<PackageLicenseExpression>MIT</PackageLicenseExpression>
+	<PackageId>Serilog.Blazor.ApiConnector</PackageId>
   </PropertyGroup>
 
 	<ItemGroup>
