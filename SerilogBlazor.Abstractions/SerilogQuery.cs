@@ -40,7 +40,7 @@ public abstract class SerilogQuery
 		public HashSet<string> HasProperties { get; set; } = [];
 		public Dictionary<string, object> HassPropertyValues { get; set; } = [];
 
-		public static Criteria ParseExpression(string input)
+		public static Criteria ParseExpression(string? input)
 		{
 			/*
 			 [{string}] = SourceContext (assume wildcards around it)
