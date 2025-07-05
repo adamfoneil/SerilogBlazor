@@ -5,36 +5,34 @@ using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using SerilogBlazor.Abstractions;
 
 namespace SerilogBlazor.ApiConnector;
 
 public static class ServiceExtensions
 {
-	public static IServiceCollection AddSerilogApiQueries(
-		this IServiceCollection services, 
-		DetailQuery detailQuery,
-		MetricsQuery metricsQuery)
-	{
-		services.AddMemoryCache();
-		services.AddSingleton(detailQuery);
-		services.AddSingleton(metricsQuery);
-
-		return services;
-	}
-
 	public static IEndpointRouteBuilder MapSerilogEndpoints(this IEndpointRouteBuilder app, string path, string headerSecret, TimeSpan? cacheDuration = null)
 	{
 		cacheDuration ??= TimeSpan.FromMinutes(1);
 
-		app.MapGet($"{path}/detail", async (ILogger<DetailQuery> logger, IMemoryCache cache, HttpRequest request, DetailQuery query, [FromQuery]string? search) =>
+		app.MapGet($"{path}/detail", async ([FromServices]ILogger<IDetailQuery> logger, [FromServices]IMemoryCache cache, HttpRequest request, [FromServices] IDetailQuery query, 
+			[FromQuery]string? search, [FromQuery]int? offset, [FromQuery]int? rowCount) =>
 		{
-			if (!ValidateHeaderSecret(request, headerSecret, logger)) return Results.Unauthorized();			
+			if (!ValidateHeaderSecret(request, headerSecret, logger)) return Results.Unauthorized();
+
+			offset ??= 0;
+			rowCount ??= 50;
+
+			var key = new
+			{
+				offset,
+				rowCount,
+				Search = search ?? "empty"
+			}.ToMd5();
 
 			try
 			{				
 				logger.LogDebug("Executing details query with search: '{Search}' with cache duration {duration}", search, cacheDuration);
-				var (resultType, entries) = await cache.GetOrExecuteAsync(search.ToMd5(), async () => await query.ExecuteAsync(search), cacheDuration.Value);
+				var (resultType, entries) = await cache.GetOrExecuteAsync(key, async () => await query.ExecuteAsync(search, offset.Value, rowCount.Value), cacheDuration.Value);
 				logger.LogDebug("Results were {ResultType}", resultType);
 				return Results.Ok(entries);
 			}
@@ -45,7 +43,7 @@ public static class ServiceExtensions
 			}
 		});
 
-		app.MapGet($"{path}/metrics", async (ILogger<MetricsQuery> logger, IMemoryCache cache, HttpRequest request, MetricsQuery query) =>
+		app.MapGet($"{path}/metrics", async ([FromServices] ILogger<IMetricsQuery> logger, [FromServices] IMemoryCache cache, HttpRequest request, [FromServices] IMetricsQuery query) =>
 		{
 			if (!ValidateHeaderSecret(request, headerSecret, logger)) return Results.Unauthorized();			
 
@@ -69,7 +67,7 @@ public static class ServiceExtensions
 	private static bool ValidateHeaderSecret<T>(HttpRequest request, string headerSecret, ILogger<T> logger)
 	{		
 		if (request.Headers.TryGetValue("serilog-api-secret", out var secretValue))
-		{			
+		{
 			var result = secretValue == headerSecret;
 			logger.LogDebug("Header secret found: {Secret}, match = {match}", secretValue, result);
 			return result;
