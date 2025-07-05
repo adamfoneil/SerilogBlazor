@@ -21,13 +21,13 @@ public static class ServiceExtensions
 		services.AddSingleton(sp => new MetricsQuery(metricsQuery));
 	}
 
-	public static void MapSerilogEndpoints(this IEndpointRouteBuilder app, string path, string requireHeaderSecret, TimeSpan? cacheDuration = null)
+	public static void MapSerilogEndpoints(this IEndpointRouteBuilder app, string path, string headerSecret, TimeSpan? cacheDuration = null)
 	{
 		cacheDuration ??= TimeSpan.FromMinutes(1);
 
 		app.MapGet($"{path}/detail", async (ILogger<DetailQuery> logger, IMemoryCache cache, HttpRequest request, DetailQuery query, [FromQuery]string? search) =>
 		{
-			if (!ValidateHeaderSecret(request, requireHeaderSecret, logger)) return Results.Unauthorized();			
+			if (!ValidateHeaderSecret(request, headerSecret, logger)) return Results.Unauthorized();			
 
 			try
 			{				
@@ -45,7 +45,7 @@ public static class ServiceExtensions
 
 		app.MapGet($"{path}/metrics", async (ILogger<MetricsQuery> logger, IMemoryCache cache, HttpRequest request, MetricsQuery query) =>
 		{
-			if (!ValidateHeaderSecret(request, requireHeaderSecret, logger)) return Results.Unauthorized();			
+			if (!ValidateHeaderSecret(request, headerSecret, logger)) return Results.Unauthorized();			
 
 			try
 			{
