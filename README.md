@@ -113,11 +113,11 @@ builder.Services.AddSerilogUtilities({your connection string}, logLevels, "log",
 var logLevels = new ApplicationLogLevels();
 
 Log.Logger = logLevels
-	.GetConfiguration()
-	.WriteTo.Console() // optional, but I use this
-	.WriteTo.PostgreSQL({your connection string}, "serilog", columnOptions: PostgresColumnOptions.Default, needAutoCreateTable: true)	
-	.Enrich.FromLogContext()	
-	.CreateLogger();
+  .GetConfiguration()
+  .WriteTo.Console() // optional, but I use this
+  .WriteTo.PostgreSQL({your connection string}, "serilog", columnOptions: PostgresColumnOptions.Default, needAutoCreateTable: true)	
+  .Enrich.FromLogContext()	
+  .CreateLogger();
 
 builder.Services.AddSerilog();
 builder.Services.AddSerilogUtilities({your connection string}, logLevels, "public", "serilog", TimestampType.Utc);
@@ -133,7 +133,7 @@ Now your ready to build your own Serilog viewer page. Refer to [sample](https://
 # Goodies and Extensions
 
 ## BeginRequestId
-Correlating log entries in API or non-SPA web apps can be done with ASP.NET Core's `HttpContext.TraceIdentifier` property. This is not helpful in Blazor due to how it works with `HttpContext`. As an alternative, this library provides a generic log correlation extension method [BeginRequestId](https://github.com/adamfoneil/SerilogBlazor/blob/728e242bc2d91bf10779831ba843587c0c2e4631/SerilogBlazor.Abstractions/LoggerExtensions.cs#L10). Use this at the beginning of a method where you want to ensure that all logs written in that scope have a common identifier. [Example](https://github.com/adamfoneil/SerilogBlazor/blob/728e242bc2d91bf10779831ba843587c0c2e4631/SampleApp/Components/Pages/Home.razor#L30). This works with `LoggingRequestIdProvider` to provide an auto-incrementing value when it's called.
+Correlating log entries in API or non-SPA web apps can be done with ASP.NET Core's `HttpContext.TraceIdentifier` property. This is not helpful in Blazor due to how it works with `HttpContext`. As an alternative, this library provides a generic log correlation extension method [BeginRequestId](https://github.com/adamfoneil/SerilogBlazor/blob/728e242bc2d91bf10779831ba843587c0c2e4631/SerilogBlazor.Abstractions/LoggerExtensions.cs#L10). Use this at the beginning of a method where you want to ensure that all logs written in that scope have a common identifier. [Example](https://github.com/adamfoneil/SerilogBlazor/blob/728e242bc2d91bf10779831ba843587c0c2e4631/SampleApp/Components/Pages/Home.razor#L30). This works with [LoggingRequestIdProvider](https://github.com/adamfoneil/SerilogBlazor/blob/master/SerilogBlazor.Abstractions/LoggingRequestIdProvider.cs) to provide an auto-incrementing value when it's called.
 
 ```csharp
 @inject LoggingRequestIdProvider RequestId
@@ -151,6 +151,10 @@ private void LogThis()
   SampleService.DoWork();
 }
 ```
+
+When logs are correlated, you can click the Request Id in the grid view and find all the logs related to that request, spread across any services in scope at the time.
+
+![image](https://github.com/user-attachments/assets/024224a6-8ac3-46e4-baaa-bbb2be45929e)
 
 ## SerilogCleanup
 Implement retention periods for various log levels with the `AddSerilogCleanup` method, used at startup:
