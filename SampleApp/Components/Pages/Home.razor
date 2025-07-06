@@ -11,7 +11,7 @@
 
 <hr />
 
-<LevelToggle OnLogLevelsChanged="OnLogLevelsChanged" />
+<LevelToggle />
 <hr />
 
 <details style="margin-bottom:0.5rem">
@@ -25,7 +25,6 @@
 @code {
 	private IEnumerable<SerilogEntry> entries = [];
 	private SearchBar<ApplicationDbContext>? searchBar;
-	private SourceContextFilter? sourceContextFilter;	
 
 	private void LogThis()
 	{
@@ -63,14 +62,6 @@
 		if (searchBar is not null)
 		{
 			await searchBar.AddSourceContext(selection);
-		}
-	}
-
-	private async Task OnLogLevelsChanged()
-	{
-		if (sourceContextFilter is not null)
-		{
-			await sourceContextFilter.RefreshAsync();
 		}
 	}
 }
