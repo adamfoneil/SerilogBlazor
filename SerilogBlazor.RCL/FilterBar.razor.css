@@ -1,0 +1,126 @@
+/* Filter bar styling */
+.filter-bar {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+/* Tab styling */
+.filter-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    border-bottom: 2px solid #e1e5e9;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+}
+
+.filter-tab {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    border: none;
+    background-color: #f8f9fa;
+    border-radius: 8px 8px 0 0;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.filter-tab:hover {
+    background-color: #e9ecef;
+    opacity: 0.8;
+}
+
+.filter-tab.active {
+    background-color: #ffffff;
+    border: 2px solid #e1e5e9;
+    border-bottom: 2px solid #ffffff;
+    margin-bottom: -2px;
+    font-weight: 600;
+}
+
+.tab-count {
+    font-size: 12px;
+    color: #6c757d;
+    font-weight: 400;
+}
+
+.filter-tab.active .tab-count {
+    color: #495057;
+}
+
+/* Content area */
+.filter-content {
+    min-height: 200px;
+    padding: 16px 0;
+}
+
+/* Reuse grid styling from SourceContextFilter */
+.source-context-grid {
+    display: grid;
+    grid-template-columns: auto auto auto auto;
+    gap: 8px 16px;
+}
+
+.source-context-row {
+    cursor: pointer;
+    display: contents;
+}
+
+.source-context-row:hover > div {
+    background-color: #f8f9fa;
+    padding: 4px 8px;
+    border-radius: 4px;
+}
+
+/* Level badge styling - reused from SourceContextFilter */
+.level-heading-badge {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 16px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    min-width: 80px;
+    text-align: center;
+}
+
+/* Level-specific badge styles */
+.level-heading-badge.level-information {
+    color: #0c84ff;
+    background-color: #e7f3ff;
+}
+
+.level-heading-badge.level-warning {
+    color: #ff9500;
+    background-color: #fff3e0;
+}
+
+.level-heading-badge.level-error {
+    color: #ff3b30;
+    background-color: #ffebee;
+}
+
+.level-heading-badge.level-debug {
+    color: #8e8e93;
+    background-color: #f5f5f5;
+}
+
+.level-heading-badge.level-verbose {
+    color: #8e8e93;
+    background-color: #f5f5f5;
+}
+
+.level-heading-badge.level-fatal {
+    color: #ff3b30;
+    background-color: #ffebee;
+}
+
+.level-heading-badge.level-critical {
+    color: #ff3b30;
+    background-color: #ffebee;
+}

@@ -1,3 +1,115 @@
 @using SerilogBlazor.Abstractions
 @inject SerilogSourceContextMetricsQuery Query
 @inject LogLevels LogLevels
+
+<div class="filter-bar">
+	<div class="filter-tabs">
+		@foreach (var levelGrp in metricsResults.GroupBy(row => row.Level))
+		{
+			<button class="filter-tab @(activeTab == levelGrp.Key ? "active" : "")" 
+					@onclick="@(() => SetActiveTab(levelGrp.Key))">
+				<span class="level-heading-badge level-@levelGrp.Key.ToLower()">@levelGrp.Key</span>
+				<span class="tab-count">(@levelGrp.Count())</span>
+			</button>
+		}
+	</div>
+
+	<div class="filter-content">
+		@if (!string.IsNullOrEmpty(activeTab))
+		{
+			var activeLevel = metricsResults.Where(r => r.Level == activeTab);
+			if (activeLevel.Any())
+			{
+				<div class="source-context-grid">
+					@foreach (var item in activeLevel)
+					{
+						<div class="source-context-row" style="display:contents" @onclick="@(() => OnSourceContextClick(item.SourceContext, activeTab))">
+							<div>@item.SourceContext</div>
+							<div>@item.Count</div>
+							<div>@item.LatestTimestamp.ToString("yyyy-MM-dd HH:mm:ss") - @item.AgeText</div>									
+							<div>@GetEffectiveLogLevel(item.SourceContext)</div>
+						</div>
+					}
+				</div>
+			}
+		}
+	</div>
+</div>
+
+@code {
+	private IEnumerable<SourceContextMetricsResult> metricsResults = [];
+	private string activeTab = "";
+
+	[Parameter] public string? UserName { get; set; }
+
+	[Parameter] public EventCallback<SourceContextFilterSelection> SourceContextClicked { get; set; }
+
+	protected override async Task OnInitializedAsync()
+	{
+		await Refresh();
+		SetInitialActiveTab();
+	}
+
+	protected override async Task OnParametersSetAsync()
+	{
+		await Refresh();
+		SetInitialActiveTab();
+	}
+
+	private async Task Refresh()
+	{
+		metricsResults = await Query.ExecuteAsync();	
+	}
+
+	public async Task RefreshAsync()
+	{
+		await Refresh();
+		SetInitialActiveTab();
+		await InvokeAsync(StateHasChanged);
+	}
+
+	private void SetInitialActiveTab()
+	{
+		if (string.IsNullOrEmpty(activeTab) && metricsResults.Any())
+		{
+			activeTab = metricsResults.First().Level;
+		}
+	}
+
+	private void SetActiveTab(string level)
+	{
+		activeTab = level;
+	}
+
+	private async Task OnSourceContextClick(string sourceContext, string logLevel)
+	{
+		await SourceContextClicked.InvokeAsync(new SourceContextFilterSelection(sourceContext, logLevel));
+	}
+
+	private string GetEffectiveLogLevel(string? sourceContext)
+	{
+		if (string.IsNullOrWhiteSpace(sourceContext)) return LogLevels.DefaultLevel.ToString();
+
+		// Find the longest matching prefix from LogLevels.LoggingLevels
+		string? bestMatch = null;
+		int bestMatchLength = 0;
+
+		foreach (var kvp in LogLevels.LoggingLevels)
+		{
+			var prefix = kvp.Key;
+			if (sourceContext.StartsWith(prefix) && prefix.Length > bestMatchLength)
+			{
+				bestMatch = prefix;
+				bestMatchLength = prefix.Length;
+			}
+		}
+
+		if (bestMatch != null)
+		{
+			return LogLevels.LoggingLevels[bestMatch].MinimumLevel.ToString();
+		}
+
+		// Default to Information if no prefix matches
+		return LogLevels.DefaultLevel.ToString();
+	}
+}
