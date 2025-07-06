@@ -52,6 +52,19 @@ Example: [SampleApp](https://github.com/adamfoneil/SerilogBlazor/blob/f7d98814e2
 </details>
 
 <details>
+  <summary>FilterBar</summary>
+
+This is a reworking of the `SourceContextFilter` component as a tabbed UI.
+
+![image](https://github.com/user-attachments/assets/0b36cad2-bc9a-47cb-8c82-6dde01096220)
+
+Source: [FilterBar](https://github.com/adamfoneil/SerilogBlazor/blob/master/SerilogBlazor.RCL/FilterBar.razor)
+
+Example: [SampleApp](https://github.com/adamfoneil/SerilogBlazor/blob/29e6e38f60d3f15867fb2d42fd89e138355e6646/SampleApp/Components/Pages/Home.razor#L19)
+
+</details>
+
+<details>
   <summary>SearchBar</summary>
 
 Search your logs with a variety of shortcuts. Save searches for easy reuse. Supported syntax:
