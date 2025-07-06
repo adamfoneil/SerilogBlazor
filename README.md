@@ -152,7 +152,7 @@ private void LogThis()
 }
 ```
 
-When logs are correlated, you can click the Request Id in the grid view and find all the logs related to the request scope.
+When logs are correlated, you can click the Request Id in the grid view and find all the logs related to that request, spread across any services in scope at the time.
 
 ![image](https://github.com/user-attachments/assets/024224a6-8ac3-46e4-baaa-bbb2be45929e)
 
