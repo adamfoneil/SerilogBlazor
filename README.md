@@ -152,6 +152,10 @@ private void LogThis()
 }
 ```
 
+When logs are correlated, you can click the Request Id in the grid view and find all the logs related to the request scope.
+
+![image](https://github.com/user-attachments/assets/024224a6-8ac3-46e4-baaa-bbb2be45929e)
+
 ## SerilogCleanup
 Implement retention periods for various log levels with the `AddSerilogCleanup` method, used at startup:
 
