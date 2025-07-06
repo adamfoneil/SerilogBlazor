@@ -20,17 +20,25 @@
 			var activeLevel = metricsResults.Where(r => r.Level == activeTab);
 			if (activeLevel.Any())
 			{
-				<div class="source-context-grid">
-					@foreach (var item in activeLevel)
-					{
-						<div class="source-context-row" style="display:contents" @onclick="@(() => OnSourceContextClick(item.SourceContext, activeTab))">
-							<div>@item.SourceContext</div>
-							<div>@item.Count</div>
-							<div>@item.LatestTimestamp.ToString("yyyy-MM-dd HH:mm:ss") - @item.AgeText</div>									
-							<div>@GetEffectiveLogLevel(item.SourceContext)</div>
+				@foreach (var namespaceGroup in activeLevel.GroupBy(row => GetNamespaceRoot(row.SourceContext)))
+				{
+					<details class="namespace-group">
+						<summary class="namespace-summary">
+							@namespaceGroup.Key - @namespaceGroup.Count() categories [ @namespaceGroup.Sum(item => item.Count).ToString("n0") logs ]
+						</summary>
+						<div class="source-context-grid">
+							@foreach (var item in namespaceGroup)
+							{
+								<div class="source-context-row" style="display:contents" @onclick="@(() => OnSourceContextClick(item.SourceContext, activeTab))">
+									<div>@item.SourceContext</div>
+									<div>@item.Count</div>
+									<div>@item.LatestTimestamp.ToString("yyyy-MM-dd HH:mm:ss") - @item.AgeText</div>									
+									<div>@GetEffectiveLogLevel(item.SourceContext)</div>
+								</div>
+							}
 						</div>
-					}
-				</div>
+					</details>
+				}
 			}
 		}
 	</div>
@@ -84,6 +92,13 @@
 	private async Task OnSourceContextClick(string sourceContext, string logLevel)
 	{
 		await SourceContextClicked.InvokeAsync(new SourceContextFilterSelection(sourceContext, logLevel));
+	}
+
+	private string GetNamespaceRoot(string? @namespace)
+	{
+		if (string.IsNullOrWhiteSpace(@namespace)) return string.Empty;
+		var parts = @namespace.Split('.');
+		return (parts.Length == 0) ? @namespace : parts[0];
 	}
 
 	private string GetEffectiveLogLevel(string? sourceContext)
