@@ -113,11 +113,11 @@ builder.Services.AddSerilogUtilities({your connection string}, logLevels, "log",
 var logLevels = new ApplicationLogLevels();
 
 Log.Logger = logLevels
-	.GetConfiguration()
-	.WriteTo.Console() // optional, but I use this
-	.WriteTo.PostgreSQL({your connection string}, "serilog", columnOptions: PostgresColumnOptions.Default, needAutoCreateTable: true)	
-	.Enrich.FromLogContext()	
-	.CreateLogger();
+  .GetConfiguration()
+  .WriteTo.Console() // optional, but I use this
+  .WriteTo.PostgreSQL({your connection string}, "serilog", columnOptions: PostgresColumnOptions.Default, needAutoCreateTable: true)	
+  .Enrich.FromLogContext()	
+  .CreateLogger();
 
 builder.Services.AddSerilog();
 builder.Services.AddSerilogUtilities({your connection string}, logLevels, "public", "serilog", TimestampType.Utc);
