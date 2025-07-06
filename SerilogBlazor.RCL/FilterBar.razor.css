@@ -58,11 +58,28 @@
     padding: 16px 0;
 }
 
+/* Namespace grouping styling */
+.namespace-group {
+    margin-bottom: 16px;
+}
+
+.namespace-summary {
+    cursor: pointer;
+    font-weight: 600;
+    padding: 8px 0;
+    margin-bottom: 8px;
+}
+
+.namespace-summary:hover {
+    opacity: 0.8;
+}
+
 /* Reuse grid styling from SourceContextFilter */
 .source-context-grid {
     display: grid;
     grid-template-columns: auto auto auto auto;
     gap: 8px 16px;
+    margin-left: 20px;
 }
 
 .source-context-row {
@@ -72,8 +89,6 @@
 
 .source-context-row:hover > div {
     background-color: #f8f9fa;
-    padding: 4px 8px;
-    border-radius: 4px;
 }
 
 /* Level badge styling - reused from SourceContextFilter */
