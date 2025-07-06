@@ -14,7 +14,11 @@
 <LevelToggle OnLogLevelsChanged="OnLogLevelsChanged" />
 <hr />
 
-<SourceContextFilter @ref="sourceContextFilter" SourceContextClicked="OnSourceContextClicked" />
+<details style="margin-bottom:0.5rem">
+	<summary>Filter</summary>
+	<FilterBar SourceContextClicked="OnSourceContextClicked" />
+</details>
+
 <SearchBar TDbContext="ApplicationDbContext" @ref="searchBar" @rendermode="InteractiveServer" SearchExecuted="OnSearchExecuted" />
 <SerilogGrid Entries="@entries" RequestIdClicked="OnRequestIdClicked" @rendermode="InteractiveServer" />
 
