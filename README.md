@@ -60,6 +60,20 @@ This is a reworking of the `SourceContextFilter` component as a tabbed UI.
 
 Source: [FilterBar](https://github.com/adamfoneil/SerilogBlazor/blob/master/SerilogBlazor.RCL/FilterBar.razor)
 
+**Two Usage Options:**
+
+1. **Parameter-based (Flexible)**: Pass data as parameters for flexible usage
+```razor
+<FilterBar MetricsResults="@yourMetricsData" 
+           LogLevels="@yourLogLevels" 
+           SourceContextClicked="@OnSourceContextClicked" />
+```
+
+2. **Injection-based (Original)**: Uses dependency injection (backward compatible)
+```razor
+<FilterBarQuery SourceContextClicked="@OnSourceContextClicked" />
+```
+
 Example: [SampleApp](https://github.com/adamfoneil/SerilogBlazor/blob/29e6e38f60d3f15867fb2d42fd89e138355e6646/SampleApp/Components/Pages/Home.razor#L19)
 
 </details>

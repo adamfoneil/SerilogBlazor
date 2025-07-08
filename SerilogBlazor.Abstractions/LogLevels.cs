@@ -18,7 +18,7 @@ public abstract class LogLevels(LogEventLevel defaultMinLevel = LogEventLevel.In
 {
 	public abstract Dictionary<string, LoggingLevelSwitch> LoggingLevels { get; }
 
-	public readonly LogEventLevel DefaultLevel = defaultMinLevel;
+	public LogEventLevel DefaultLevel { get; } = defaultMinLevel;
 
 	/// <summary>
 	/// Switch for controlling the default minimum log level at runtime
