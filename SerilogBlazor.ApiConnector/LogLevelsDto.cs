@@ -17,5 +17,5 @@ public class LogLevelsDto
 	/// Configured log levels for specific namespaces
 	/// </summary>
 	[Required]
-	public Dictionary<string, string> ConfiguredLevels { get; set; } = new();
+	public Dictionary<string, string> ConfiguredLevels { get; set; } = [];
 }
