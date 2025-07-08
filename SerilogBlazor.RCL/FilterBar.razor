@@ -1,10 +1,8 @@
 @using SerilogBlazor.Abstractions
-@inject SerilogSourceContextMetricsQuery Query
-@inject LogLevels LogLevels
 
 <div class="filter-bar">
 	<div class="filter-tabs">
-		@foreach (var levelGrp in metricsResults.GroupBy(row => row.Level))
+		@foreach (var levelGrp in MetricsResults.GroupBy(row => row.Level))
 		{
 			<button class="filter-tab @(activeTab == levelGrp.Key ? "active" : "")" 
 					@onclick="@(() => SetActiveTab(levelGrp.Key))">
@@ -17,7 +15,7 @@
 	<div class="filter-content">
 		@if (!string.IsNullOrEmpty(activeTab))
 		{
-			var activeLevel = metricsResults.Where(r => r.Level == activeTab);
+			var activeLevel = MetricsResults.Where(r => r.Level == activeTab);
 			if (activeLevel.Any())
 			{
 				@foreach (var namespaceGroup in activeLevel.GroupBy(row => GetNamespaceRoot(row.SourceContext)))
@@ -45,42 +43,24 @@
 </div>
 
 @code {
-	private IEnumerable<SourceContextMetricsResult> metricsResults = [];
 	private string activeTab = "";
 
 	[Parameter] public string? UserName { get; set; }
+	[Parameter] public IEnumerable<SourceContextMetricsResult> MetricsResults { get; set; } = [];
+	[Parameter] public IFilterBarLogLevels? LogLevels { get; set; }
 
 	[Parameter] public EventCallback<SourceContextFilterSelection> SourceContextClicked { get; set; }
 
-	protected override async Task OnInitializedAsync()
+	protected override void OnParametersSet()
 	{
-		await Refresh();
 		SetInitialActiveTab();
-	}
-
-	protected override async Task OnParametersSetAsync()
-	{
-		await Refresh();
-		SetInitialActiveTab();
-	}
-
-	private async Task Refresh()
-	{
-		metricsResults = await Query.ExecuteAsync();	
-	}
-
-	public async Task RefreshAsync()
-	{
-		await Refresh();
-		SetInitialActiveTab();
-		await InvokeAsync(StateHasChanged);
 	}
 
 	private void SetInitialActiveTab()
 	{
-		if (string.IsNullOrEmpty(activeTab) && metricsResults.Any())
+		if (string.IsNullOrEmpty(activeTab) && MetricsResults.Any())
 		{
-			activeTab = metricsResults.First().Level;
+			activeTab = MetricsResults.First().Level;
 		}
 	}
 
@@ -103,7 +83,8 @@
 
 	private string GetEffectiveLogLevel(string? sourceContext)
 	{
-		if (string.IsNullOrWhiteSpace(sourceContext)) return LogLevels.DefaultLevel.ToString();
+		if (LogLevels == null || string.IsNullOrWhiteSpace(sourceContext)) 
+			return LogLevels?.DefaultLevel.ToString() ?? "Information";
 
 		// Find the longest matching prefix from LogLevels.LoggingLevels
 		string? bestMatch = null;

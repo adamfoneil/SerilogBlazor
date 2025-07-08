@@ -1,0 +1,37 @@
+@using SerilogBlazor.Abstractions
+@inject SerilogSourceContextMetricsQuery Query
+@inject LogLevels LogLevels
+
+<FilterBar MetricsResults="metricsResults" 
+           LogLevels="LogLevels" 
+           UserName="@UserName" 
+           SourceContextClicked="@SourceContextClicked" />
+
+@code {
+	private IEnumerable<SourceContextMetricsResult> metricsResults = [];
+
+	[Parameter] public string? UserName { get; set; }
+
+	[Parameter] public EventCallback<SourceContextFilterSelection> SourceContextClicked { get; set; }
+
+	protected override async Task OnInitializedAsync()
+	{
+		await Refresh();
+	}
+
+	protected override async Task OnParametersSetAsync()
+	{
+		await Refresh();
+	}
+
+	private async Task Refresh()
+	{
+		metricsResults = await Query.ExecuteAsync();	
+	}
+
+	public async Task RefreshAsync()
+	{
+		await Refresh();
+		await InvokeAsync(StateHasChanged);
+	}
+}
