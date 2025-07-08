@@ -20,11 +20,11 @@
 	</RestoreAdditionalProjectSources>
   </PropertyGroup>
 
-    <ItemGroup>
-        <ProjectReference Include="../SerilogBlazor.Abstractions/SerilogBlazor.Abstractions.csproj" />
-    </ItemGroup>
-	
-  <ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Serilog.Blazor.Abstractions" Version="1.0.6" />
+	</ItemGroup>
+
+	<ItemGroup>
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
   </ItemGroup>
 

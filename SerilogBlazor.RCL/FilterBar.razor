@@ -47,7 +47,7 @@
 
 	[Parameter] public string? UserName { get; set; }
 	[Parameter] public IEnumerable<SourceContextMetricsResult> MetricsResults { get; set; } = [];
-	[Parameter] public IFilterBarLogLevels? LogLevels { get; set; }
+	[Parameter] public ILogLevels? LogLevels { get; set; }
 
 	[Parameter] public EventCallback<SourceContextFilterSelection> SourceContextClicked { get; set; }
 
@@ -84,7 +84,7 @@
 	private string GetEffectiveLogLevel(string? sourceContext)
 	{
 		if (LogLevels == null || string.IsNullOrWhiteSpace(sourceContext)) 
-			return LogLevels?.DefaultLevel.ToString() ?? "Information";
+			return LogLevels?.DefaultLevelSwitch.MinimumLevel.ToString() ?? "Information";
 
 		// Find the longest matching prefix from LogLevels.LoggingLevels
 		string? bestMatch = null;
@@ -106,6 +106,6 @@
 		}
 
 		// Default to Information if no prefix matches
-		return LogLevels.DefaultLevel.ToString();
+		return LogLevels.DefaultLevelSwitch.MinimumLevel.ToString();
 	}
 }
