@@ -4,6 +4,18 @@
     <TargetFramework>net9.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+	  <Title>Serilog Blazor API Connector Client</Title>
+	  <Version>1.0.7</Version>
+	  <Authors>Adam O'Neil</Authors>
+	  <Company>Adam O'Neil</Company>
+	  <Description>Query Serilog data from apps implementing Serilog.Blazor.ApiConnector</Description>
+	  <Copyright>Copyright (c) 2025 Adam O'Neil</Copyright>
+	  <PackageProjectUrl>https://github.com/adamfoneil/SerilogBlazor</PackageProjectUrl>
+	  <RepositoryUrl>https://github.com/adamfoneil/SerilogBlazor</RepositoryUrl>
+	  <PackageTags>serilog; blazor; api</PackageTags>
+	  <PackageLicenseExpression>MIT</PackageLicenseExpression>
+	  <PackageId>Serilog.Blazor.ApiConnectorClient</PackageId>
+	  <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
   </PropertyGroup>
 	
 	<ItemGroup>
