@@ -7,7 +7,7 @@ public class SerilogApiConnectorClient(IHttpClientFactory httpClientFactory)
 {
 	private readonly IHttpClientFactory _httpClientFactory = httpClientFactory;
 
-	public async Task<SerilogEntry[]> GetEntriesAsync(string endpoint, string headerSecret, string? criteria = null)
+	public async Task<SerilogEntry[]> GetEntriesAsync(string endpoint, string headerSecret, string? criteria = null, int? offset = null, int? rowCount = null)
 	{
 		ArgumentException.ThrowIfNullOrWhiteSpace(endpoint);
 		ArgumentException.ThrowIfNullOrWhiteSpace(headerSecret);
@@ -16,11 +16,27 @@ public class SerilogApiConnectorClient(IHttpClientFactory httpClientFactory)
 		httpClient.DefaultRequestHeaders.Add("serilog-api-secret", headerSecret);
 
 		var requestUri = $"{endpoint.TrimEnd('/')}/detail";
+		var queryParams = new List<string>();
 		
 		if (!string.IsNullOrWhiteSpace(criteria))
 		{
 			var encodedCriteria = Uri.EscapeDataString(criteria);
-			requestUri += $"?search={encodedCriteria}";
+			queryParams.Add($"search={encodedCriteria}");
+		}
+		
+		if (offset.HasValue)
+		{
+			queryParams.Add($"offset={offset.Value}");
+		}
+		
+		if (rowCount.HasValue)
+		{
+			queryParams.Add($"rowCount={rowCount.Value}");
+		}
+		
+		if (queryParams.Count > 0)
+		{
+			requestUri += $"?{string.Join("&", queryParams)}";
 		}
 
 		var response = await httpClient.GetAsync(requestUri);
