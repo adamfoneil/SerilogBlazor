@@ -12,18 +12,9 @@ public interface ILogLevels
 }
 
 /// <summary>
-/// Interface for FilterBar component's log level needs
-/// </summary>
-public interface IFilterBarLogLevels
-{
-	LogEventLevel DefaultLevel { get; }
-	Dictionary<string, LoggingLevelSwitch> LoggingLevels { get; }
-}
-
-/// <summary>
 /// Define logging levels for different namespaces that can be toggled at runtime
 /// </summary>
-public abstract class LogLevels(LogEventLevel defaultMinLevel = LogEventLevel.Information) : ILogLevels, IFilterBarLogLevels
+public abstract class LogLevels(LogEventLevel defaultMinLevel = LogEventLevel.Information) : ILogLevels
 {
 	public abstract Dictionary<string, LoggingLevelSwitch> LoggingLevels { get; }
 
