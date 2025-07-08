@@ -1,4 +1,5 @@
 @page "/filterbar-demo"
+@using Serilog
 @using SerilogBlazor.Abstractions
 @using Serilog.Events
 @using Serilog.Core
@@ -10,8 +11,8 @@
 <h4>1. FilterBar (Parameter-based) - Flexible Usage</h4>
 <div style="border: 1px solid #ccc; padding: 1rem; margin: 1rem 0;">
     <FilterBar MetricsResults="@sampleMetrics" 
-               LogLevels="@sampleLogLevels" 
-               SourceContextClicked="@OnSourceContextClicked" />
+    LogLevels="@sampleLogLevels" 
+    SourceContextClicked="@OnSourceContextClicked" />
 </div>
 
 <h4>2. FilterBarQuery (Injection-based) - Original Behavior</h4>
@@ -32,7 +33,7 @@
 
 @code {
     private SourceContextFilterSelection? selectedContext;
-    
+
     private List<SourceContextMetricsResult> sampleMetrics = new()
     {
         new() { SourceContext = "SampleApp.Controllers.HomeController", Level = "Information", Count = 25, LatestTimestamp = DateTime.Now.AddMinutes(-30), AgeText = "30m ago" },
@@ -42,17 +43,17 @@
         new() { SourceContext = "Microsoft.EntityFrameworkCore.Database", Level = "Error", Count = 1, LatestTimestamp = DateTime.Now.AddHours(-3), AgeText = "3h ago" },
         new() { SourceContext = "System.Net.Http.HttpClient", Level = "Information", Count = 8, LatestTimestamp = DateTime.Now.AddMinutes(-45), AgeText = "45m ago" }
     };
-    
+
     private DemoLogLevels sampleLogLevels = new();
-    
+
     private async Task OnSourceContextClicked(SourceContextFilterSelection selection)
     {
         selectedContext = selection;
         StateHasChanged();
         await Task.CompletedTask;
     }
-    
-    private class DemoLogLevels : IFilterBarLogLevels
+
+    private class DemoLogLevels : ILogLevels
     {
         public LogEventLevel DefaultLevel => LogEventLevel.Information;
 
@@ -62,5 +63,12 @@
             ["Microsoft"] = new LoggingLevelSwitch(LogEventLevel.Warning),
             ["System"] = new LoggingLevelSwitch(LogEventLevel.Information)
         };
+
+        public LoggingLevelSwitch DefaultLevelSwitch => throw new NotImplementedException();
+
+        public LoggerConfiguration GetConfiguration()
+        {
+            throw new NotImplementedException();
+        }
     }
 }
