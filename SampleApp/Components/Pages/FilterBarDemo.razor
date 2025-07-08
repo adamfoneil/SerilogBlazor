@@ -1,0 +1,66 @@
+@page "/filterbar-demo"
+@using SerilogBlazor.Abstractions
+@using Serilog.Events
+@using Serilog.Core
+
+<h3>FilterBar Component Demo</h3>
+
+<p>This page demonstrates the difference between the new parameter-based FilterBar and the injection-based FilterBarQuery.</p>
+
+<h4>1. FilterBar (Parameter-based) - Flexible Usage</h4>
+<div style="border: 1px solid #ccc; padding: 1rem; margin: 1rem 0;">
+    <FilterBar MetricsResults="@sampleMetrics" 
+               LogLevels="@sampleLogLevels" 
+               SourceContextClicked="@OnSourceContextClicked" />
+</div>
+
+<h4>2. FilterBarQuery (Injection-based) - Original Behavior</h4>
+<div style="border: 1px solid #ccc; padding: 1rem; margin: 1rem 0;">
+    @* This would work if we had the dependencies injected in a real app *@
+    @* <FilterBarQuery SourceContextClicked="@OnSourceContextClicked" /> *@
+    <p><em>FilterBarQuery would appear here with injected dependencies in a full application.</em></p>
+</div>
+
+<h4>Selected Context</h4>
+@if (selectedContext != null)
+{
+    <div style="background: #f0f8ff; padding: 1rem; margin: 1rem 0;">
+        <p><strong>Source Context:</strong> @selectedContext.SourceContext</p>
+        <p><strong>Log Level:</strong> @selectedContext.LogLevel</p>
+    </div>
+}
+
+@code {
+    private SourceContextFilterSelection? selectedContext;
+    
+    private List<SourceContextMetricsResult> sampleMetrics = new()
+    {
+        new() { SourceContext = "SampleApp.Controllers.HomeController", Level = "Information", Count = 25, LatestTimestamp = DateTime.Now.AddMinutes(-30), AgeText = "30m ago" },
+        new() { SourceContext = "SampleApp.Services.DataService", Level = "Information", Count = 15, LatestTimestamp = DateTime.Now.AddHours(-1), AgeText = "1h ago" },
+        new() { SourceContext = "SampleApp.Middleware.RequestLogging", Level = "Debug", Count = 100, LatestTimestamp = DateTime.Now.AddMinutes(-5), AgeText = "5m ago" },
+        new() { SourceContext = "Microsoft.AspNetCore.Routing", Level = "Warning", Count = 3, LatestTimestamp = DateTime.Now.AddHours(-2), AgeText = "2h ago" },
+        new() { SourceContext = "Microsoft.EntityFrameworkCore.Database", Level = "Error", Count = 1, LatestTimestamp = DateTime.Now.AddHours(-3), AgeText = "3h ago" },
+        new() { SourceContext = "System.Net.Http.HttpClient", Level = "Information", Count = 8, LatestTimestamp = DateTime.Now.AddMinutes(-45), AgeText = "45m ago" }
+    };
+    
+    private DemoLogLevels sampleLogLevels = new();
+    
+    private async Task OnSourceContextClicked(SourceContextFilterSelection selection)
+    {
+        selectedContext = selection;
+        StateHasChanged();
+        await Task.CompletedTask;
+    }
+    
+    private class DemoLogLevels : IFilterBarLogLevels
+    {
+        public LogEventLevel DefaultLevel => LogEventLevel.Information;
+
+        public Dictionary<string, LoggingLevelSwitch> LoggingLevels => new()
+        {
+            ["SampleApp"] = new LoggingLevelSwitch(LogEventLevel.Debug),
+            ["Microsoft"] = new LoggingLevelSwitch(LogEventLevel.Warning),
+            ["System"] = new LoggingLevelSwitch(LogEventLevel.Information)
+        };
+    }
+}
