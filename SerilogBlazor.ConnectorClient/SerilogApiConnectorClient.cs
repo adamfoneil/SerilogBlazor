@@ -3,37 +3,46 @@ using System.Text.Json;
 
 namespace SerilogBlazor.ConnectorClient;
 
-public class SerilogApiConnectorClient(IHttpClientFactory httpClientFactory)
+public class SerilogApiConnectorClient(IHttpClientFactory httpClientFactory, string endpoint, string headerSecret) : ISerilogQuery
 {
 	private readonly IHttpClientFactory _httpClientFactory = httpClientFactory;
+	private readonly string _endpoint = endpoint;
+	private readonly string _headerSecret = headerSecret;
 
-	public async Task<SerilogEntry[]> GetEntriesAsync(string endpoint, string headerSecret, string? criteria = null, int? offset = null, int? rowCount = null)
+	private HttpClient InitClient()
 	{
-		ArgumentException.ThrowIfNullOrWhiteSpace(endpoint);
-		ArgumentException.ThrowIfNullOrWhiteSpace(headerSecret);
+		var client = _httpClientFactory.CreateClient();
+		client.BaseAddress = new Uri(_endpoint.TrimEnd('/') + "/");
+		client.DefaultRequestHeaders.Add("serilog-api-secret", _headerSecret);
+		return client;
+	}
 
-		using var httpClient = _httpClientFactory.CreateClient();
-		httpClient.DefaultRequestHeaders.Add("serilog-api-secret", headerSecret);
+	public async Task<IEnumerable<SerilogEntry>> ExecuteAsync(string? query = null, int offset = 0, int limit = 50)
+	{
+		ArgumentException.ThrowIfNullOrWhiteSpace(_endpoint);
+		ArgumentException.ThrowIfNullOrWhiteSpace(_headerSecret);
 
-		var requestUri = $"{endpoint.TrimEnd('/')}/detail";
+		using var httpClient = InitClient();
+		
+		var requestUri = "/detail";
 		var queryParams = new List<string>();
-		
-		if (!string.IsNullOrWhiteSpace(criteria))
+
+		if (!string.IsNullOrWhiteSpace(query))
 		{
-			var encodedCriteria = Uri.EscapeDataString(criteria);
-			queryParams.Add($"search={encodedCriteria}");
+			var encodedquery = Uri.EscapeDataString(query);
+			queryParams.Add($"search={encodedquery}");
 		}
-		
-		if (offset.HasValue)
+
+		if (offset > 0)
 		{
-			queryParams.Add($"offset={offset.Value}");
+			queryParams.Add($"offset={offset}");
 		}
-		
-		if (rowCount.HasValue)
+
+		if (limit > 0)
 		{
-			queryParams.Add($"rowCount={rowCount.Value}");
+			queryParams.Add($"rowCount={limit}");
 		}
-		
+
 		if (queryParams.Count > 0)
 		{
 			requestUri += $"?{string.Join("&", queryParams)}";
@@ -44,19 +53,19 @@ public class SerilogApiConnectorClient(IHttpClientFactory httpClientFactory)
 
 		var jsonContent = await response.Content.ReadAsStringAsync();
 		var entries = JsonSerializer.Deserialize<SerilogEntry[]>(jsonContent, JsonSerializerOptions.Web);
-		
+
 		return entries ?? [];
 	}
 
-	public async Task<SourceContextMetricsResult[]> GetMetricsAsync(string endpoint, string headerSecret)
+
+	public async Task<SourceContextMetricsResult[]> GetMetricsAsync()
 	{
-		ArgumentException.ThrowIfNullOrWhiteSpace(endpoint);
-		ArgumentException.ThrowIfNullOrWhiteSpace(headerSecret);
+		ArgumentException.ThrowIfNullOrWhiteSpace(_endpoint);
+		ArgumentException.ThrowIfNullOrWhiteSpace(_headerSecret);
 
-		using var httpClient = _httpClientFactory.CreateClient();
-		httpClient.DefaultRequestHeaders.Add("serilog-api-secret", headerSecret);
+		using var httpClient = InitClient();
 
-		var requestUri = $"{endpoint.TrimEnd('/')}/metrics";
+		var requestUri = "/metrics";
 
 		var response = await httpClient.GetAsync(requestUri);
 		response.EnsureSuccessStatusCode();
