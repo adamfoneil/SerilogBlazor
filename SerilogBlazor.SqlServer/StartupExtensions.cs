@@ -24,7 +24,7 @@ public static class StartupExtensions
 				connectionString, schemaName, tableName
 		));
 
-		services.AddSingleton<SerilogQuery>(sp =>
+		services.AddSingleton<ISerilogQuery>(sp =>
 			new SerilogSqlServerQuery(				
 				timestampType,
 				sp.GetRequiredService<ILogger<SerilogSqlServerQuery>>(),
