@@ -1,10 +1,15 @@
-﻿using SerilogBlazor.Abstractions;
+﻿using Microsoft.Extensions.Logging;
+using SerilogBlazor.Abstractions;
 using System.Text.Json;
 
 namespace SerilogBlazor.ConnectorClient;
 
-public class SerilogApiConnectorClient(IHttpClientFactory httpClientFactory, string endpoint, string headerSecret) : ISerilogQuery
+public class SerilogApiConnectorClient(
+	ILogger<SerilogApiConnectorClient> logger,
+	IHttpClientFactory httpClientFactory, 
+	string endpoint, string headerSecret) : ISerilogQuery
 {
+	private readonly ILogger<SerilogApiConnectorClient> _logger = logger;
 	private readonly IHttpClientFactory _httpClientFactory = httpClientFactory;
 	private readonly string _endpoint = endpoint;
 	private readonly string _headerSecret = headerSecret;
