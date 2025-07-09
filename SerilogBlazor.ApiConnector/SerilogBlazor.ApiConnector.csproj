@@ -9,7 +9,7 @@
 	</RestoreAdditionalProjectSources>
 	<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
 	<Title>Serilog Blazor API Connector</Title>
-	<Version>1.0.7</Version>
+	<Version>1.0.8</Version>
 	<Authors>Adam O'Neil</Authors>
 	<Company>Adam O'Neil</Company>
 	<Description>Securely expose Serilog data with API endpoints</Description>
@@ -22,7 +22,7 @@
   </PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Serilog.Blazor.Abstractions" Version="1.0.6" />
+		<PackageReference Include="Serilog.Blazor.Abstractions" Version="1.0.7" />
 	</ItemGroup>
 
 	<ItemGroup>
