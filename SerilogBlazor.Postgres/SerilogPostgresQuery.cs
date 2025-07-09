@@ -35,7 +35,7 @@ public class SerilogPostgresQuery(
 		public string? PropertyJson { get; init; } // Postgres stores properties as JSON
 	}
 
-	public override async Task<IEnumerable<SerilogEntry>> ExecuteAsync(Criteria? criteria = null, int offset = 0, int limit = 50)
+	protected override async Task<IEnumerable<SerilogEntry>> ExecuteInternalAsync(Criteria? criteria = null, int offset = 0, int limit = 50)
 	{
 		using var cn = new NpgsqlConnection(_connectionString);
 		await cn.OpenAsync();
@@ -78,12 +78,6 @@ public class SerilogPostgresQuery(
 			sw.Stop();
 			_logger.LogInformation("Serilog query {status} in {elapsed} ms", error ? "failed" : "succeeded", sw.ElapsedMilliseconds);
 		}
-	}
-
-	protected override IEnumerable<string> GetSearchTerms(Criteria criteria)
-	{
-		var (_, _, searchTerms) = GetWhereClause(criteria, _timezone);
-		return searchTerms;
 	}
 
 	private SerilogEntry ToSerilogEntry(SerilogPostgresEntry source) => new()
@@ -234,5 +228,11 @@ public class SerilogPostgresQuery(
 			(terms.Any() ? $"WHERE {string.Join(" AND ", terms.Select(item => item.Sql))}" : string.Empty, 
 			parameters, 
 			terms.Select(item => item.Display));
+	}
+
+	public override IEnumerable<string> GetSearchTerms(Criteria criteria)
+	{
+		var (_, _, searchTerms) = GetWhereClause(criteria, _timezone);
+		return searchTerms;
 	}
 }
