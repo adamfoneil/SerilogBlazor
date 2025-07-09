@@ -1,6 +1,4 @@
-﻿using static SerilogBlazor.Abstractions.SerilogQuery;
-
-namespace SerilogBlazor.Abstractions;
+﻿namespace SerilogBlazor.Abstractions;
 
 public interface ISerilogQuery
 {
