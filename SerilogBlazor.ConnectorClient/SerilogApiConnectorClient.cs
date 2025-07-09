@@ -16,6 +16,7 @@ public class SerilogApiConnectorClient(
 
 	private HttpClient InitClient()
 	{
+		_logger.LogDebug("Initializing Serilog API client with endpoint: {endpoint}, header secret {secret}", _endpoint, _headerSecret);
 		var client = _httpClientFactory.CreateClient();
 		client.BaseAddress = new Uri(_endpoint.TrimEnd('/') + "/");
 		client.DefaultRequestHeaders.Add("serilog-api-secret", _headerSecret);
@@ -53,6 +54,7 @@ public class SerilogApiConnectorClient(
 			requestUri += $"?{string.Join("&", queryParams)}";
 		}
 
+		_logger.LogDebug("Querying serilog: {requestUri}", requestUri);
 		var response = await httpClient.GetAsync(requestUri);
 		response.EnsureSuccessStatusCode();
 
@@ -72,6 +74,7 @@ public class SerilogApiConnectorClient(
 
 		var requestUri = "/metrics";
 
+		_logger.LogDebug("Querying serilog metrics: {requestUri}", requestUri);
 		var response = await httpClient.GetAsync(requestUri);
 		response.EnsureSuccessStatusCode();
 
