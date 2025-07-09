@@ -15,16 +15,16 @@ public class SerilogEntry
 	public Dictionary<string, object> Properties { get; init; } = [];
 }	
 
-public abstract class SerilogQuery
+public abstract class SerilogQuery : ISerilogQuery
 {
-	public abstract Task<IEnumerable<SerilogEntry>> ExecuteAsync(Criteria? criteria = null, int offset = 0, int limit = 50);
+	protected abstract Task<IEnumerable<SerilogEntry>> ExecuteInternalAsync(Criteria? criteria = null, int offset = 0, int limit = 50);
 
-	protected abstract IEnumerable<string> GetSearchTerms(Criteria criteria);
+	public abstract IEnumerable<string> GetSearchTerms(Criteria criteria);
 
-	public (Criteria Criteria, string[] SearchTerms) ParseCriteria(string input)
+	public async Task<IEnumerable<SerilogEntry>> ExecuteAsync(string? query = null, int offset = 0, int limit = 50)
 	{
-		var criteria = Criteria.ParseExpression(input);
-		return (criteria, [.. GetSearchTerms(criteria)]);
+		var criteria = Criteria.ParseExpression(query);
+		return await ExecuteInternalAsync(criteria, offset, limit);
 	}
 
 	public class Criteria
