@@ -2,7 +2,7 @@
 @using SerilogBlazor.Abstractions
 @using SerilogBlazor.Abstractions.SavedSearches
 @typeparam TDbContext where TDbContext : DbContext, ISerilogSavedSearches
-@inject SerilogQuery Query
+@inject ISerilogQuery Query
 @inject IDbContextFactory<TDbContext> DbFactory
 
 <div class="search-container">	
@@ -139,12 +139,11 @@
 	}
 
 	private async Task ExecuteSearch()
-	{
-		(criteria, searchTerms) = Query.ParseCriteria(SearchText);
-		var results = await Query.ExecuteAsync(criteria, page * pageSize, pageSize);
+	{		
+		var results = await Query.ExecuteAsync(SearchText, page * pageSize, pageSize);
 		
 		// Check if we have more results by requesting one extra item
-		var checkResults = await Query.ExecuteAsync(criteria, (page + 1) * pageSize, 1);
+		var checkResults = await Query.ExecuteAsync(SearchText, (page + 1) * pageSize, 1);
 		hasMoreResults = checkResults.Any();
 		
 		await SearchTextChanged.InvokeAsync(SearchText);
