@@ -19,8 +19,8 @@
 	<FilterBarQuery SourceContextClicked="OnSourceContextClicked" />
 </details>
 
-<SearchBar TDbContext="ApplicationDbContext" @ref="searchBar" @rendermode="InteractiveServer" SearchExecuted="OnSearchExecuted" />
-<SerilogGrid Entries="@entries" RequestIdClicked="OnRequestIdClicked" @rendermode="InteractiveServer" />
+<SearchBar TDbContext="ApplicationDbContext" @ref="searchBar" SearchExecuted="OnSearchExecuted" Query="Query" />
+<SerilogGrid Entries="@entries" RequestIdClicked="OnRequestIdClicked" />
 
 @code {
 	private IEnumerable<SerilogEntry> entries = [];
