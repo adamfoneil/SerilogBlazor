@@ -2,7 +2,6 @@
 @using SerilogBlazor.Abstractions
 @using SerilogBlazor.Abstractions.SavedSearches
 @typeparam TDbContext where TDbContext : DbContext, ISerilogSavedSearches
-@inject ISerilogQuery Query
 @inject IDbContextFactory<TDbContext> DbFactory
 
 <div class="search-container">	
@@ -80,7 +79,7 @@
 	</div>
 </Dialog>
 
-@code {	
+@code {
 	private string[] searchTerms = [];
 	private SerilogQuery.Criteria? criteria;
 	private int page = 0;
@@ -101,8 +100,11 @@
 	[Parameter]
 	public EventCallback<string> SearchTextChanged { get; set; }
 
-	[Parameter]
+	[Parameter, EditorRequired]
 	public EventCallback<IEnumerable<SerilogEntry>> SearchExecuted { get; set; }
+
+	[Parameter, EditorRequired]
+	public ISerilogQuery? Query { get; set; }
 
 	private async Task OnSearchTextChanged()
 	{
@@ -140,6 +142,8 @@
 
 	private async Task ExecuteSearch()
 	{		
+		ArgumentNullException.ThrowIfNull(Query, nameof(Query));
+
 		var results = await Query.ExecuteAsync(SearchText, page * pageSize, pageSize);
 		
 		// Check if we have more results by requesting one extra item
