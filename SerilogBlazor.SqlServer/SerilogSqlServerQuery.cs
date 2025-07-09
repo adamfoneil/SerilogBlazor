@@ -40,7 +40,7 @@ public class SerilogSqlServerQuery(
 		public string? PropertyXml { get; init; }		
 	}
 
-	public override async Task<IEnumerable<SerilogEntry>> ExecuteAsync(Criteria? criteria = null, int offset = 0, int limit = 50)
+	protected override async Task<IEnumerable<SerilogEntry>> ExecuteInternalAsync(Criteria? criteria = null, int offset = 0, int limit = 50)
 	{
 		using var cn = new SqlConnection(_connectionString);
 		cn.Open();
@@ -85,7 +85,7 @@ public class SerilogSqlServerQuery(
 		}
 	}
 
-	protected override IEnumerable<string> GetSearchTerms(Criteria criteria)
+	public override IEnumerable<string> GetSearchTerms(Criteria criteria)
 	{
 		var (_, _, searchTerms) = GetWhereClause(criteria, _timestampType);
 		return searchTerms;
