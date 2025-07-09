@@ -6,10 +6,10 @@
 @inject IDbContextFactory<TDbContext> DbFactory
 
 <div class="search-container">	
-	<input type="text" @bind-value="searchText" @bind-value:after="OnSearchTextChanged" placeholder="Search..." class="form-control search-input" />
+	<input type="text" @bind-value="SearchText" @bind-value:after="OnSearchTextChanged" placeholder="Search..." class="form-control search-input" />
 
 	<div class="paging-controls">
-		<button type="button" class="paging-button" @onclick="ShowSaveDialog" disabled="@(string.IsNullOrWhiteSpace(searchText))" title="Save current search">💾</button>
+		<button type="button" class="paging-button" @onclick="ShowSaveDialog" disabled="@(string.IsNullOrWhiteSpace(SearchText))" title="Save current search">💾</button>
 		<button type="button" class="paging-button" @onclick="PreviousPage" disabled="@(page == 0)">‹</button>
 		<button type="button" class="paging-button" @onclick="NextPage" disabled="@(!hasMoreResults)">›</button>
 	</div>
@@ -80,8 +80,7 @@
 	</div>
 </Dialog>
 
-@code {
-	private string searchText = string.Empty;
+@code {	
 	private string[] searchTerms = [];
 	private SerilogQuery.Criteria? criteria;
 	private int page = 0;
@@ -92,6 +91,9 @@
 	private string saveErrorMessage = string.Empty;
 
 	const int pageSize = 50;
+
+	[Parameter]
+	public string SearchText { get; set; } = string.Empty;
 
 	[Parameter]
 	public string UserName { get; set; } = string.Empty; // Set this from the authenticated user context
@@ -138,14 +140,14 @@
 
 	private async Task ExecuteSearch()
 	{
-		(criteria, searchTerms) = Query.ParseCriteria(searchText);
+		(criteria, searchTerms) = Query.ParseCriteria(SearchText);
 		var results = await Query.ExecuteAsync(criteria, page * pageSize, pageSize);
 		
 		// Check if we have more results by requesting one extra item
 		var checkResults = await Query.ExecuteAsync(criteria, (page + 1) * pageSize, 1);
 		hasMoreResults = checkResults.Any();
 		
-		await SearchTextChanged.InvokeAsync(searchText);
+		await SearchTextChanged.InvokeAsync(SearchText);
 		await SearchExecuted.InvokeAsync(results);
 	}
 
@@ -156,10 +158,10 @@
 
 		// Remove any existing RequestId from the search text
 		var regex = new System.Text.RegularExpressions.Regex(@"#\w+");
-		var cleanedSearchText = regex.Replace(searchText, "").Trim();
+		var cleanedSearchText = regex.Replace(SearchText, string.Empty).Trim();
 		
 		// Add the new RequestId
-		searchText = string.IsNullOrWhiteSpace(cleanedSearchText) 
+		SearchText = string.IsNullOrWhiteSpace(cleanedSearchText) 
 			? $"#{requestId}" 
 			: $"{cleanedSearchText} #{requestId}";
 		
@@ -176,7 +178,7 @@
 		// Remove any existing SourceContext and LogLevel from the search text
 		var sourceContextRegex = new System.Text.RegularExpressions.Regex(@"\[[^\]]+\]");
 		var logLevelRegex = new System.Text.RegularExpressions.Regex(@"@@\w+");
-		var cleanedSearchText = sourceContextRegex.Replace(searchText, "");
+		var cleanedSearchText = sourceContextRegex.Replace(SearchText, "");
 		cleanedSearchText = logLevelRegex.Replace(cleanedSearchText, "").Trim();
 		
 		// Build the new search terms
@@ -187,7 +189,7 @@
 		if (!string.IsNullOrWhiteSpace(selection.LogLevel))
 			searchTerms.Add($"@{selection.LogLevel}");
 		
-		searchText = string.Join(" ", searchTerms);
+		SearchText = string.Join(" ", searchTerms);
 		
 		page = 0; // Reset to first page when search changes
 		hasMoreResults = true; // Reset this flag when search changes
@@ -209,7 +211,7 @@
 			return;
 		}
 
-		if (string.IsNullOrWhiteSpace(searchText))
+		if (string.IsNullOrWhiteSpace(SearchText))
 		{
 			saveErrorMessage = "No search expression to save.";
 			return;
@@ -226,7 +228,7 @@
 			if (existingSearch != null)
 			{
 				// Update existing search
-				existingSearch.Expression = searchText;
+				existingSearch.Expression = SearchText;
 				existingSearch.UpdatedAt = DateTime.UtcNow;
 			}
 			else
@@ -236,7 +238,7 @@
 				{
 					UserName = UserName,
 					SearchName = newSearchName,
-					Expression = searchText,
+					Expression = SearchText,
 					CreatedAt = DateTime.UtcNow
 				};
 				db.SerilogSavedSearches.Add(newSearch);
@@ -260,7 +262,7 @@
 
 	private async Task ExecuteSavedSearch(SerilogSavedSearch savedSearch)
 	{
-		searchText = savedSearch.Expression;
+		SearchText = savedSearch.Expression;
 		page = 0;
 		hasMoreResults = true;
 		await ExecuteSearch();
