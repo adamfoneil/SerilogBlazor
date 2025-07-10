@@ -20,7 +20,7 @@
 </details>
 
 <SearchBar TDbContext="ApplicationDbContext" @ref="searchBar" SearchExecuted="OnSearchExecuted" Query="Query" />
-<SerilogGrid Entries="@entries" RequestIdClicked="OnRequestIdClicked" />
+<SerilogGrid Entries="entries" RequestIdClicked="OnRequestIdClicked" />
 
 @code {
 	private IEnumerable<SerilogEntry> entries = [];
