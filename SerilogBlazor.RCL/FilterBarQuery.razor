@@ -3,14 +3,11 @@
 @inject LogLevels LogLevels
 
 <FilterBar MetricsResults="metricsResults" 
-           LogLevels="LogLevels" 
-           UserName="@UserName" 
-           SourceContextClicked="@SourceContextClicked" />
+           LogLevels="LogLevels"            
+           SourceContextClicked="SourceContextClicked" />
 
 @code {
 	private IEnumerable<SourceContextMetricsResult> metricsResults = [];
-
-	[Parameter] public string? UserName { get; set; }
 
 	[Parameter] public EventCallback<SourceContextFilterSelection> SourceContextClicked { get; set; }
 

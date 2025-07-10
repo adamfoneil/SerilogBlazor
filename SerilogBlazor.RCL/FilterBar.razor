@@ -44,11 +44,9 @@
 
 @code {
 	private string activeTab = "";
-
-	[Parameter] public string? UserName { get; set; }
+	
 	[Parameter] public IEnumerable<SourceContextMetricsResult> MetricsResults { get; set; } = [];
 	[Parameter] public ILogLevels? LogLevels { get; set; }
-
 	[Parameter] public EventCallback<SourceContextFilterSelection> SourceContextClicked { get; set; }
 
 	protected override void OnParametersSet()
