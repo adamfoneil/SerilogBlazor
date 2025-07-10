@@ -64,7 +64,6 @@ public class SerilogApiConnectorClient(
 		return entries ?? [];
 	}
 
-
 	public async Task<SourceContextMetricsResult[]> GetMetricsAsync()
 	{
 		ArgumentException.ThrowIfNullOrWhiteSpace(_endpoint);
