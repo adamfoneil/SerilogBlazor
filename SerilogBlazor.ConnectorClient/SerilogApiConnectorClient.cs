@@ -30,7 +30,7 @@ public class SerilogApiConnectorClient(
 
 		using var httpClient = InitClient();
 		
-		var requestUri = "/detail";
+		var requestUri = "detail";
 		var queryParams = new List<string>();
 
 		if (!string.IsNullOrWhiteSpace(query))
@@ -72,7 +72,7 @@ public class SerilogApiConnectorClient(
 
 		using var httpClient = InitClient();
 
-		var requestUri = "/metrics";
+		var requestUri = "metrics";
 
 		_logger.LogDebug("Querying serilog metrics: {requestUri}", requestUri);
 		var response = await httpClient.GetAsync(requestUri);
