@@ -95,13 +95,19 @@
 	public string SearchText { get; set; } = string.Empty;
 
 	[Parameter]
-	public string UserName { get; set; } = string.Empty; // Set this from the authenticated user context
-
-	[Parameter]
 	public EventCallback<string> SearchTextChanged { get; set; }
 
 	[Parameter]
+	public string UserName { get; set; } = string.Empty; // Set this from the authenticated user context
+
+	[Parameter]
 	public EventCallback<IEnumerable<SerilogEntry>> SearchExecuted { get; set; }
+
+	[Parameter]
+	public bool Executing { get; set; }
+
+	[Parameter]
+	public EventCallback<bool> ExecutingChanged { get; set; }
 
 	[Parameter, EditorRequired]
 	public ISerilogQuery? Query { get; set; }
@@ -144,14 +150,24 @@
 	{		
 		ArgumentNullException.ThrowIfNull(Query, nameof(Query));
 
-		var results = await Query.ExecuteAsync(SearchText, page * pageSize, pageSize);
-		
-		// Check if we have more results by requesting one extra item
-		var checkResults = await Query.ExecuteAsync(SearchText, (page + 1) * pageSize, 1);
-		hasMoreResults = checkResults.Any();
-		
-		await SearchTextChanged.InvokeAsync(SearchText);
-		await SearchExecuted.InvokeAsync(results);
+		try
+		{
+			Executing = true;
+			var results = await Query.ExecuteAsync(SearchText, page * pageSize, pageSize);
+
+			await SearchTextChanged.InvokeAsync(SearchText);
+			await SearchExecuted.InvokeAsync(results);
+
+			// Check if we have more results by requesting one extra item
+			var checkResults = await Query.ExecuteAsync(SearchText, (page + 1) * pageSize, 1);
+			hasMoreResults = checkResults.Any();
+		}
+		finally
+		{
+			Executing = false;
+			await ExecutingChanged.InvokeAsync(Executing);
+
+		}			
 	}
 
 	public async Task AddRequestId(string requestId)
