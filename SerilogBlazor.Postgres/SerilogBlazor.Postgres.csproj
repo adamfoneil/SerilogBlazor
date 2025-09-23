@@ -15,7 +15,7 @@
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <RepositoryUrl>https://github.com/adamfoneil/SerilogBlazor</RepositoryUrl>
     <PackageTags>serilog; blazor; postgresql</PackageTags>
-    <Version>1.0.3</Version>
+    <Version>1.0.4</Version>
 	<RestoreAdditionalProjectSources>
 		https://aosoftware.blob.core.windows.net/packages/index.json
 	</RestoreAdditionalProjectSources>
@@ -30,8 +30,8 @@
 
   <ItemGroup>
     <PackageReference Include="Dapper" Version="2.1.66" />
-    <PackageReference Include="Npgsql" Version="9.0.0" />
-    <PackageReference Include="Serilog.Blazor.Abstractions" Version="1.0.7" />
+    <PackageReference Include="Npgsql" Version="9.0.3" />
+    <PackageReference Include="Serilog.Blazor.Abstractions" Version="1.0.8" />
     <PackageReference Include="Serilog.Sinks.PostgreSQL" Version="2.3.0" />
     <PackageReference Include="Coravel" Version="6.0.2" />
   </ItemGroup>

@@ -19,8 +19,8 @@ public class SerilogPostgresCleanup(
 	{
 		// Convert string level to int for Postgres
 		var sql = $@"DELETE FROM ""{Options.TableName}"" 
-			WHERE ""Level"" = @Level 
-			AND ""Timestamp"" < (NOW() AT TIME ZONE '{_timezone}' - INTERVAL '{retentionDays} days')";
+			WHERE ""level"" = @Level 
+			AND ""timestamp"" < (NOW() AT TIME ZONE '{_timezone}' - INTERVAL '{retentionDays} days')";
 		
 		return cn.ExecuteAsync(sql, new { Level = logLevel, RetentionDays = retentionDays }, commandTimeout: 0);
 	}
