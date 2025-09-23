@@ -8,8 +8,8 @@ namespace SerilogBlazor.Abstractions;
 
 public class SerilogCleanupOptions
 {
-	public string ConnectionString { get; set; } = default!;
-	public string TableName { get; set; } = default!;
+	public required string ConnectionString { get; init; }
+	public required string TableName { get; init; }
 	/// <summary>
 	/// Debug level retention in days
 	/// </summary>
