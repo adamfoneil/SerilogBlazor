@@ -53,8 +53,7 @@
 }
 
 /* Content area */
-.filter-content {
-    min-height: 200px;
+.filter-content {    
     padding: 16px 0;
 }
 
