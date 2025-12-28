@@ -9,6 +9,7 @@
 
 	<div class="paging-controls">
 		<button type="button" class="paging-button" @onclick="ShowSaveDialog" disabled="@(string.IsNullOrWhiteSpace(SearchText))" title="Save current search">💾</button>
+		<button type="button" class="paging-button" @onclick="RefreshSearch" disabled="@Executing" title="Refresh results">🔄</button>
 		<button type="button" class="paging-button" @onclick="PreviousPage" disabled="@(page == 0)">‹</button>
 		<button type="button" class="paging-button" @onclick="NextPage" disabled="@(!hasMoreResults)">›</button>
 	</div>
@@ -144,6 +145,11 @@
 			page++;
 			await ExecuteSearch();
 		}
+	}
+
+	private async Task RefreshSearch()
+	{
+		await ExecuteSearch();
 	}
 
 	private async Task ExecuteSearch()
