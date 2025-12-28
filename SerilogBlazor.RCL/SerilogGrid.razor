@@ -238,15 +238,17 @@
         if (string.IsNullOrEmpty(sql)) return sql;
         
         // Unescape common JSON escape sequences
-        // Note: \\\\ must be processed first to avoid incorrect unescaping
+        // Use a unique placeholder that won't appear in SQL to handle escaped backslashes correctly
+        const string BACKSLASH_PLACEHOLDER = "___ESCAPED_BACKSLASH___";
+        
         var unescaped = sql
-            .Replace("\\\\", "\x00") // Temporary placeholder for escaped backslash
+            .Replace("\\\\", BACKSLASH_PLACEHOLDER) // Temporary placeholder for escaped backslash
             .Replace("\\n", "\n")
             .Replace("\\r", "\r")
             .Replace("\\t", "\t")
             .Replace("\\\"", "\"")
             .Replace("\\'", "'")
-            .Replace("\x00", "\\"); // Replace placeholder with single backslash
+            .Replace(BACKSLASH_PLACEHOLDER, "\\"); // Replace placeholder with single backslash
         
         return unescaped;
     }
