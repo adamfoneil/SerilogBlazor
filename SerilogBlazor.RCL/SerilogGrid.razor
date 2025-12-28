@@ -1,4 +1,6 @@
 @using SerilogBlazor.Abstractions
+@using System.Text.Json
+@using System.Text.RegularExpressions
 <div class="serilog-grid">
     <!-- Header Row -->
     <div class="serilog-grid-header">
@@ -51,14 +53,30 @@
                 @if (entry.Properties?.Any() == true)
                 {
                     <div class="detail-section">
-                        <h4>Properties:</h4>
-                        <div class="properties-grid">
-                            @foreach (var prop in entry.Properties)
+                        @if (IsEfCoreCommand(entry))
+                        {
+                            <div class="ef-core-controls">
+                                <h4>Properties:</h4>
+                                <label class="ef-core-toggle">
+                                    <input type="checkbox" @bind="efCoreOptimizedView[entry.Id]" />
+                                    Optimize for EF Core Query
+                                </label>
+                            </div>
+                            
+                            @if (GetEfCoreOptimizedState(entry.Id))
                             {
-                                <div class="property-key">@prop.Key:</div>
-                                <div class="property-value">@prop.Value?.ToString()</div>
+                                @RenderEfCoreOptimized(entry)
                             }
-                        </div>
+                            else
+                            {
+                                @RenderPropertiesGrid(entry)
+                            }
+                        }
+                        else
+                        {
+                            <h4>Properties:</h4>
+                            @RenderPropertiesGrid(entry)
+                        }
                     </div>
                 }
             </div>
@@ -71,6 +89,7 @@
     [Parameter] public EventCallback<string> RequestIdClicked { get; set; }
     
     private HashSet<int> expandedRows = new();
+    private Dictionary<int, bool> efCoreOptimizedView = new();
     
     private void ToggleExpand(int entryId)
     {
@@ -87,5 +106,147 @@
     private async Task OnRequestIdClicked(string requestId)
     {
         await RequestIdClicked.InvokeAsync(requestId);
+    }
+
+    private bool IsEfCoreCommand(SerilogEntry entry)
+    {
+        return entry.SourceContext == "Microsoft.EntityFrameworkCore.Database.Command";
+    }
+
+    private bool GetEfCoreOptimizedState(int entryId)
+    {
+        return efCoreOptimizedView.TryGetValue(entryId, out var value) && value;
+    }
+
+    private string FormatPropertyValue(object? value)
+    {
+        if (value == null) return string.Empty;
+        
+        var valueStr = value.ToString();
+        if (string.IsNullOrWhiteSpace(valueStr)) return valueStr ?? string.Empty;
+        
+        // Try to parse and format as JSON
+        try
+        {
+            using var doc = JsonDocument.Parse(valueStr);
+            return JsonSerializer.Serialize(doc, new JsonSerializerOptions { WriteIndented = true });
+        }
+        catch
+        {
+            // Not JSON or invalid JSON, return as-is
+            return valueStr;
+        }
+    }
+
+    private RenderFragment RenderPropertiesGrid(SerilogEntry entry) => __builder =>
+    {
+        <div class="properties-grid">
+            @foreach (var prop in entry.Properties)
+            {
+                <div class="property-key">@prop.Key:</div>
+                <div class="property-value">
+                    @{
+                        var formattedValue = FormatPropertyValue(prop.Value);
+                        if (formattedValue.Contains('\n'))
+                        {
+                            <pre class="json-formatted">@formattedValue</pre>
+                        }
+                        else
+                        {
+                            @formattedValue
+                        }
+                    }
+                </div>
+            }
+        </div>
+    };
+
+    private RenderFragment RenderEfCoreOptimized(SerilogEntry entry) => __builder =>
+    {
+        var (commandText, parameters) = ExtractEfCoreData(entry);
+        
+        <div class="ef-core-optimized">
+            @if (!string.IsNullOrEmpty(commandText))
+            {
+                <div class="ef-core-section">
+                    <h5>Command Text:</h5>
+                    <pre class="ef-core-sql">@UnescapeSql(commandText)</pre>
+                </div>
+            }
+            
+            @if (!string.IsNullOrEmpty(parameters))
+            {
+                <div class="ef-core-section">
+                    <h5>Parameters:</h5>
+                    <pre class="ef-core-parameters">@FormatPropertyValue(parameters)</pre>
+                </div>
+            }
+            
+            @if (string.IsNullOrEmpty(commandText) && string.IsNullOrEmpty(parameters))
+            {
+                <div class="ef-core-section">
+                    <p class="ef-core-not-found">No commandText or parameters found in properties.</p>
+                </div>
+            }
+        </div>
+    };
+
+    private (string? commandText, string? parameters) ExtractEfCoreData(SerilogEntry entry)
+    {
+        string? commandText = null;
+        string? parameters = null;
+
+        foreach (var prop in entry.Properties)
+        {
+            var valueStr = prop.Value?.ToString();
+            if (string.IsNullOrWhiteSpace(valueStr)) continue;
+
+            try
+            {
+                using var doc = JsonDocument.Parse(valueStr);
+                var root = doc.RootElement;
+
+                // Try to find commandText
+                if (root.TryGetProperty("commandText", out var cmdTextElement))
+                {
+                    commandText = cmdTextElement.GetString();
+                }
+
+                // Try to find parameters
+                if (root.TryGetProperty("parameters", out var paramsElement))
+                {
+                    parameters = JsonSerializer.Serialize(paramsElement, new JsonSerializerOptions { WriteIndented = true });
+                }
+
+                // If we found both, we can stop searching
+                if (commandText != null && parameters != null)
+                {
+                    break;
+                }
+            }
+            catch
+            {
+                // Not JSON or doesn't have the properties we're looking for
+                continue;
+            }
+        }
+
+        return (commandText, parameters);
+    }
+
+    private string UnescapeSql(string sql)
+    {
+        if (string.IsNullOrEmpty(sql)) return sql;
+        
+        // Unescape common JSON escape sequences
+        var unescaped = sql
+            .Replace("\\n", "\n")
+            .Replace("\\r", "\r")
+            .Replace("\\t", "\t")
+            .Replace("\\\"", "\"")
+            .Replace("\\'", "'")
+            .Replace("\\\\", "\\");
+        
+        return unescaped;
     }
 }

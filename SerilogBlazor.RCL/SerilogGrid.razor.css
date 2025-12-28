@@ -171,6 +171,93 @@
 	word-break: break-word;
 }
 
+.json-formatted {
+	background-color: #f8f9fa;
+	border: 1px solid #e1e5e9;
+	border-radius: 4px;
+	padding: 8px;
+	font-size: 12px;
+	font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+	white-space: pre-wrap;
+	overflow-x: auto;
+	margin: 4px 0 0 0;
+	line-height: 1.4;
+}
+
+.ef-core-controls {
+	display: flex;
+	align-items: center;
+	gap: 16px;
+	margin-bottom: 12px;
+}
+
+	.ef-core-controls h4 {
+		margin: 0;
+	}
+
+.ef-core-toggle {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	font-size: 13px;
+	cursor: pointer;
+	user-select: none;
+}
+
+	.ef-core-toggle input[type="checkbox"] {
+		cursor: pointer;
+		width: 16px;
+		height: 16px;
+	}
+
+.ef-core-optimized {
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+}
+
+.ef-core-section h5 {
+	margin: 0 0 8px 0;
+	font-size: 13px;
+	font-weight: 600;
+	color: #495057;
+	text-transform: uppercase;
+	letter-spacing: 0.5px;
+}
+
+.ef-core-sql {
+	background-color: #f0f8ff;
+	border: 1px solid #b3d9ff;
+	border-radius: 4px;
+	padding: 12px;
+	font-size: 13px;
+	font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+	white-space: pre-wrap;
+	overflow-x: auto;
+	margin: 0;
+	line-height: 1.5;
+	color: #004080;
+}
+
+.ef-core-parameters {
+	background-color: #f8f9fa;
+	border: 1px solid #e1e5e9;
+	border-radius: 4px;
+	padding: 12px;
+	font-size: 12px;
+	font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+	white-space: pre-wrap;
+	overflow-x: auto;
+	margin: 0;
+	line-height: 1.4;
+}
+
+.ef-core-not-found {
+	color: #6c757d;
+	font-style: italic;
+	margin: 0;
+}
+
 @@media (max-width: 1200px) {
 	.serilog-grid-header,
 	.serilog-grid-row {
