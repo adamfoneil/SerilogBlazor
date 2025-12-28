@@ -1,6 +1,5 @@
 @using SerilogBlazor.Abstractions
 @using System.Text.Json
-@using System.Text.RegularExpressions
 <div class="serilog-grid">
     <!-- Header Row -->
     <div class="serilog-grid-header">
@@ -239,13 +238,15 @@
         if (string.IsNullOrEmpty(sql)) return sql;
         
         // Unescape common JSON escape sequences
+        // Note: \\\\ must be processed first to avoid incorrect unescaping
         var unescaped = sql
+            .Replace("\\\\", "\x00") // Temporary placeholder for escaped backslash
             .Replace("\\n", "\n")
             .Replace("\\r", "\r")
             .Replace("\\t", "\t")
             .Replace("\\\"", "\"")
             .Replace("\\'", "'")
-            .Replace("\\\\", "\\");
+            .Replace("\x00", "\\"); // Replace placeholder with single backslash
         
         return unescaped;
     }
