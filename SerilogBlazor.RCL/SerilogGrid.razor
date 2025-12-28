@@ -86,10 +86,10 @@
 @code {
     [Parameter] public IEnumerable<SerilogEntry> Entries { get; set; } = [];
     [Parameter] public EventCallback<string> RequestIdClicked { get; set; }
-    
-    private HashSet<int> expandedRows = new();
-    private Dictionary<int, bool> efCoreOptimizedView = new();
-    
+
+    private HashSet<int> expandedRows = [];
+    private Dictionary<int, bool> efCoreOptimizedView = [];
+
     private void ToggleExpand(int entryId)
     {
         if (expandedRows.Contains(entryId))
@@ -102,20 +102,19 @@
         }
     }
 
+    protected override void OnParametersSet()
+    {
+        efCoreOptimizedView = Entries.ToDictionary(e => e.Id, e => false);
+    }
+
     private async Task OnRequestIdClicked(string requestId)
     {
         await RequestIdClicked.InvokeAsync(requestId);
     }
 
-    private bool IsEfCoreCommand(SerilogEntry entry)
-    {
-        return entry.SourceContext == "Microsoft.EntityFrameworkCore.Database.Command";
-    }
+    private bool IsEfCoreCommand(SerilogEntry entry) => entry.SourceContext == "Microsoft.EntityFrameworkCore.Database.Command";    
 
-    private bool GetEfCoreOptimizedState(int entryId)
-    {
-        return efCoreOptimizedView.TryGetValue(entryId, out var value) && value;
-    }
+    private bool GetEfCoreOptimizedState(int entryId) => efCoreOptimizedView.TryGetValue(entryId, out var value) && value;    
 
     private string FormatPropertyValue(object? value)
     {
