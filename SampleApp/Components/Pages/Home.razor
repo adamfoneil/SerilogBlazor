@@ -8,6 +8,7 @@
 
 <PageTitle>Serilog Viewer</PageTitle>
 <button @onclick="LogThis">Log Me</button>
+<button @onclick="LogEfCore">Log EF Core Query</button>
 
 <hr />
 
@@ -37,6 +38,28 @@
 
 		// logs from this method call will be correlated with requestId in scope here
 		SampleService.DoWork();
+	}
+
+	private async Task LogEfCore()
+	{
+		// attach an id to all logging in this method
+		Logger.BeginRequestId(RequestId);
+
+		Logger.LogInformation("Starting EF Core query demonstration");
+
+		// This will generate EF Core logs
+		await SampleService.DoEfCoreQuery();
+		
+		Logger.LogInformation("Completed EF Core query demonstration");
+		
+		// Refresh the grid to show new logs
+		await RefreshLogs();
+	}
+
+	private async Task RefreshLogs()
+	{
+		entries = await Query.ExecuteAsync();
+		StateHasChanged();
 	}
 
 	override protected async Task OnInitializedAsync()

@@ -11,6 +11,7 @@ var logLevels = new ApplicationLogLevels();
 
 Log.Logger = logLevels
 	.GetConfiguration()
+	.MinimumLevel.Override("Microsoft.EntityFrameworkCore.Database.Command", Serilog.Events.LogEventLevel.Information)
 	.WriteTo.Console()
 	.WriteTo.MSSqlServer(AppDbContextFactory.ConnectionString, new MSSqlServerSinkOptions()
 	{
