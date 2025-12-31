@@ -1,35 +1,37 @@
 ﻿using Coravel.Invocable;
 using Microsoft.Extensions.Logging;
 
-namespace SerilogBlazor.Abstractions;
+namespace SerilogBlazor.Abstractions.EFCore;
 
-public class SerilogEFCoreQuery
+public class SerilogEFEntry
 {
     /// <summary>
     /// FK to original Serilog log entry, should cascade delete
     /// </summary>
-    public int SourceLogId { get; set; }
+    public int SourceLogId { get; init; }
+    public DateTime Timestamp { get; init; }
+    public string? AgeText { get; init; } = default!;
     /// <summary>
     /// select, insert, update, delete
     /// </summary>
-    public string Action { get; set; } = default!;
+    public string Action { get; init; } = default!;
     /// <summary>
     /// covered object names (tables, views, functions)
     /// </summary>
-    public string[] ObjectNames { get; set; } = [];
+    public string[] ObjectNames { get; init; } = [];
     /// <summary>
     /// unescaped raw SQL from source log
     /// </summary>
-    public string SQL { get; set; } = default!;
+    public string SQL { get; init; } = default!;
     /// <summary>
     /// param names and values
     /// </summary>
-    public string[] Parameters { get; set; } = [];
+    public string[] Parameters { get; init; } = [];
     /// <summary>
     /// TagWith values from C# code
     /// </summary>
-    public string[] Tags { get; set; } = [];
-    public long ElapsedMS { get; set; }
+    public string[] Tags { get; init; } = [];
+    public long ElapsedMS { get; init; }
 }
 
 public abstract class EFQueryIndexer(ILogger<EFQueryIndexer> logger) : IInvocable
@@ -44,12 +46,12 @@ public abstract class EFQueryIndexer(ILogger<EFQueryIndexer> logger) : IInvocabl
     /// <summary>
     /// how do we extract relevant info from the log entry?
     /// </summary>
-    protected abstract SerilogEFCoreQuery? ParseEFCoreQuery(SerilogEntry logEntry);
+    protected abstract SerilogEFEntry? ParseEFCoreQuery(SerilogEntry logEntry);
 
     /// <summary>
     /// store the parsed query logs
     /// </summary>
-    protected abstract Task SaveQueryLogsAsync(IEnumerable<SerilogEFCoreQuery> queryLogs);
+    protected abstract Task SaveQueryLogsAsync(IEnumerable<SerilogEFEntry> queryLogs);
 
     public async Task Invoke()
     {
