@@ -1,0 +1,137 @@
+@using SerilogBlazor.Abstractions.EFCore
+@inject ISerilogEFQuery Query
+
+<div class="efcore-search-container">
+	<div class="search-field">
+		<label for="action">Action</label>
+		<select id="action" class="form-control" @bind="Action" @bind:after="OnFieldChanged">
+			<option value="">All</option>
+			<option value="select">Select</option>
+			<option value="insert">Insert</option>
+			<option value="update">Update</option>
+			<option value="delete">Delete</option>
+		</select>
+	</div>
+
+	<div class="search-field">
+		<label for="objectName">Object Name</label>
+		<input type="text" id="objectName" @bind-value="ObjectName" @bind-value:after="OnFieldChanged" placeholder="Table/View..." class="form-control" />
+	</div>
+
+	<div class="search-field">
+		<label for="tag">Tag</label>
+		<input type="text" id="tag" @bind-value="Tag" @bind-value:after="OnFieldChanged" placeholder="Tag..." class="form-control" />
+	</div>
+
+	<div class="search-field">
+		<label for="sql">Raw SQL</label>
+		<input type="text" id="sql" @bind-value="RawSQL" @bind-value:after="OnFieldChanged" placeholder="SQL text..." class="form-control" />
+	</div>
+
+	<div class="paging-controls">
+		<button type="button" class="paging-button" @onclick="RefreshSearch" disabled="@Executing" title="Refresh results">🔄</button>
+		<button type="button" class="paging-button" @onclick="PreviousPage" disabled="@(page == 0)">‹</button>
+		<button type="button" class="paging-button" @onclick="NextPage" disabled="@(!hasMoreResults)">›</button>
+	</div>
+</div>
+
+@code {
+	private int page = 0;
+	private bool hasMoreResults = true;
+
+	const int pageSize = 50;
+
+	[Parameter]
+	public string Action { get; set; } = string.Empty;
+
+	[Parameter]
+	public EventCallback<string> ActionChanged { get; set; }
+
+	[Parameter]
+	public string ObjectName { get; set; } = string.Empty;
+
+	[Parameter]
+	public EventCallback<string> ObjectNameChanged { get; set; }
+
+	[Parameter]
+	public string Tag { get; set; } = string.Empty;
+
+	[Parameter]
+	public EventCallback<string> TagChanged { get; set; }
+
+	[Parameter]
+	public string RawSQL { get; set; } = string.Empty;
+
+	[Parameter]
+	public EventCallback<string> RawSQLChanged { get; set; }
+
+	[Parameter]
+	public EventCallback<IEnumerable<SerilogEFEntry>> SearchExecuted { get; set; }
+
+	[Parameter]
+	public bool Executing { get; set; }
+
+	[Parameter]
+	public EventCallback<bool> ExecutingChanged { get; set; }
+
+	private async Task OnFieldChanged()
+	{
+		page = 0; // Reset to first page when search criteria changes
+		hasMoreResults = true; // Reset this flag when search changes
+		await ExecuteSearch();
+	}
+
+	private async Task PreviousPage()
+	{
+		if (page > 0)
+		{
+			page--;
+			await ExecuteSearch();
+		}
+	}
+
+	private async Task NextPage()
+	{
+		if (hasMoreResults)
+		{
+			page++;
+			await ExecuteSearch();
+		}
+	}
+
+	private async Task RefreshSearch()
+	{
+		await ExecuteSearch();
+	}
+
+	private async Task ExecuteSearch()
+	{
+		try
+		{
+			Executing = true;
+			await ExecutingChanged.InvokeAsync(Executing);
+
+			var action = string.IsNullOrWhiteSpace(Action) ? null : Action;
+			var objectName = string.IsNullOrWhiteSpace(ObjectName) ? null : ObjectName;
+			var sql = string.IsNullOrWhiteSpace(RawSQL) ? null : RawSQL;
+			var tag = string.IsNullOrWhiteSpace(Tag) ? null : Tag;
+
+			var results = await Query.ExecuteAsync(action, objectName, sql, tag, page * pageSize, pageSize);
+
+			await ActionChanged.InvokeAsync(Action);
+			await ObjectNameChanged.InvokeAsync(ObjectName);
+			await TagChanged.InvokeAsync(Tag);
+			await RawSQLChanged.InvokeAsync(RawSQL);
+			await SearchExecuted.InvokeAsync(results);
+
+			// Check if we have more results by requesting one extra item
+			var checkResults = await Query.ExecuteAsync(action, objectName, sql, tag, (page + 1) * pageSize, 1);
+			hasMoreResults = checkResults.Any();
+		}
+		finally
+		{
+			Executing = false;
+			await ExecutingChanged.InvokeAsync(Executing);
+		}
+	}
+}
