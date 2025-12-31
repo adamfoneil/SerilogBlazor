@@ -1,5 +1,6 @@
 @using SerilogBlazor.Abstractions
 @using System.Text.Json
+@using System.Text.RegularExpressions
 <div class="serilog-grid">
     <!-- Header Row -->
     <div class="serilog-grid-header">
@@ -89,6 +90,9 @@
 
     private HashSet<int> expandedRows = [];
     private Dictionary<int, bool> efCoreOptimizedView = [];
+    
+    // Static regex for better performance when unescaping unicode
+    private static readonly Regex UnicodeEscapeRegex = new Regex(@"\\u([0-9A-Fa-f]{4})", RegexOptions.Compiled);
 
     private void ToggleExpand(int entryId)
     {
@@ -176,7 +180,7 @@
             {
                 <div class="ef-core-section">
                     <h5>Parameters:</h5>
-                    <pre class="ef-core-parameters">@FormatPropertyValue(parameters)</pre>
+                    <div class="ef-core-parameters">@RenderEfCoreParameters(parameters)</div>
                 </div>
             }
             
@@ -251,4 +255,46 @@
         
         return unescaped;
     }
+
+    private string UnescapeUnicode(string text)
+    {
+        if (string.IsNullOrEmpty(text)) return text;
+        
+        // Unescape unicode sequences like \u0027 using static compiled regex
+        return UnicodeEscapeRegex.Replace(
+            text,
+            match => ((char)Convert.ToInt32(match.Groups[1].Value, 16)).ToString()
+        );
+    }
+
+    private RenderFragment RenderEfCoreParameters(string parametersJson) => __builder =>
+    {
+        try
+        {
+            using var doc = JsonDocument.Parse(parametersJson);
+            var root = doc.RootElement;
+
+            <div class="ef-params-list">
+                @foreach (var param in root.EnumerateArray())
+                {
+                    var name = param.TryGetProperty("name", out var nameElement) ? nameElement.GetString() : null;
+                    var value = param.TryGetProperty("value", out var valueElement) ? valueElement.GetString() : null;
+
+                    if (!string.IsNullOrEmpty(name))
+                    {
+                        <div class="ef-param-entry">
+                            <span class="ef-param-name">@name</span>
+                            <span class="ef-param-separator">=</span>
+                            <code class="ef-param-value">@UnescapeUnicode(value ?? "NULL")</code>
+                        </div>
+                    }
+                }
+            </div>
+        }
+        catch (JsonException)
+        {
+            // Fallback to displaying raw JSON if parsing fails
+            <pre>@parametersJson</pre>
+        }
+    };
 }

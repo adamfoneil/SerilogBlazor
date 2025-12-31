@@ -246,10 +246,43 @@
 	padding: 12px;
 	font-size: 12px;
 	font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
-	white-space: pre-wrap;
 	overflow-x: auto;
 	margin: 0;
 	line-height: 1.4;
+}
+
+.ef-params-list {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+}
+
+.ef-param-entry {
+	display: flex;
+	align-items: baseline;
+	gap: 6px;
+	line-height: 1.6;
+}
+
+.ef-param-name {
+	color: #6c757d;
+	font-weight: 500;
+	white-space: nowrap;
+}
+
+.ef-param-separator {
+	color: #6c757d;
+}
+
+.ef-param-value {
+	background-color: #e7f3ff;
+	color: #004080;
+	padding: 2px 6px;
+	border-radius: 3px;
+	font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+	font-size: 12px;
+	word-break: break-word;
+	flex: 1;
 }
 
 .ef-core-not-found {
