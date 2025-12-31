@@ -1,5 +1,6 @@
 @using SerilogBlazor.Abstractions
 @using System.Text.Json
+@using System.Text.RegularExpressions
 <div class="serilog-grid">
     <!-- Header Row -->
     <div class="serilog-grid-header">
@@ -89,6 +90,9 @@
 
     private HashSet<int> expandedRows = [];
     private Dictionary<int, bool> efCoreOptimizedView = [];
+    
+    // Static regex for better performance when unescaping unicode
+    private static readonly Regex UnicodeEscapeRegex = new Regex(@"\\u([0-9A-Fa-f]{4})", RegexOptions.Compiled);
 
     private void ToggleExpand(int entryId)
     {
@@ -256,10 +260,9 @@
     {
         if (string.IsNullOrEmpty(text)) return text;
         
-        // Unescape unicode sequences like \u0027
-        return System.Text.RegularExpressions.Regex.Replace(
+        // Unescape unicode sequences like \u0027 using static compiled regex
+        return UnicodeEscapeRegex.Replace(
             text,
-            @"\\u([0-9A-Fa-f]{4})",
             match => ((char)Convert.ToInt32(match.Groups[1].Value, 16)).ToString()
         );
     }
@@ -288,7 +291,7 @@
                 }
             </div>
         }
-        catch
+        catch (JsonException)
         {
             // Fallback to displaying raw JSON if parsing fails
             <pre>@parametersJson</pre>
