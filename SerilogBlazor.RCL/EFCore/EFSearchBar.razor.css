@@ -1,0 +1,103 @@
+.efcore-search-container {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr) auto;
+    gap: 12px;
+    align-items: end;
+    margin-bottom: 4px;
+}
+
+.search-field {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.search-field label {
+    font-size: 12px;
+    font-weight: 500;
+    color: #495057;
+    margin: 0;
+}
+
+.search-field .form-control,
+.search-field select {
+    padding: 12px 16px;
+    font-size: 14px;
+    border: 2px solid #e1e5e9;
+    border-radius: 8px;
+    background-color: #ffffff;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+}
+
+.search-field .form-control:focus,
+.search-field select:focus {
+    outline: none;
+    border-color: #0d6efd;
+    box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.1), 0 4px 8px rgba(0, 0, 0, 0.08);
+    background-color: #ffffff;
+}
+
+.search-field .form-control::placeholder {
+    color: #6c757d;
+    font-weight: 400;
+}
+
+.paging-controls {
+    display: flex;
+    gap: 4px;
+}
+
+.paging-button {
+    min-width: 40px;
+    height: 48px;
+    padding: 12px 16px;
+    border: 2px solid #0d6efd;
+    border-radius: 8px;
+    background-color: #0d6efd;
+    color: #ffffff;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    font-size: 16px;
+    font-weight: 500;
+}
+
+.paging-button:hover:not(:disabled) {
+    background-color: #0b5ed7;
+    border-color: #0a58ca;
+}
+
+.paging-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background-color: #6c757d;
+    border-color: #6c757d;
+    color: #ffffff;
+}
+
+.paging-button:focus {
+    outline: 0;
+    box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.25);
+}
+
+@media (max-width: 1200px) {
+    .efcore-search-container {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .paging-controls {
+        grid-column: span 2;
+        justify-self: end;
+    }
+}
+
+@media (max-width: 768px) {
+    .efcore-search-container {
+        grid-template-columns: 1fr;
+    }
+    
+    .paging-controls {
+        grid-column: 1;
+        justify-self: stretch;
+    }
+}
