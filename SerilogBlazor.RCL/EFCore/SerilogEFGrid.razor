@@ -1,0 +1,134 @@
+@using SerilogBlazor.Abstractions.EFCore
+<div class="serilog-ef-grid">
+    <!-- Header Row -->
+    <div class="serilog-ef-grid-header">
+        <div class="header-cell">Timestamp/Age</div>
+        <div class="header-cell">Action</div>
+        <div class="header-cell">Objects</div>
+        <div class="header-cell">Tags</div>
+        <div class="header-cell"></div>        
+    </div>
+
+    <!-- Data Rows -->
+    @foreach (var entry in Entries)
+    {
+        <div class="serilog-ef-grid-row @(expandedRows.Contains(entry.SourceLogId) ? "expanded" : "")">
+            <div class="data-cell">
+                @entry.Timestamp.ToString("yyyy-MM-dd HH:mm:ss") - @entry.AgeText
+            </div>
+            <div class="data-cell action-@GetActionCssClass(entry.Action)">@entry.Action</div>
+            <div class="data-cell">@string.Join(", ", entry.ObjectNames ?? [])</div>
+            <div class="data-cell">@string.Join(", ", entry.Tags ?? [])</div>
+            <div class="data-cell expand-cell">
+                <button class="expand-button" @onclick="@(() => ToggleExpand(entry.SourceLogId))">
+                    @(expandedRows.Contains(entry.SourceLogId) ? "▼" : "▶")
+                </button>
+            </div>
+        </div>
+
+        @if (expandedRows.Contains(entry.SourceLogId))
+        {
+            <div class="serilog-ef-grid-details">
+                <div class="detail-section">
+                    <h4>Objects:</h4>
+                    <div class="detail-value">
+                        @if (entry.ObjectNames?.Any() == true)
+                        {
+                            <div class="ef-objects-list">
+                                @foreach (var obj in entry.ObjectNames)
+                                {
+                                    <span class="ef-object-tag">@obj</span>
+                                }
+                            </div>
+                        }
+                        else
+                        {
+                            <span class="empty-value">No objects</span>
+                        }
+                    </div>
+                </div>
+
+                <div class="detail-section">
+                    <h4>Tags:</h4>
+                    <div class="detail-value">
+                        @if (entry.Tags?.Any() == true)
+                        {
+                            <div class="ef-tags-list">
+                                @foreach (var tag in entry.Tags)
+                                {
+                                    <span class="ef-tag">@tag</span>
+                                }
+                            </div>
+                        }
+                        else
+                        {
+                            <span class="empty-value">No tags</span>
+                        }
+                    </div>
+                </div>
+
+                <div class="detail-section">
+                    <h4>SQL:</h4>
+                    <pre class="ef-sql-text">@entry.SQL</pre>
+                </div>
+
+                <div class="detail-section">
+                    <h4>Parameters:</h4>
+                    <div class="detail-value">
+                        @if (entry.Parameters?.Any() == true)
+                        {
+                            <div class="ef-parameters-list">
+                                @foreach (var param in entry.Parameters)
+                                {
+                                    <div class="ef-parameter-entry">@param</div>
+                                }
+                            </div>
+                        }
+                        else
+                        {
+                            <span class="empty-value">No parameters</span>
+                        }
+                    </div>
+                </div>
+
+                <div class="detail-section">
+                    <h4>Elapsed Time:</h4>
+                    <div class="detail-value">@entry.ElapsedMS ms</div>
+                </div>
+            </div>
+        }
+    }
+</div>
+
+@code {
+    [Parameter] public IEnumerable<SerilogEFEntry> Entries { get; set; } = [];
+
+    private HashSet<int> expandedRows = [];
+
+    private void ToggleExpand(int entryId)
+    {
+        if (expandedRows.Contains(entryId))
+        {
+            expandedRows.Remove(entryId);
+        }
+        else
+        {
+            expandedRows.Add(entryId);
+        }
+    }
+
+    private string GetActionCssClass(string? action)
+    {
+        if (string.IsNullOrWhiteSpace(action)) return "unknown";
+        
+        // Sanitize and normalize the action for CSS class usage
+        return action.ToLower() switch
+        {
+            "select" => "select",
+            "insert" => "insert",
+            "update" => "update",
+            "delete" => "delete",
+            _ => "unknown"
+        };
+    }
+}
