@@ -8,30 +8,30 @@ public class SerilogEFEntry
     /// <summary>
     /// FK to original Serilog log entry, should cascade delete
     /// </summary>
-    public int SourceLogId { get; init; }
-    public DateTime Timestamp { get; init; }
-    public string? AgeText { get; init; } = default!;
+    public int SourceLogId { get; set; }
+    public DateTime Timestamp { get; set; }
+    public string? AgeText { get; set; } = default!;
     /// <summary>
     /// select, insert, update, delete
     /// </summary>
-    public string Action { get; init; } = default!;
+    public string Action { get; set; } = default!;
     /// <summary>
     /// covered object names (tables, views, functions)
     /// </summary>
-    public string[] ObjectNames { get; init; } = [];
+    public string[] ObjectNames { get; set; } = [];
     /// <summary>
     /// unescaped raw SQL from source log
     /// </summary>
-    public string SQL { get; init; } = default!;
+    public string SQL { get; set; } = default!;
     /// <summary>
     /// param names and values
     /// </summary>
-    public string[] Parameters { get; init; } = [];
+    public string[] Parameters { get; set; } = [];
     /// <summary>
     /// TagWith values from C# code
     /// </summary>
-    public string[] Tags { get; init; } = [];
-    public long ElapsedMS { get; init; }
+    public string[] Tags { get; set; } = [];
+    public long ElapsedMS { get; set; }
 }
 
 public abstract class EFQueryIndexer(ILogger<EFQueryIndexer> logger) : IInvocable
