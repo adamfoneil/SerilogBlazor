@@ -16,7 +16,7 @@
             <div class="data-cell">
                 @entry.Timestamp.ToString("yyyy-MM-dd HH:mm:ss") - @entry.AgeText
             </div>
-            <div class="data-cell action-@entry.Action.ToLower()">@entry.Action</div>
+            <div class="data-cell action-@GetActionCssClass(entry.Action)">@entry.Action</div>
             <div class="data-cell">@string.Join(", ", entry.ObjectNames ?? [])</div>
             <div class="data-cell">@string.Join(", ", entry.Tags ?? [])</div>
             <div class="data-cell expand-cell">
@@ -115,5 +115,20 @@
         {
             expandedRows.Add(entryId);
         }
+    }
+
+    private string GetActionCssClass(string? action)
+    {
+        if (string.IsNullOrWhiteSpace(action)) return "unknown";
+        
+        // Sanitize and normalize the action for CSS class usage
+        return action.ToLower() switch
+        {
+            "select" => "select",
+            "insert" => "insert",
+            "update" => "update",
+            "delete" => "delete",
+            _ => "unknown"
+        };
     }
 }

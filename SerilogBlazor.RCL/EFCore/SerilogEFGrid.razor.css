@@ -72,6 +72,10 @@
 	color: #ff3b30;
 }
 
+.action-unknown {
+	color: #8e8e93;
+}
+
 .expand-cell {
 	text-align: center;
 	padding: 8px;
