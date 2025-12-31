@@ -274,6 +274,12 @@
             using var doc = JsonDocument.Parse(parametersJson);
             var root = doc.RootElement;
 
+            @if (root.ValueKind != JsonValueKind.Array)
+            {
+                <pre>@parametersJson</pre>
+                return;
+            }
+
             <div class="ef-params-list">
                 @foreach (var param in root.EnumerateArray())
                 {
