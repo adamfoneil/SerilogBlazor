@@ -21,7 +21,7 @@
   </PropertyGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\SerilogBlazor.Abstractions\SerilogBlazor.Abstractions.csproj" />
+		<PackageReference Include="Serilog.Blazor.Abstractions" Version="1.0.9" />
 	</ItemGroup>
 
 	<ItemGroup>
