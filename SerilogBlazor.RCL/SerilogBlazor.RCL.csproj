@@ -21,7 +21,7 @@
   </PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Serilog.Blazor.Abstractions" Version="1.0.7" />
+		<ProjectReference Include="..\SerilogBlazor.Abstractions\SerilogBlazor.Abstractions.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -35,8 +35,5 @@
     </None>
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="EFCore\" />
-  </ItemGroup>
 
 </Project>
