@@ -10,7 +10,7 @@
 
 .serilog-ef-grid-header {
 	display: grid;
-	grid-template-columns: 220px 120px 1fr 1fr 40px;
+	grid-template-columns: 220px 120px 1fr 1fr 100px 40px;
 	background-color: #f8f9fa;
 	border-bottom: 2px solid #e1e5e9;
 	font-weight: 600;
@@ -18,7 +18,7 @@
 
 .serilog-ef-grid-row {
 	display: grid;
-	grid-template-columns: 220px 120px 1fr 1fr 40px;
+	grid-template-columns: 220px 120px 1fr 1fr 100px 40px;
 	border-bottom: 1px solid #e1e5e9;
 	transition: background-color 0.15s ease;
 }
@@ -193,14 +193,14 @@
 @media (max-width: 1200px) {
 	.serilog-ef-grid-header,
 	.serilog-ef-grid-row {
-		grid-template-columns: 150px 100px 1fr 1fr 40px;
+		grid-template-columns: 150px 100px 1fr 1fr 80px 40px;
 	}
 }
 
 @media (max-width: 768px) {
 	.serilog-ef-grid-header,
 	.serilog-ef-grid-row {
-		grid-template-columns: 120px 80px 1fr 1fr 30px;
+		grid-template-columns: 120px 80px 1fr 1fr 70px 30px;
 	}
 
 	.header-cell, .data-cell {

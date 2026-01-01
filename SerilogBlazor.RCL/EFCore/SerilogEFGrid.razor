@@ -6,6 +6,7 @@
         <div class="header-cell">Action</div>
         <div class="header-cell">Objects</div>
         <div class="header-cell">Tags</div>
+        <div class="header-cell">Elapsed Time</div>
         <div class="header-cell"></div>        
     </div>
 
@@ -19,6 +20,7 @@
             <div class="data-cell action-@GetActionCssClass(entry.Action)">@entry.Action</div>
             <div class="data-cell">@string.Join(", ", entry.ObjectNames ?? [])</div>
             <div class="data-cell">@string.Join(", ", entry.Tags ?? [])</div>
+            <div class="data-cell">@entry.ElapsedMS ms</div>
             <div class="data-cell expand-cell">
                 <button class="expand-button" @onclick="@(() => ToggleExpand(entry.SourceLogId))">
                     @(expandedRows.Contains(entry.SourceLogId) ? "▼" : "▶")
