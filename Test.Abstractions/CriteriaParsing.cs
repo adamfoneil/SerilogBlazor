@@ -238,4 +238,91 @@ public class CriteriaParsing
 		cleaned4 = logLevelRegex.Replace(cleaned4, "").Trim();
 		Assert.AreEqual("error  message", cleaned4);
 	}
+
+	[TestMethod]
+	public void PropertyValueWithIntegerValue()
+	{
+		var input = "!requestId = 4956";
+		var output = SerilogQuery.Criteria.ParseExpression(input);
+		Assert.IsTrue(output.HasPropertyValues.ContainsKey("requestId"));
+		Assert.AreEqual(4956, output.HasPropertyValues["requestId"]);
+	}
+
+	[TestMethod]
+	public void PropertyValueWithQuotedString()
+	{
+		var input = "!weather = \"clear and sunny\"";
+		var output = SerilogQuery.Criteria.ParseExpression(input);
+		Assert.IsTrue(output.HasPropertyValues.ContainsKey("weather"));
+		Assert.AreEqual("clear and sunny", output.HasPropertyValues["weather"]);
+	}
+
+	[TestMethod]
+	public void PropertyValueWithUnquotedString()
+	{
+		var input = "!status = active";
+		var output = SerilogQuery.Criteria.ParseExpression(input);
+		Assert.IsTrue(output.HasPropertyValues.ContainsKey("status"));
+		Assert.AreEqual("active", output.HasPropertyValues["status"]);
+	}
+
+	[TestMethod]
+	public void MultiplePropertyValues()
+	{
+		var input = "!requestId = 4956 !weather = \"clear and sunny\"";
+		var output = SerilogQuery.Criteria.ParseExpression(input);
+		Assert.IsTrue(output.HasPropertyValues.ContainsKey("requestId"));
+		Assert.AreEqual(4956, output.HasPropertyValues["requestId"]);
+		Assert.IsTrue(output.HasPropertyValues.ContainsKey("weather"));
+		Assert.AreEqual("clear and sunny", output.HasPropertyValues["weather"]);
+	}
+
+	[TestMethod]
+	public void PropertyValueWithOtherCriteria()
+	{
+		var input = "@err !apptId = 64696 [MyService]";
+		var output = SerilogQuery.Criteria.ParseExpression(input);
+		Assert.AreEqual("Error", output.Level);
+		Assert.AreEqual("MyService", output.SourceContext);
+		Assert.IsTrue(output.HasPropertyValues.ContainsKey("apptId"));
+		Assert.AreEqual(64696, output.HasPropertyValues["apptId"]);
+	}
+
+	[TestMethod]
+	public void PropertyValueDoesNotConflictWithException()
+	{
+		// !word should still be exception, !word = value should be property
+		var input = "!NullReferenceException";
+		var output = SerilogQuery.Criteria.ParseExpression(input);
+		Assert.AreEqual("NullReferenceException", output.Exception);
+		Assert.AreEqual(0, output.HasPropertyValues.Count);
+	}
+
+	[TestMethod]
+	public void PropertyValueAndExceptionTogether()
+	{
+		var input = "!NullReferenceException !userId = 123";
+		var output = SerilogQuery.Criteria.ParseExpression(input);
+		Assert.AreEqual("NullReferenceException", output.Exception);
+		Assert.IsTrue(output.HasPropertyValues.ContainsKey("userId"));
+		Assert.AreEqual(123, output.HasPropertyValues["userId"]);
+	}
+
+	[TestMethod]
+	public void PropertyValueWithSpacesAroundEquals()
+	{
+		var input = "!count  =  42";
+		var output = SerilogQuery.Criteria.ParseExpression(input);
+		Assert.IsTrue(output.HasPropertyValues.ContainsKey("count"));
+		Assert.AreEqual(42, output.HasPropertyValues["count"]);
+	}
+
+	[TestMethod]
+	public void PropertyValueWithDecimalNumber()
+	{
+		var input = "!price = 19.99";
+		var output = SerilogQuery.Criteria.ParseExpression(input);
+		Assert.IsTrue(output.HasPropertyValues.ContainsKey("price"));
+		Assert.AreEqual(19.99m, output.HasPropertyValues["price"]);
+	}
 }

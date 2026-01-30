@@ -47,8 +47,9 @@ public abstract class SerilogQuery : ISerilogQuery
 			 @{string} = Level (can be partial like "warn" "info" or "err")
 			 #{string} = RequestId
 			 -{string} = age expression (e.g., -7d for up to 7 days ago, or -30m for up to 30 minutes ago), supported types: d, h, hr, m, s, wk, mon
-			!{string} = exception text
-			{string} = anything not punctuated is assumed to be a message search term
+			 !{propertyName} = {value} = property value (e.g., !apptId = 64696, !weather = "clear and sunny")
+			 !{string} = exception text (when not followed by =)
+			 {string} = anything not punctuated is assumed to be a message search term
 			*/
 
             if (string.IsNullOrWhiteSpace(input))
@@ -62,6 +63,7 @@ public abstract class SerilogQuery : ISerilogQuery
             remainingText = ProcessLevel(remainingText, criteria);
             remainingText = ProcessRequestId(remainingText, criteria);
             remainingText = ProcessAge(remainingText, criteria);
+            remainingText = ProcessPropertyValues(remainingText, criteria);
             remainingText = ProcessException(remainingText, criteria);
 
             // Process quoted messages
@@ -142,9 +144,45 @@ public abstract class SerilogQuery : ISerilogQuery
             return input;
         }
 
+        private static string ProcessPropertyValues(string input, Criteria criteria)
+        {
+            // Match pattern: !propertyName = value or !propertyName = "quoted value"
+            // The value can be either quoted (capturing everything between quotes) or unquoted (capturing until whitespace)
+            var regex = new System.Text.RegularExpressions.Regex(@"!(\w+)\s*=\s*(?:""([^""]+)""|(\S+))");
+            
+            var matches = regex.Matches(input);
+            foreach (System.Text.RegularExpressions.Match match in matches)
+            {
+                var propertyName = match.Groups[1].Value;
+                var quotedValue = match.Groups[2].Value;
+                var unquotedValue = match.Groups[3].Value;
+                
+                var value = !string.IsNullOrEmpty(quotedValue) ? quotedValue : unquotedValue;
+                
+                // Try to parse as number if it's not quoted, using invariant culture
+                if (string.IsNullOrEmpty(quotedValue) && int.TryParse(value, System.Globalization.NumberStyles.Integer, System.Globalization.CultureInfo.InvariantCulture, out int intValue))
+                {
+                    criteria.HasPropertyValues[propertyName] = intValue;
+                }
+                else if (string.IsNullOrEmpty(quotedValue) && decimal.TryParse(value, System.Globalization.NumberStyles.Number, System.Globalization.CultureInfo.InvariantCulture, out decimal decimalValue))
+                {
+                    criteria.HasPropertyValues[propertyName] = decimalValue;
+                }
+                else
+                {
+                    criteria.HasPropertyValues[propertyName] = value;
+                }
+            }
+            
+            // Remove all matched property values from input
+            input = regex.Replace(input, "").Trim();
+            return input;
+        }
+
         private static string ProcessException(string input, Criteria criteria)
         {
-            var regex = new System.Text.RegularExpressions.Regex(@"!(\w+)");
+            // Only match !word pattern that is NOT followed by = (to avoid conflict with property values)
+            var regex = new System.Text.RegularExpressions.Regex(@"!(\w+)(?!\s*=)");
             var match = regex.Match(input);
             if (match.Success)
             {
