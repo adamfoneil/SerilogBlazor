@@ -63,7 +63,8 @@ public class SerilogPostgresQuery(
 		{
 			var results = await cn.QueryAsync<SerilogPostgresEntry>(query, parameters);
 
-			// todo: apply non-query criteria (e.g., HasProperties, HassPropertyValues)
+			// Property values are now handled in the WHERE clause via jsonb containment operator
+			// todo: apply non-query criteria (e.g., HasProperties if needed)
 
 			return results.Select(ToSerilogEntry);
 		}
@@ -222,6 +223,30 @@ public class SerilogPostgresQuery(
 		{
 			parameters.Add("@exception", $"%{criteria.Exception}%");
 			terms.Add(($"\"exception\" ILIKE @exception", $"Exception contains '{criteria.Exception}'"));
+		}
+
+		// Handle property values using jsonb containment operator
+		foreach (var propertyValue in criteria.HasPropertyValues)
+		{
+			// Build jsonb containment check
+			// For properties stored as: {"Properties": {"apptId": 64696}}
+			// We need: (properties -> 'Properties') @> '{"apptId": 64696}'
+			
+			string jsonValue;
+			if (propertyValue.Value is string strValue)
+			{
+				// Escape quotes and format as JSON string
+				var escapedValue = strValue.Replace("\"", "\\\"");
+				jsonValue = $"\"{escapedValue}\"";
+			}
+			else
+			{
+				// Numbers and other types don't need quotes in JSON
+				jsonValue = propertyValue.Value.ToString();
+			}
+			
+			var jsonbCheck = $@"(""properties"" -> 'Properties') @> '{{""{propertyValue.Key}"": {jsonValue}}}'";
+			terms.Add((jsonbCheck, $"Property '{propertyValue.Key}' = {propertyValue.Value}"));
 		}
 
 		return 
