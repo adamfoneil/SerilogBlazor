@@ -47,8 +47,9 @@ public abstract class SerilogQuery : ISerilogQuery
 			 @{string} = Level (can be partial like "warn" "info" or "err")
 			 #{string} = RequestId
 			 -{string} = age expression (e.g., -7d for up to 7 days ago, or -30m for up to 30 minutes ago), supported types: d, h, hr, m, s, wk, mon
-			!{string} = exception text
-			{string} = anything not punctuated is assumed to be a message search term
+			 !{propertyName} = {value} = property value (e.g., !apptId = 64696, !weather = "clear and sunny")
+			 !{string} = exception text (when not followed by =)
+			 {string} = anything not punctuated is assumed to be a message search term
 			*/
 
             if (string.IsNullOrWhiteSpace(input))
@@ -158,12 +159,12 @@ public abstract class SerilogQuery : ISerilogQuery
                 
                 var value = !string.IsNullOrEmpty(quotedValue) ? quotedValue : unquotedValue;
                 
-                // Try to parse as number if it's not quoted
-                if (string.IsNullOrEmpty(quotedValue) && int.TryParse(value, out int intValue))
+                // Try to parse as number if it's not quoted, using invariant culture
+                if (string.IsNullOrEmpty(quotedValue) && int.TryParse(value, System.Globalization.NumberStyles.Integer, System.Globalization.CultureInfo.InvariantCulture, out int intValue))
                 {
                     criteria.HasPropertyValues[propertyName] = intValue;
                 }
-                else if (string.IsNullOrEmpty(quotedValue) && decimal.TryParse(value, out decimal decimalValue))
+                else if (string.IsNullOrEmpty(quotedValue) && decimal.TryParse(value, System.Globalization.NumberStyles.Number, System.Globalization.CultureInfo.InvariantCulture, out decimal decimalValue))
                 {
                     criteria.HasPropertyValues[propertyName] = decimalValue;
                 }

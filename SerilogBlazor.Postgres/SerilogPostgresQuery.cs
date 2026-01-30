@@ -235,16 +235,27 @@ public class SerilogPostgresQuery(
 			string jsonValue;
 			if (propertyValue.Value is string strValue)
 			{
-				// Escape quotes and format as JSON string
-				var escapedValue = strValue.Replace("\"", "\\\"");
+				// Escape backslashes first, then double quotes for JSON
+				var escapedValue = strValue.Replace("\\", "\\\\").Replace("\"", "\\\"");
 				jsonValue = $"\"{escapedValue}\"";
+			}
+			else if (propertyValue.Value is int or long or short or byte)
+			{
+				// Integer types don't need culture-specific formatting
+				jsonValue = propertyValue.Value.ToString()!;
+			}
+			else if (propertyValue.Value is decimal or float or double)
+			{
+				// Use invariant culture for decimal formatting to ensure period as decimal separator
+				jsonValue = string.Format(System.Globalization.CultureInfo.InvariantCulture, "{0}", propertyValue.Value);
 			}
 			else
 			{
-				// Numbers and other types don't need quotes in JSON
-				jsonValue = propertyValue.Value.ToString();
+				// Fallback for other types, use invariant culture
+				jsonValue = string.Format(System.Globalization.CultureInfo.InvariantCulture, "{0}", propertyValue.Value);
 			}
 			
+			// Property key is restricted to \w+ by the regex, so it's safe to use directly
 			var jsonbCheck = $@"(""properties"" -> 'Properties') @> '{{""{propertyValue.Key}"": {jsonValue}}}'";
 			terms.Add((jsonbCheck, $"Property '{propertyValue.Key}' = {propertyValue.Value}"));
 		}
